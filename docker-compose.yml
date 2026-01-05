@@ -1,0 +1,26 @@
+services:
+
+
+
+  # ------- DATABASE --------
+  postgres:
+    image: postgres:18
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: vladimircosma
+      POSTGRES_PASSWORD: rabbijacob
+      POSTGRES_DB: bandatabase
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+  adminer:
+    image: adminer
+    container_name: adminer_ui
+    restart: always
+    ports:
+      - "8082:8080"
+
+volumes:
+  pgdata:
