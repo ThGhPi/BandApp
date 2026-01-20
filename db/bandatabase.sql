@@ -37,13 +37,15 @@ CASCADE;
 DROP TYPE IF EXISTS attendance_choice_enum;
 DROP TYPE IF EXISTS role_enum;
 DROP TYPE IF EXISTS file_type_enum;
-DROP TYPE IF EXISTS instrument_key_enum;
+DROP TYPE IF EXISTS key_enum;
+DROP TYPE IF EXISTS group_type_enum;
 
 
 -- ============= ENUM CREATION =================
 
-CREATE TYPE instrument_key_enum AS ENUM ('ut', 'fa', 'si_bemol', 'mi_bemol');
-CREATE TYPE file_type_enum AS ENUM ('mscz', 'mp3', 'png', 'jpeg', 'jpg');
+CREATE TYPE group_type_enum AS ENUM ('section', 'other');
+CREATE TYPE key_enum AS ENUM ('ut', 'f', 'b_flat', 'e_flat');
+CREATE TYPE file_type_enum AS ENUM ('audio', 'score', 'photo', 'invoice');
 CREATE TYPE role_enum AS ENUM ('admin', 'org', 'arr', 'member');
 CREATE TYPE attendance_choice_enum AS ENUM ('yes', 'no', 'maybe');
 
