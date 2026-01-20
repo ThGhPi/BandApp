@@ -28,8 +28,7 @@ DROP TABLE IF EXISTS
     place_type,
     city,
     file_info,
-    section,
-    section_type,
+    work_group,
     instrument,
     piece
 CASCADE;
@@ -43,7 +42,7 @@ DROP TYPE IF EXISTS group_type_enum;
 
 -- ============= ENUM CREATION =================
 
-CREATE TYPE group_type_enum AS ENUM ('section', 'other');
+CREATE TYPE group_type_enum AS ENUM ('group', 'other');
 CREATE TYPE key_enum AS ENUM ('ut', 'f', 'b_flat', 'e_flat');
 CREATE TYPE file_type_enum AS ENUM ('audio', 'score', 'photo', 'invoice');
 CREATE TYPE role_enum AS ENUM ('admin', 'org', 'arr', 'member');
@@ -61,7 +60,7 @@ CREATE TABLE piece (
 CREATE TABLE instrument (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    key instrument_key_enum NOT NULL
+    key key_enum NOT NULL
 );
 
 CREATE TABLE survey (
@@ -79,27 +78,21 @@ CREATE TABLE choice (
     survey_id BIGINT NOT NULL REFERENCES survey(id)
 );
 
-
-CREATE TABLE section_type (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
-);
-
-CREATE TABLE section (
+CREATE TABLE work_group (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     creation_date DATE NOT NULL,
+    group_type group_type_enum NOT NULL,
     goal VARCHAR(50),
     details VARCHAR(255),
-    scheduled_end VARCHAR(50),
-    type_id BIGINT REFERENCES section_type(id)
+    scheduled_end VARCHAR(50)
 );
 
 CREATE TABLE file_info (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     file_url VARCHAR(255) NOT NULL UNIQUE,
     file_type file_type_enum NOT NULL,
-    section_id BIGINT REFERENCES section(id),
+    group_id BIGINT REFERENCES work_group(id),
     piece_id BIGINT REFERENCES piece(id)
 );
 
@@ -159,6 +152,7 @@ CREATE TABLE event (
     event_end TIME,
     rdv TIME,
     details VARCHAR(255),
+    group_id biGINT REFERENCES work_group(id),
     place_id BIGINT NOT NULL REFERENCES place(id),
     organisation_id BIGINT NOT NULL REFERENCES organisation(id),
     type_id BIGINT REFERENCES event_type(id)
@@ -195,8 +189,8 @@ CREATE TABLE attendance (
 
 CREATE TABLE participation (
     person_id BIGINT REFERENCES person(id),
-    section_id BIGINT REFERENCES section(id),
-    PRIMARY KEY (person_id, section_id)
+    group_id BIGINT REFERENCES work_group(id),
+    PRIMARY KEY (person_id, group_id)
 );
 
 CREATE TABLE player (
