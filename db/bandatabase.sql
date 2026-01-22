@@ -85,7 +85,7 @@ CREATE TABLE work_group (
     group_type group_type_enum NOT NULL,
     goal VARCHAR(50),
     details VARCHAR(255),
-    scheduled_end VARCHAR(50)
+    scheduled_end DATE
 );
 
 CREATE TABLE file_info (
