@@ -1,7 +1,5 @@
 package com.thghpi.bandapp.band_api.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -37,11 +35,15 @@ public class Event {
     @Column(length = 255)
     private String details;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "organiser_id", nullable = false)
+    private Organisation organiser;
 }

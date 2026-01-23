@@ -43,6 +43,10 @@ public class Place {
     @Builder.Default
     private List<Event> events = new ArrayList<Event>();
 
+    @OneToMany(mappedBy = "organisation")
+    @Builder.Default
+    private List<Organisation> organisations = new ArrayList<Organisation>();
+
     @ManyToOne
     @JoinColumn(name = "photo_id")
     private FileInfo fileInfo;
