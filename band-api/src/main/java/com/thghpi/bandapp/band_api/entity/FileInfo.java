@@ -1,5 +1,8 @@
 package com.thghpi.bandapp.band_api.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +21,10 @@ public class FileInfo {
     @Column(name = "file_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private FileType fileType;
+
+    @OneToMany(mappedBy = "fileInfo")
+    @Builder.Default
+    private List<Place> places = new ArrayList<Place>();
 
     @ManyToOne
     @JoinColumn(name = "section_id")

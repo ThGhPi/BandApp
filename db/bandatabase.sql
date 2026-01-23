@@ -112,9 +112,10 @@ CREATE TABLE place (
     name VARCHAR(50),
     address VARCHAR(255) NOT NULL,
     address_details VARCHAR(255),
-    gps_coordinates TEXT UNIQUE,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     capacity INT,
-    file_id BIGINT REFERENCES file_info(id),
+    photo_id BIGINT REFERENCES file_info(id),
     city_id BIGINT NOT NULL REFERENCES city(id),
     type_id BIGINT REFERENCES place_type(id)
 );
@@ -168,7 +169,7 @@ CREATE TABLE invoice (
 
 CREATE TABLE invoice_line (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    rate DECIMAL(15,2),
+    rate DOUBLE PRECISION NOT NULL,
     event_id BIGINT NOT NULL UNIQUE REFERENCES event(id),
     invoice_id BIGINT NOT NULL REFERENCES invoice(id)
 );

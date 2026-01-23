@@ -40,7 +40,11 @@ public class Group {
     @OneToMany(mappedBy = "section")
     @Builder.Default
     private List<FileInfo> filesInfo = new ArrayList<FileInfo>();
-    
+
+    @OneToMany(mappedBy = "group")
+    @Builder.Default
+    private List<Event> events = new ArrayList<Event>();
+
     @ManyToMany(mappedBy = "groups")
     @Builder.Default
     private List<Person> persons = new ArrayList<Person>();
