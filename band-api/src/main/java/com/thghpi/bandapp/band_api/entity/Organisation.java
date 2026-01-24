@@ -12,7 +12,7 @@ import lombok.Data;
 @Builder
 public class Organisation {
     @Id
-    @Column(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)
@@ -27,6 +27,10 @@ public class Organisation {
     @OneToMany(mappedBy = "organiser")
     @Builder.Default
     private List<Event> events = new ArrayList<Event>();
+
+    @OneToMany(mappedBy = "organisation")
+    @Builder.Default
+    private List<Invoice> invoices = new ArrayList<Invoice>();
 
     @ManyToOne
     @JoinColum(name = "address_id")
