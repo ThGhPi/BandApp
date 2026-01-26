@@ -1,6 +1,8 @@
 package com.thghpi.bandapp.band_api.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -22,9 +24,13 @@ public class Invoice {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "file_id", nullable = false, unique = true)
-    private FileInfo fileInfo;
+    private FileInfo pdfInfo;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "organisation_id", nullable = false)
     private Organisation organisation;
+
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
 }

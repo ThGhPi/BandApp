@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class PlaceType {
+public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

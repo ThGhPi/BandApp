@@ -33,6 +33,6 @@ public class Organisation {
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
     @ManyToOne
-    @JoinColum(name = "address_id")
+    @JoinColumn(name = "address_id")
     private Place address;
 }

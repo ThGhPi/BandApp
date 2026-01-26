@@ -1,4 +1,4 @@
-package com.thghpi.bandapp.band_api.entity;
+package com.thghpi.bandapp.band_api.entity.enumeration;
 
 /**
  * enumeration for attendance choice by member: presence, undecided or absence

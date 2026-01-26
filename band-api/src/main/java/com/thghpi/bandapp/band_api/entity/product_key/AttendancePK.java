@@ -1,4 +1,4 @@
-package com.thghpi.bandapp.band_api.entity;
+package com.thghpi.bandapp.band_api.entity.product_key;
 
 import java.io.Serializable;
 

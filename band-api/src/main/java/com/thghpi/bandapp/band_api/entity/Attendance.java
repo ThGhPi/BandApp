@@ -1,5 +1,8 @@
 package com.thghpi.bandapp.band_api.entity;
 
+import com.thghpi.bandapp.band_api.entity.enumeration.AttendanceChoice;
+import com.thghpi.bandapp.band_api.entity.product_key.AttendancePK;
+
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;

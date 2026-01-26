@@ -3,6 +3,8 @@ package com.thghpi.bandapp.band_api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thghpi.bandapp.band_api.entity.enumeration.FileType;
+
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,7 @@ public class FileInfo {
     @Enumerated(EnumType.STRING)
     private FileType fileType;
 
-    @OneToMany(mappedBy = "fileInfo")
+    @OneToMany(mappedBy = "photoInfo")
     @Builder.Default
     private List<Place> places = new ArrayList<Place>();
 

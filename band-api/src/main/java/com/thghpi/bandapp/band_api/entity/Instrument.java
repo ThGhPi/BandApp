@@ -3,6 +3,8 @@ package com.thghpi.bandapp.band_api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thghpi.bandapp.band_api.entity.enumeration.Key;
+
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
