@@ -27,8 +27,4 @@ public class FileInfo {
     @OneToMany(mappedBy = "photoInfo")
     @Builder.Default
     private List<Place> places = new ArrayList<Place>();
-
-    @ManyToOne
-    @JoinColumn(name = "section_id")
-    private Group section;
 }
