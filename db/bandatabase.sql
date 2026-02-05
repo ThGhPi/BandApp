@@ -27,6 +27,7 @@ DROP TABLE IF EXISTS
     place,
     place_type,
     city,
+    score,
     file_info,
     work_group,
     instrument,
@@ -91,9 +92,18 @@ CREATE TABLE work_group (
 CREATE TABLE file_info (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     file_url VARCHAR(255) NOT NULL UNIQUE,
-    file_type file_type_enum NOT NULL,
-    group_id BIGINT REFERENCES work_group(id),
-    piece_id BIGINT REFERENCES piece(id)
+    file_type file_type_enum NOT NULL
+);
+
+CREATE TABLE score(
+   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+   part VARCHAR(25) NOT NULL,
+   publication_date DATE NOT NULL,
+   size DECIMAL(15,2) NOT NULL,
+   speed INT,
+   piece_id BIGINT NOT NULL REFERENCES piece(id),
+   section_id BIGINT REFERENCES work_group(id),
+   file_info_id BIGINT NOT NULL REFERENCES file_info(id)
 );
 
 CREATE TABLE city (

@@ -16,11 +16,11 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private LocalDate publicationDate;
+    
     @Column(length = 25, nullable = false)
     private String part;
-
-    @Column(nullable = false)
-    private LocalDate size;
 
     @Column(nullable = false)
     private Double size;

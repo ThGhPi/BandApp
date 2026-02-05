@@ -2,7 +2,6 @@ package com.thghpi.bandapp.band_api.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDate;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -2,6 +2,8 @@ package com.thghpi.bandapp.band_api.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,10 @@ public class Event {
 
     @Column(length = 255)
     private String details;
+
+    @OneToMany(mappedBy = "event")
+    @Builder.Default
+    private List<Programme> programme = new ArrayList<Programme>();
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "place_id", nullable = false)

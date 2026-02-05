@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data 
-@Entity
+@Entity(name = "invoice_line")
 @Builder
 public class InvoiceLine {
     @Id

@@ -41,7 +41,7 @@ public class Group {
 
     @OneToMany(mappedBy = "section")
     @Builder.Default
-    private List<FileInfo> filesInfo = new ArrayList<FileInfo>();
+    private List<Score> scores = new ArrayList<Score>();
 
     @OneToMany(mappedBy = "group")
     @Builder.Default

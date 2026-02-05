@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-@Entity
+@Entity(name = "event_type")
 public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

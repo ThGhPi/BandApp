@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Entity
+@Entity(name = "file_info")
 @Builder
 public class FileInfo {
     @Id
