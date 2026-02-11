@@ -25,12 +25,12 @@ public class Invoice {
     @OneToOne(optional = false)
     @JoinColumn(name = "file_id", nullable = false, unique = true)
     private FileInfo pdfInfo;
+    
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "organisation_id", nullable = false)
     private Organisation organisation;
-
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
 }

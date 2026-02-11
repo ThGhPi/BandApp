@@ -41,8 +41,6 @@ public class Person {
     @Column(name = "phone_number", length = 12, nullable = false)
     private String phoneNumber;
 
-    
-    
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Place address;

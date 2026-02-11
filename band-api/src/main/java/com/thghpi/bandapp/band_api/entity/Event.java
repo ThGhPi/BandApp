@@ -42,6 +42,10 @@ public class Event {
     private List<Programme> programme = new ArrayList<Programme>();
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "type_id")
+    private EventType type;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 

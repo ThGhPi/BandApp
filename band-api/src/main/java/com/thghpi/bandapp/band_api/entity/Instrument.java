@@ -21,6 +21,7 @@ public class Instrument {
     private String name;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Key key;
     
     @ManyToMany
