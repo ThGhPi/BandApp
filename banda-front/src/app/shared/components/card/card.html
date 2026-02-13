@@ -1,0 +1,26 @@
+<div class="rounded-2xl overflow-hidden shadow-md bg-surface">
+
+  <!-- Header -->
+  <div
+    class="px-4 py-3 flex justify-between items-center text-white font-semibold"
+    [ngClass]="'bg-' + headerBg">
+
+    <span>{{ title }}</span>
+    @if (subtitle) {
+        <span>{{ subtitle }}</span>
+    }
+
+  </div>
+
+  <!-- sub-Header -->
+
+
+  <!-- Body -->
+  <div class="p-4 bg-lightgray">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Footer (optional) -->
+  <ng-content select="[card-footer]"></ng-content>
+
+</div>

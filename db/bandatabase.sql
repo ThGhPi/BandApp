@@ -138,7 +138,8 @@ CREATE TABLE person (
     email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role role_enum NOT NULL,
-    phone_number CHAR(12) NOT NULL,
+    phone_number CHAR(12),
+    birthday DATE,
     address_id BIGINT REFERENCES place(id)
 );
 

@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,11 @@ public class Person {
     @Column(nullable = false)
     private Role role;
 
-    @Column(name = "phone_number", length = 12, nullable = false)
+    @Column(name = "phone_number", length = 12)
     private String phoneNumber;
+
+    @Column
+    private LocalDate birthday;
 
     @ManyToOne
     @JoinColumn(name = "address_id")
