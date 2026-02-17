@@ -216,3 +216,43 @@ CREATE TABLE answer (
     choice_id BIGINT REFERENCES choice(id),
     PRIMARY KEY (person_id, choice_id)
 );
+
+-- ========================================
+-- =======  Initial Data Insertion  =======
+-- ========================================
+
+WITH new_survey AS (
+    INSERT INTO survey (question, scheduled_end, multiplicity)
+    VALUES (
+        'Quel nouveau morceau ajouter au répertoire ?',
+        DATE '2024-09-18', FALSE
+    )
+    RETURNING id
+)
+INSERT INTO choice (title, complement, url, survey_id)
+SELECT v.title, v.complement, v.url, new_survey.id
+FROM new_survey,
+(
+    VALUES
+    ('Antanarivo Street', NULL, 'https://youtube.com/'),
+    ('Je ne suis pas un Héros', NULL, 'https://youtube.com/'),
+    ('Havana', NULL, 'https://youtube.com/')
+) AS v(title, complement, url);
+
+WITH new_survey AS (
+    INSERT INTO survey (question, scheduled_end, multiplicity)
+    VALUES (
+        'Quelles sont tes disponibilités pour l’A.G. ?',
+        DATE '2024-10-04', TRUE
+    )
+    RETURNING id
+)
+INSERT INTO choice (title, complement, survey_id)
+SELECT v.title, v.complement, new_survey.id
+FROM new_survey,
+(
+    VALUES
+    ('Lundi 15 octobre', 'RDV 20h00'),
+    ('Mardi 16 octobre', 'RDV 20h00'),
+    ('Samedi 20 octobre', 'RDV 15h00')
+) AS v(title, complement);
