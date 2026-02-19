@@ -1,4 +1,20 @@
 @for (survey of surveys(); track survey.id) {
-  <app-card [title]="survey.question"></app-card>
+  <app-card [title]="survey.question">
+    @if (survey.scheduledEnd >= new Date()) {
+      <div card-footer>
+        <div>
+          Répondre avant le :
+        </div>
+        <div>{{survey.scheduledEnd | smartDates}}</div>
+      </div>
+    } @else {
+      <div card-footer>
+        <div>
+          Répondre avant le :
+        </div>
+        <div>{{survey.scheduledEnd | smartDates}}</div>
+      </div>
+    }
+  </app-card>
 }
 

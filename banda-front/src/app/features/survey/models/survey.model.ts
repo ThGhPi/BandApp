@@ -5,6 +5,6 @@ export interface Survey {
   question: string;
   scheduledEnd: string;
   multiplicity: boolean;
-  totalVote: number;
+  totalVotes: number;
   options: Choice[];
 }

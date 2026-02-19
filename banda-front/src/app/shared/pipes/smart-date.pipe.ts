@@ -14,12 +14,19 @@ export class SmartDatePipe implements PipeTransform {
     const dateYear = date.getFullYear();
     const currentYear = now.getFullYear();
 
-    if (dateYear < currentYear) {
-      return `${date.getMonth()}/${dateYear}`
+    const month: string = date.getMonth().toString().padStart(2,'0');
+
+    if (dateYear === currentYear) {
+      const weekday: string = new Intl.DateTimeFormat('fr-FR', {weekday: 'short'}).format(date);
+      const day: string = date.getDay().toString().padStart(2,'0');
+      return `${capitalize(weekday)} ${day}/${month}`;
     }
-
-
-    return `${date.getMonth()}`;
+    
+    return `${month}/${dateYear}`;
   }
 
+}
+
+function capitalize(weekday: string): string {
+  return weekday.charAt(0).toUpperCase() + weekday.slice(1);
 }

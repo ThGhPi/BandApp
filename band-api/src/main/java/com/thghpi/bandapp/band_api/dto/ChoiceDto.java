@@ -1,8 +1,5 @@
 package com.thghpi.bandapp.band_api.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,5 +11,6 @@ public class ChoiceDto {
     private String complement;
     private String url;
     private SurveyDto survey;
-    private List<PersonDto> persons = new ArrayList<PersonDto>();
+    private Long votes;
+    private Boolean isChosen;
 }

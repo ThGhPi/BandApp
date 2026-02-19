@@ -30,4 +30,8 @@ public class Survey {
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Choice> choices = new ArrayList<Choice>();
+
+    public Boolean isClosed() {
+        return LocalDate.now().isAfter(scheduledEnd);
+    }
 }
