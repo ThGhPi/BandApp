@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 )
 public interface ChoiceMapper {
     
-    @Mapping(target = "votes", expression = "java(choice.getVotes)")
+    @Mapping(target = "votes", expression = "java(choice.getVotes())")
     ChoiceDto toDto(Choice choice);
 
     Choice toEntity(ChoiceDto choice);
