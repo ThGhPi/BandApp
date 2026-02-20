@@ -4,5 +4,5 @@ export interface Choice {
   complement: string;
   url: string;
   votes: number;
-  chosen: boolean
+  chosen: boolean;
 }

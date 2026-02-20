@@ -11,8 +11,8 @@ import org.mapstruct.Mapping;
 )
 public interface SurveyMapper {
     
-    @Mapping(target = "totalVotes", expression = "java(survey.getTotalVotes())")
     @Mapping(target = "closed", expression = "java(survey.isClosed())")
+    @Mapping(target = "totalVotes", expression = "java(survey.getTotalVotes())")
     SurveyDto toDto(Survey survey);
     
     Survey toEntity(SurveyDto survey);

@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface SurveyService {
     List<SurveyDto> getRecent();
-    List<SurveyDto> getOld(Long pageNumber);
+    List<SurveyDto> getPrevious(Long pageNumber);
 }

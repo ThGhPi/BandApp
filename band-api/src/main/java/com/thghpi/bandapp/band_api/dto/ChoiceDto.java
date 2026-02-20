@@ -12,5 +12,4 @@ public class ChoiceDto {
     private String url;
     private SurveyDto survey;
     private Long votes;
-    private Boolean chosen;
 }

@@ -9,18 +9,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SurveyServiceImpl extends SurveyService {
+public class SurveyServiceImpl implements SurveyService {
     private final SurveyRepository repository;
     private final SurveyMapper mapper;
 
+    @Override
     public List<SurveyDto> getRecent() {
         LocalDate date = LocalDate.now().minusMonths(1);
         return repository.findRecent(date)
@@ -29,7 +28,8 @@ public class SurveyServiceImpl extends SurveyService {
             .collect(Collectors.toList());
     }
 
-    public List<SurveyDto> getOld(pageNumber) {
+    @Override
+    public List<SurveyDto> getPrevious(Long pageNumber) {
         LocalDate date = LocalDate.now().minusMonths(1);
         return repository.findOld(date, pageNumber*5)
             .stream()
