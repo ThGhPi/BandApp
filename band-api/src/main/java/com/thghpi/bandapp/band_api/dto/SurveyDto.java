@@ -14,7 +14,7 @@ public class SurveyDto {
     private String question;
     private LocalDate scheduledEnd;
     private Boolean multiplicity;
-    private Boolean isClosed;
+    private Boolean closed;
     private Long totalVotes;
     private List<ChoiceDto> choices = new ArrayList<ChoiceDto>();
 }

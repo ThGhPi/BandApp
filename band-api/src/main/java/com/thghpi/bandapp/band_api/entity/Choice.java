@@ -38,4 +38,8 @@ public class Choice {
         )
     @Builder.Default
     private List<Person> persons = new ArrayList<Person>();
+
+    public Long getVotes() {
+        return (long) persons.size();
+    }
 }
