@@ -49,7 +49,7 @@ public class Place {
 
     @ManyToOne
     @JoinColumn(name = "photo_id")
-    private FileInfo fileInfo;
+    private FileInfo photoInfo;
 
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)

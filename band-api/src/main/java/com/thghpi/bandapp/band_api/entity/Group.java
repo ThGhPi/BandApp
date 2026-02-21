@@ -50,8 +50,4 @@ public class Group {
     @ManyToMany(mappedBy = "groups")
     @Builder.Default
     private List<Person> persons = new ArrayList<Person>();
-
-    @ManyToMany(mappedBy = "group")
-    @Builder.Default
-    private List<Choice> choices = new ArrayList<Choice>();
 }
