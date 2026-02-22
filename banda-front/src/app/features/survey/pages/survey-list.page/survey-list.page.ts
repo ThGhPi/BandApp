@@ -13,7 +13,7 @@ import { SmartDatePipe } from '../../../../shared/pipes/smart-date.pipe';
 export class SurveyListPage {
   private surveyService = inject(SurveyService);
 
-  surveys = signal<Survey[]>([]);
+  private surveys = signal<Survey[]>([]);
 
   ngOnInit() {
     this.loadSurveys();
