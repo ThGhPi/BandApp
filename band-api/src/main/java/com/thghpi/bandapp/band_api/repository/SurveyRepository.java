@@ -18,7 +18,7 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
      * @return une liste de sondage avec leur choix et leurs votes
      */
     @Query(
-        "SELECT s FROM Survey s LEFT JOIN FETCH s.choices c LEFT JOIN FETCH c.persons WHERE s.scheduled_end >= :date"
+        "SELECT s FROM Survey s LEFT JOIN FETCH s.choices c LEFT JOIN FETCH c.persons WHERE s.scheduled_end >= :date ORDER BY s.scheduled_end DESC"
     )
     List<Survey> findRecent(LocalDate date);
     

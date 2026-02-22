@@ -11,7 +11,7 @@
 	<groupId>com.thghpi.bandapp</groupId>
 	<artifactId>band-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Bandapp-API</name>
+	<name>band-api</name>
 	<description>api for orchestra app</description>
 	<url/>
 	<licenses>
@@ -32,6 +32,20 @@
         <lombok.version>1.18.36</lombok.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
 	</properties>
+
+	<!-- BOM Testcontainers 2.x -->
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-bom</artifactId>
+            <version>2.0.3</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -90,6 +104,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-testcontainers</artifactId>
+    		<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.testcontainers</groupId>
+    		<artifactId>testcontainers-postgresql</artifactId>
+    		<scope>test</scope>
 		</dependency>
 	</dependencies>
 
