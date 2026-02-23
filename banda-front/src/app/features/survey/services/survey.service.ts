@@ -10,7 +10,7 @@ import { API_ENDPOINTS } from '../../../core/config/api-endpoints';
 export class SurveyService {
   private baseUrl = API_ENDPOINTS.surveys;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Get all surveys
@@ -27,14 +27,24 @@ export class SurveyService {
   }
 
   /**
-   * Vote for an option (choice)
+   * Vote an option (choice)
    */
-  vote(surveyId: number, choiceId: number): Observable<Survey> {
+  addVote(surveyId: number, choiceId: number): Observable<Survey> {
     return this.http.post<Survey>(
       `${this.baseUrl}/${surveyId}/vote`,
-      { choiceId: choiceId }
+      { choiceId }
     );
   }
+
+  /**
+   * Unvote an option 
+   */
+  removeVote(surveyId: number, choiceId: number): Observable<Survey> {
+    return this.http.delete<Survey>(
+      `${this.baseUrl}/${surveyId}/vote/${choiceId}`
+    );
+  }
+
 
   /**
    * Create survey (admin)

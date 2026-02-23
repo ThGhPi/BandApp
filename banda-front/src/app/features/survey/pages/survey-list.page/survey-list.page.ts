@@ -3,17 +3,18 @@ import { Survey } from '../../models/survey.model';
 import { SurveyService } from '../../services/survey.service';
 import { Card } from "../../../../shared/components/card/card";
 import { SmartDatePipe } from '../../../../shared/pipes/smart-date.pipe';
+import { Option } from '../../component/option/option';
 
 @Component({
   selector: 'app-survey-list.page',
-  imports: [Card, SmartDatePipe],
+  imports: [Card, SmartDatePipe, Option],
   templateUrl: './survey-list.page.html',
   styleUrl: './survey-list.page.css',
 })
 export class SurveyListPage {
   private surveyService = inject(SurveyService);
 
-  private surveys = signal<Survey[]>([]);
+  surveys = signal<Survey[]>([]);
 
   ngOnInit() {
     this.loadSurveys();
@@ -23,5 +24,27 @@ export class SurveyListPage {
     this.surveyService.getAll().subscribe(data => {
       this.surveys.set(data);
     });
+  }
+
+  handleVote(event: {
+    surveyId: number;
+    optionId: number;
+    selected: boolean;
+  }) {
+    const request$ = event.selected
+      ? this.surveyService.addVote(event.surveyId, event.optionId)
+      : this.surveyService.removeVote(event.surveyId, event.optionId);
+
+    request$.subscribe(updatedSurvey => {
+      this.updateSurvey(updatedSurvey);
+    });
+  }
+
+  private updateSurvey(updatedSurvey: Survey) {
+    this.surveys.update(surveys =>
+      surveys.map(s =>
+        s.id === updatedSurvey.id ? updatedSurvey : s
+      )
+    );
   }
 }

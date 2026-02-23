@@ -1,5 +1,12 @@
 @for (survey of surveys(); track survey.id) {
   <app-card [title]="survey.question">
+    @for (option of survey.options; track option.id) {
+      <app-option
+        [survey]="survey"
+        [option]="option"
+        (voteChange)="handleVote($event)">
+      </app-option>
+    }
     @if (survey.scheduledEnd >= new Date()) {
       <div card-footer>
         <div>
