@@ -20,6 +20,7 @@ public class Attendance {
     private AttendancePK id;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AttendanceChoice attendanceChoice;
 
     @ManyToOne
