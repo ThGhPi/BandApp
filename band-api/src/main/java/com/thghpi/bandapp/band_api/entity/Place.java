@@ -43,13 +43,13 @@ public class Place {
     @Builder.Default
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany(mappedBy = "organisation")
+    @OneToMany(mappedBy = "address")
     @Builder.Default
     private List<Organisation> organisations = new ArrayList<Organisation>();
 
     @ManyToOne
     @JoinColumn(name = "photo_id")
-    private FileInfo fileInfo;
+    private FileInfo photoInfo;
 
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
