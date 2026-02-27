@@ -13,10 +13,17 @@ export class SurveyService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Get all surveys
+   * Get all recent surveys
    */
-  getAll(): Observable<Survey[]> {
+  getRecent(): Observable<Survey[]> {
     return this.http.get<Survey[]>(this.baseUrl);
+  }
+
+  /**
+   * Get survey by id
+   */
+  getPrevious(page: number): Observable<Survey> {
+    return this.http.get<Survey>(`${this.baseUrl}/page/${page}`);
   }
 
   /**

@@ -3,14 +3,14 @@
     @for (option of survey.options; track option.id) {
       <app-option
         [survey]="survey"
-        [option]="option"
+        [choice]="option"
         (voteChange)="handleVote($event)">
       </app-option>
     }
-    @if (survey.scheduledEnd >= new Date()) {
+    @if (survey.closed) {
       <div card-footer>
         <div>
-          Répondre avant le :
+          Sondage clos le :
         </div>
         <div>{{survey.scheduledEnd | smartDates}}</div>
       </div>

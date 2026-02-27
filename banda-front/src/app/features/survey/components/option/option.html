@@ -1,0 +1,47 @@
+<div class="relative border-b border-dark hover:bg-gray-200 last:border-b-0 overflow-hidden"
+     (click)="toggle()">
+
+  <div class="left">
+
+    <div
+    class="absolute inset-y-0 left-0 bg-success bg-opacity-25 transition-all duration-500"
+    [style.width.%]="survey().totalVotes > 0 ? (choice().votes / survey().totalVotes) * 100 : 0">
+    </div>
+    <!-- Multiple choice() -->
+    @if (survey().multiplicity) {
+      <input type="checkbox"
+        [name]="survey().id"
+        [readOnly]="survey().closed"
+        [checked]="choice().chosen" />
+    }
+    <!-- Single choice() -->
+    @else {
+      <input type="radio"
+        [name]="survey().id"
+        [readOnly]="survey().closed"
+        [checked]="choice().chosen" />
+    }
+    <div class="flex-column">
+        <div>
+          {{ choice().title }}
+        </div>
+        <!-- Avec complément -->
+        @if (choice().complement) {
+            <!-- Avec lien externe -->
+            @if (choice().url) {
+                <a [href]="choice().url" class="text-night underline italic">
+                    {{ choice().complement }}
+                </a>
+            }
+            <!-- Sans lien externe -->
+            @else {
+                <div>{{ choice().complement }}</div>
+            }
+        }
+    </div>
+  </div>
+
+  <div class="votes">
+    {{ choice().votes }} vote{{ choice().votes > 1 ? 's' : '' }}
+  </div>
+</div>

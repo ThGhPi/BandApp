@@ -1,14 +1,17 @@
-import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './card.html',
 })
 export class Card {
-  @Input() title!: string;
-  @Input() subtitle?: string;
-  @Input() headerBg: string = "festive";
+  title = input.required<string>();
+  subtitle = input<string>();
+  headerBg = input<string>('festive');
+
+  headerClasses = computed(() => 
+  `bg-${this.headerBg()} px-4 py-3 flex justify-between items-center text-white font-semibold`
+);
 }

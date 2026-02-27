@@ -1,1 +1,25 @@
-<p>navbar works!</p>
+<header class="bg-festive text-white p-4 flex justify-between items-center">
+
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 bg-yellow-400 rounded-full"></div>
+    <h1 class="text-xl font-semibold">Band’ App</h1>
+  </div>
+
+  <button (click)="toggleMenu()" class="text-2xl">
+    ☰
+  </button>
+
+</header>
+
+@if (isOpen) {
+  <nav class="bg-festive text-white flex flex-col gap-6 p-6 text-xl">
+
+    <a routerLink="/acceuil" (click)="toggleMenu()">Accueil</a>
+    <a routerLink="/profil" (click)="toggleMenu()">Mon Profil</a>
+    <a routerLink="/sondages" (click)="toggleMenu()">Sondages</a>
+    <a routerLink="/evenement" (click)="toggleMenu()">Evènements</a>
+    <a routerLink="/partitions" (click)="toggleMenu()">Partitions</a>
+    <a routerLink="/login" (click)="toggleMenu()">Déconnexion</a>
+
+  </nav>
+}

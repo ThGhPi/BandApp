@@ -3,7 +3,7 @@ import { Survey } from '../../models/survey.model';
 import { SurveyService } from '../../services/survey.service';
 import { Card } from "../../../../shared/components/card/card";
 import { SmartDatePipe } from '../../../../shared/pipes/smart-date.pipe';
-import { Option } from '../../component/option/option';
+import { Option } from '../../components/option/option';
 
 @Component({
   selector: 'app-survey-list.page',
@@ -21,7 +21,7 @@ export class SurveyListPage {
   }
 
   loadSurveys() {
-    this.surveyService.getAll().subscribe(data => {
+    this.surveyService.getRecent().subscribe(data => {
       this.surveys.set(data);
     });
   }
