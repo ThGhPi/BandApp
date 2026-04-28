@@ -5,11 +5,6 @@
 
 -- ============= DROP QUERIES ==================
 
-DROP TYPE IF EXISTS attendance_choice_enum;
-DROP TYPE IF EXISTS role_enum;
-DROP TYPE IF EXISTS file_type_enum;
-DROP TYPE IF EXISTS instrument_key_enum;
-
 DROP TABLE IF EXISTS
     answer,
     player,
@@ -234,9 +229,9 @@ SELECT v.title, v.complement, v.url, new_survey.id
 FROM new_survey,
 (
     VALUES
-    ('Antanarivo Street', NULL, 'https://youtube.com/'),
-    ('Je ne suis pas un Héros', NULL, 'https://youtube.com/'),
-    ('Havana', NULL, 'https://youtube.com/')
+    ('Antanarivo Street', 'Ecouter (Youtube)', 'https://youtube.com/'),
+    ('Je ne suis pas un Héros', 'Ecouter (Youtube)', 'https://youtube.com/'),
+    ('Havana', 'Ecouter (Youtube)', 'https://youtube.com/')
 ) AS v(title, complement, url);
 
 WITH new_survey AS (
