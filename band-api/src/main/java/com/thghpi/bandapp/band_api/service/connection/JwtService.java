@@ -1,4 +1,5 @@
 package com.thghpi.bandapp.band_api.service.connection;
+import com.thghpi.bandapp.band_api.config.properties.JwtProperties;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;
@@ -6,16 +7,15 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.MacAlgorithm;
 
+import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
-
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Service class responsible for handling JWT token generation, validation, and claim extraction.
@@ -23,18 +23,13 @@ import org.springframework.stereotype.Service;
  * It relies on properties defined in the application configuration for the secret key and token expiration time.
  */
 @Service
+@RequiredArgsConstructor
 public class JwtService {
     /**
-     * The secret key used for signing JWT tokens, injected from application properties.
+     * The object containing JWT-related properties such as the secret key and expiration time,
+     * injected from the application configuration.
      */
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
-
-    /**
-     * The expiration time for JWT tokens in milliseconds, injected from application properties.
-     */
-    @Value("${security.jwt.expiration-time}")
-    private Long jwtExpiration;
+    private final JwtProperties jwtProperties;
 
     /**
      * Method to generate a JWT token for the given user details without any extra claims.
@@ -70,7 +65,7 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .audience().add(userDetails.getAuthorities().toString()).and()
                 .claims(extraClaims)
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .expiration(new Date(System.currentTimeMillis() + getJwtExpiration()))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .signWith(getSignInKey(), getSigningAlgorithm())
                 .compact();
@@ -138,11 +133,19 @@ public class JwtService {
     }
 
     /**
+     * Centralized method to get the JWT expiration time from the properties.
+     * @return the expiration time in milliseconds for JWT tokens
+     */
+    private Long getJwtExpiration() {
+        return jwtProperties.getExpirationTime();
+    }
+
+    /**
      * Centralized method to get the signing key for JWTs.
      * @return the SecretKey used for signing JWTs
      */
     private SecretKey getSignInKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getSecretKey()));
     }
 
     /**
