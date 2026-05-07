@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.service.connection;
 import com.thghpi.bandapp.band_api.config.properties.JwtProperties;
+import com.thghpi.bandapp.band_api.dto.PersonDto;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;

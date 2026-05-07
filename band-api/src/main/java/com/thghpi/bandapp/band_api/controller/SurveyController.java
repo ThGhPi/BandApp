@@ -4,8 +4,8 @@ import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
