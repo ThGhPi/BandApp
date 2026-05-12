@@ -4,14 +4,15 @@ import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return mapper.toDto(repository.save(person));
     }
 
+    /**
+     * Authenticates a person using their username and password.
+     * @param input the data transfer object containing the person's authentication information
+     * @return a JWT token if authentication is successful
+     */
     @Override
     public String authenticate(PersonDto input) {
         authenticationManager.authenticate(
@@ -51,17 +57,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
     }
 
+    /**
+     * Changes the password for the authenticated person.
+     * @param personList the list of person data transfer objects
+     * @return the updated person's data transfer object
+     */
     @Override
     public PersonDto changePassword(List<PersonDto> personList) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changePassword'");
+        authenticate(personList.getFirst());
+        Person person = mapper.toEntity(getAuthenticatedPerson());
+        person.setPassword(passwordEncoder.encode(personList.getLast().getTrialPassword()));
+        return mapper.toDto(repository.save(person));
     }
 
+    /**
+     * Retrieves the authenticated person's information.
+     * @return the authenticated person's data transfer object
+     */
     @Override
     public PersonDto getAuthenticatedPerson() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthenticatedPerson'");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Person person = repository.findByUsername(authentication.getName()).orElseThrow();
+        return mapper.toDto(person);
     }
-
-
 }
