@@ -1,6 +1,6 @@
 package com.thghpi.bandapp.band_api.config.security;
 
-import com.thghpi.bandapp.band_api.service.connection.JwtService;
+import com.thghpi.bandapp.band_api.service.connection.JwtServiceImpl;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private final HandlerExceptionResolver handlerExceptionResolver;
-    private final JwtService jwtService;
+    private final JwtServiceImpl jwtService;
     private final UserDetailsService userDetailsService;
 
     /**

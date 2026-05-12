@@ -20,7 +20,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PersonMapper mapper;
     private final PersonRepository repository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final JwtServiceImpl jwtService;
     private final AuthenticationManager authenticationManager;
     
     /**
