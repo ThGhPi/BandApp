@@ -11,4 +11,6 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
 
     Optional<Person> findByUsername(String username); // for authentication
 
+    Optional<Person> findByGroupId(Long groupId);
+
 }

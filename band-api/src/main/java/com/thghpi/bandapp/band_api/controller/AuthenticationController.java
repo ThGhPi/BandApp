@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -18,8 +21,8 @@ public class AuthenticationController {
     /**
      * Takes the body of the request as a PersonDto for endpoint band-api/auth/register,
      * and returns the registered PersonDto when the registration process is successful.
-     * @param toRegisterPersonDto the PersonDto to register, taken from the body of the request
-     * @return the registered PersonDto if the registration process is successful, otherwise an error response
+     * @param toRegisterPersonDto the PersonDto to register, taken from the body of the request.
+     * @return the registered PersonDto if the registration process is successful, otherwise an error response.
      */
     @PostMapping("/register")
     public ResponseEntity<PersonDto> register(@RequestBody PersonDto toRegisterPersonDto) {
@@ -28,10 +31,24 @@ public class AuthenticationController {
     }
 
     /**
+     * For POST request on endpoint band-api/auth/register/many,
+     * takes a list of PersonDto from the body of the request,
+     * and returns a list of registered PersonDto when the registration process is successful.
+     * @param personDtos the list of PersonDto to register, taken from the body of the request.
+     * @return the list of registered PersonDto if the registration process is successful, otherwise an error response.
+     */
+    @PostMapping("/register/many")
+    public ResponseEntity<List<PersonDto>> registerMany(@RequestBody List<PersonDto> personDtos) {
+        List<PersonDto> registeredPersons = authService.saveAll(personDtos);
+        return ResponseEntity.ok(registeredPersons);
+    }
+    
+
+    /**
      * Takes the body of the request as a PersonDto for endpoint band-api/auth/login,
      * and returns a JWT token when the authentication process is successful.
-     * @param toAuthPerson the PersonDto for authentication, taken from the body of the request
-     * @return the JWT token if the authentication process is successful, otherwise an error response
+     * @param toAuthPerson the PersonDto for authentication, taken from the body of the request.
+     * @return the JWT token if the authentication process is successful, otherwise an error response.
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody PersonDto toAuthPerson) {
@@ -44,8 +61,8 @@ public class AuthenticationController {
     /**
      * Takes the body of the request as a list of PersonDto for endpoint band-api/auth/me,
      * and returns the PersonDto with the user information when the password renewal process is successful.
-     * @param personList the list of PersonDto for password renewal, taken from the body of the request
-     * @return the updated PersonDto if the password renewal process is successful, otherwise an error response
+     * @param personList the list of PersonDto for password renewal, taken from the body of the request.
+     * @return the updated PersonDto if the password renewal process is successful, otherwise an error response.
      */
     @PutMapping("/me")
     public ResponseEntity<PersonDto> renewPassword(@RequestBody List<PersonDto> personList) {
@@ -55,13 +72,38 @@ public class AuthenticationController {
     }
     
     /**
-     * Returns the PersonDto of the currently authenticated user for endpoint band-api/auth/me.
-     * @return the PersonDto of the currently authenticated user if the retrieval process is successful, otherwise an error response
+     * Answer GET request for endpoint band-api/auth/me by returning the data of the authenticated user.
+     * @return the PersonDto of the currently authenticated user if successful, else an error response.
      */
     @GetMapping("/me")
     public ResponseEntity<PersonDto> getProfil() {
         PersonDto currentPerson = authService.getAuthenticatedPerson();
         return ResponseEntity.ok(currentPerson);
     }
-    
+
+    /**
+     * For PUT request on endpoint band-api/auth/me/{id}, takes the id of the authenticated user as a path variable
+     * and the updated data as a PersonDto in the body of the request,
+     * and returns the updated PersonDto when the update process is successful.
+     * @param id the id of the authenticated user, taken as a path variable.
+     * @param personDto the updated PersonDto, taken from the body of the request.
+     * @return the updated PersonDto if the update process is successful, otherwise an error response.
+     */
+    @PutMapping("/me/{id}")
+    public ResponseEntity<PersonDto> updateProfil(@PathVariable Long id, @RequestBody PersonDto personDto) {
+        PersonDto updatedPerson = authService.updateAuthenticatedPerson(id, personDto);
+        return ResponseEntity.ok(updatedPerson);
+    }
+
+    /**
+     * For DELETE request on endpoint band-api/auth/me/{id}, takes the id of the authenticated user as a path variable,
+     * and deletes the authenticated user's account when the deletion process is successful.
+     * @param id the id of the authenticated user, taken as a path variable.
+     * @return a no content response if the deletion process is successful, otherwise an error response.
+     */
+    @DeleteMapping("/me/{id}")
+    public ResponseEntity<Void> deleteProfil(@PathVariable Long id) {
+        authService.deleteAuthenticatedPerson(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -12,4 +12,10 @@ public interface AuthenticationService {
     PersonDto getAuthenticatedPerson();
 
     PersonDto changePassword(List<PersonDto> personList);
+
+    PersonDto updateAuthenticatedPerson(Long id, PersonDto personDto);
+
+    void deleteAuthenticatedPerson(Long id);
+
+    List<PersonDto> saveAll(List<PersonDto> personDtos);
 }
