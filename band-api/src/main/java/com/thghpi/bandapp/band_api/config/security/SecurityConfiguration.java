@@ -1,9 +1,10 @@
 package com.thghpi.bandapp.band_api.config.security;
 import com.thghpi.bandapp.band_api.config.properties.CorsProperties;
+import com.thghpi.bandapp.band_api.config.properties.PasswordEncoderProperties;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,20 +21,19 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final CorsProperties corsProperties;
+    private final PasswordEncoderProperties passwordEncoderProperties;
     private final AppUserDetailsService appUserDetailsService;
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+        return new BCryptPasswordEncoder(passwordEncoderProperties.getStrength().intValue());
     }
 
     @Bean

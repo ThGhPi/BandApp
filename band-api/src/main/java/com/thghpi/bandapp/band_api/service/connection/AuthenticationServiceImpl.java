@@ -1,11 +1,12 @@
 package com.thghpi.bandapp.band_api.service.connection;
-
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 
 import java.util.List;
+import java.util.regex.Pattern;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -19,9 +20,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final PersonMapper mapper;
-    private final PersonRepository repository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtServiceImpl jwtService;
+    private final PersonRepository repository;
+    private final PasswordChecker passwordChecker;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     /**
@@ -36,6 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public PersonDto save(PersonDto input) {
+        passwordChecker.checkPasswordStrength(input.getTrialPassword());
         Person person = mapper.toEntity(input);
         person.setPassword(passwordEncoder.encode(input.getTrialPassword()));
         return mapper.toDto(repository.save(person));
@@ -61,7 +64,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * Changes the password for the authenticated person.
-     * 
+     * Checks the strength of the new password using the PasswordChecker
+     * and then encodes it and saves the updated person entity to the repository.
      * @param personList the list of person data transfer objects
      * @return the updated person's data transfer object
      */
@@ -69,13 +73,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public PersonDto changePassword(List<PersonDto> personList) {
         authenticate(personList.getFirst());
         Person person = mapper.toEntity(getAuthenticatedPerson());
-        person.setPassword(passwordEncoder.encode(personList.getLast().getTrialPassword()));
+        String newPassword = personList.getLast().getTrialPassword();
+        passwordChecker.checkPasswordStrength(newPassword);
+        person.setPassword(passwordEncoder.encode(newPassword));
         return mapper.toDto(repository.save(person));
     }
 
     /**
      * Retrieves the authenticated person's information.
-     * 
      * @return the authenticated person's data transfer object
      */
     @Override
@@ -89,14 +94,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Updates the authenticated person's information.
      * The method checks if the authenticated user's ID matches the ID provided in
      * the path variable.
-     * 
-     * @param id        the ID of the person to update
+     * @param id the ID of the person to update
      * @param personDto the updated person data transfer object
      * @return the updated person's data transfer object
      */
     @Override
     public PersonDto updateAuthenticatedPerson(Long id, PersonDto personDto) {
-        verifyAuthenticatedPerson(id);
+        checkAuthenticatedPerson(id);
         Person updatedPerson = mapper.toEntity(personDto);
         updatedPerson.setId(id);
         return mapper.toDto(repository.save(updatedPerson));
@@ -104,31 +108,47 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * Deletes the authenticated person's account.
-     * The method checks if the authenticated user's ID matches the ID provided in
-     * the path variable
+     * The method checks if the authenticated user's ID matches the ID provided
      * before deleting the account from the repository.
-     * 
      * @param id the ID of the person to delete
      */
     @Override
     public void deleteAuthenticatedPerson(Long id) {
-        verifyAuthenticatedPerson(id);
+        checkAuthenticatedPerson(id);
         repository.deleteById(id);
     }
 
+    /**
+     * Saves all provided person data transfer objects.
+     * Checks the strength of each person's password using the PasswordChecker
+     * and then encodes it before saving to the repository.
+     * @param personDtos the list of person data transfer objects to save
+     * @return the list of saved person data transfer objects if successful, otherwise throws an error
+     */
     @Override
     public List<PersonDto> saveAll(List<PersonDto> personDtos) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
+        personDtos.forEach(dto -> {
+            passwordChecker.checkPasswordStrength(dto.getTrialPassword());
+        });
+        return repository.saveAll(
+            personDtos.stream()
+                .map(dto -> {
+                    Person person = mapper.toEntity(dto);
+                    person.setPassword(passwordEncoder.encode(dto.getTrialPassword()));
+                    return person;
+                })
+                .toList()
+            ).stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
     /**
      * Verifies that the authenticated person's ID matches the provided ID.
      * If the IDs do not match, an IllegalArgumentException is thrown.
-     * 
      * @param id the ID to verify against the authenticated person's ID
      */
-    private void verifyAuthenticatedPerson(Long id) {
+    private void checkAuthenticatedPerson(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Person person = repository.findByUsername(authentication.getName()).orElseThrow();
         if (!person.getId().equals(id)) {
