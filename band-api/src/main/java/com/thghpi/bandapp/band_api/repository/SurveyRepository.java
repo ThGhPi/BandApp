@@ -26,7 +26,7 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
      * Méthode pour récupérer des sondages plus anciens de manières
      * paginer avec la même logique que findRecent
      * @see findRecent()
-     * @param date Date de fin de sondage la plus récente retournée (strcit)
+     * @param date Date de fin de sondage la plus récente retournée (strict)
      * @param offset le nombre de résultats à ignorer pour la pagination
      * @return une liste de sondage avec leur choix et leurs votes
      */

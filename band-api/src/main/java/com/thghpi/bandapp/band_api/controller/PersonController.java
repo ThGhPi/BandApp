@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/band-api/person")
+@RequestMapping("/band-api/persons")
 public class PersonController {
     private final PersonServiceImpl service;
 
@@ -55,11 +55,18 @@ public class PersonController {
 
     /**
      * For PUT request on endpoint band-api/persons, updates the list of persons in the database with the given list of PersonDto.
+     * Check that all PersonDto in the list have an id, otherwise throws an exception.
      * @param personsToUpdate the list of PersonDto with updates, taken from the body of the request.
      * @return the list of updated PersonDto if the update process is successful, otherwise an error response.
+     * @throws IllegalArgumentException when finding a PersonDto in the list without an id.
      */
-    @PutMapping("s")
+    @PutMapping
     public ResponseEntity<List<PersonDto>> updatePersons(@RequestBody List<PersonDto> personsToUpdate) {
+        for (PersonDto personDto : personsToUpdate) {
+            if (personDto.getId() == null) {
+                throw new IllegalArgumentException("All persons must have an ID for update");
+            }
+        }
         List<PersonDto> personDtos = service.updateMany(personsToUpdate);
         return ResponseEntity.ok(personDtos);
     }
@@ -76,8 +83,21 @@ public class PersonController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("s")
+    /**
+     * For DELETE request on endpoint band-api/persons,
+     * deletes the list of persons with the given list of PersonDto from the database.
+     * Check that all PersonDto in the list have an id, otherwise throws an exception.
+     * @param personDtos the list of PersonDto to delete, taken from the body of the request.
+     * @return a no content response if the deletion process is successful, otherwise an error response.
+     * @throws IllegalArgumentException when finding a PersonDto in the list without an id.
+     */
+    @DeleteMapping
     public ResponseEntity<Void> deletePersons(@RequestBody List<PersonDto> personDtos) {
+        for (PersonDto personDto : personDtos) {
+            if (personDto.getId() == null) {
+                throw new IllegalArgumentException("All persons must have an ID for deletion");
+            }
+        }
         service.deleteMany(personDtos);
         return ResponseEntity.noContent().build();
     }

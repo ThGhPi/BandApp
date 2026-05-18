@@ -5,8 +5,6 @@ import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 
 import java.util.List;
-import java.util.regex.Pattern;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -29,10 +27,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     /**
      * Saves a new person to the database after encoding their password.
      * The method takes a PersonDto object, converts it to a Person entity,
-     * encodes the password using the PasswordEncoder and then saves it to the
-     * repository.
+     * encodes the password using the PasswordEncoder
+     * and then saves it to the repository.
      * Finally, it converts the saved entity back to a PersonDto and returns it.
-     * 
      * @param input the data transfer object containing the person's information
      * @return the saved person's data transfer object
      */
@@ -46,9 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * Authenticates a person using their username and password.
-     * 
-     * @param input the data transfer object containing the person's authentication
-     *              information
+     * @param input the data transfer object containing the person's authentication information
      * @return a JWT token if authentication is successful
      */
     @Override
@@ -66,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Changes the password for the authenticated person.
      * Checks the strength of the new password using the PasswordChecker
      * and then encodes it and saves the updated person entity to the repository.
-     * @param personList the list of person data transfer objects
+     * @param List<PersonDto> personList the list of person data transfer objects
      * @return the updated person's data transfer object
      */
     @Override
@@ -94,8 +89,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Updates the authenticated person's information.
      * The method checks if the authenticated user's ID matches the ID provided in
      * the path variable.
-     * @param id the ID of the person to update
-     * @param personDto the updated person data transfer object
+     * @param Long id the ID of the person to update
+     * @param PersonDto personDto the updated person data transfer object
      * @return the updated person's data transfer object
      */
     @Override
@@ -110,7 +105,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Deletes the authenticated person's account.
      * The method checks if the authenticated user's ID matches the ID provided
      * before deleting the account from the repository.
-     * @param id the ID of the person to delete
+     * @param Long id the ID of the person to delete
      */
     @Override
     public void deleteAuthenticatedPerson(Long id) {
@@ -122,7 +117,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Saves all provided person data transfer objects.
      * Checks the strength of each person's password using the PasswordChecker
      * and then encodes it before saving to the repository.
-     * @param personDtos the list of person data transfer objects to save
+     * @param List<PersonDto> personDtos the list of person data transfer objects to save
      * @return the list of saved person data transfer objects if successful, otherwise throws an error
      */
     @Override
@@ -146,7 +141,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     /**
      * Verifies that the authenticated person's ID matches the provided ID.
      * If the IDs do not match, an IllegalArgumentException is thrown.
-     * @param id the ID to verify against the authenticated person's ID
+     * @param Long id the ID to verify against the authenticated person's ID
      */
     private void checkAuthenticatedPerson(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -1,10 +1,14 @@
 package com.thghpi.bandapp.band_api.repository;
 import com.thghpi.bandapp.band_api.entity.Choice;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface ChoiceRepository extends JpaRepository<Choice, Long> {
+
+    List<Choice> findAllBySurveyId(Long surveyId);
 
 }
