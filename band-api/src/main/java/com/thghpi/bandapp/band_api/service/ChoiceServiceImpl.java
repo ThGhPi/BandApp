@@ -6,6 +6,7 @@ import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
      * @throws IllegalArgumentException if no choice with the specified ID is found
      */
     @Override
-    public ChoiceDto getById(Long id) {
+    public ChoiceDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Choice with ID " + id + " not found"))
@@ -62,7 +63,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
      * @return the list of saved ChoiceDto objects
      */
     @Override
-    public List<ChoiceDto> saveAll(List<ChoiceDto> choiceDtos) {
+    public List<ChoiceDto> saveAll(@NonNull List<ChoiceDto> choiceDtos) {
         return repository.saveAll(
             choiceDtos.stream()
                 .map(mapper::toEntity)
@@ -77,7 +78,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
      * @param Long id the ID of the choice to delete
      */
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(@NonNull Long id) {
         repository.deleteById(id);
     }
 

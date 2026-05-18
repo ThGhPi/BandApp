@@ -1,4 +1,14 @@
 services:
+  # ------- SWAGGER - if integrated one doesn't work --------
+  # swagger-ui:
+  #   image: swaggerapi/swagger-ui
+  #   container_name: swagger_ui
+  #   restart: always
+  #   ports:
+  #     - "8099:8080"
+  #   environment:
+  #     SWAGGER_JSON_URL: http://band-api:8080/v3/api-docs
+
   # ------- SPRING API -------- 
   band-api:
     build: ./band-api
@@ -16,7 +26,7 @@ services:
       SECURITY_JWT_EXPIRATION_TIME: ${JJWT_EXPIRATION}
       SPRING_PROFILE_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 
-  # ------- DATABASE --------
+  # ------- DATABASE - change to 17 for prod preferably --------
   postgres:
     image: postgres:18
     container_name: postgres_db
