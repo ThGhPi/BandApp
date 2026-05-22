@@ -1,8 +1,8 @@
 package com.thghpi.bandapp.band_api.service.connection;
+import com.thghpi.bandapp.band_api.dto.PersonDto;
 
 import java.util.List;
-
-import com.thghpi.bandapp.band_api.dto.PersonDto;
+import org.springframework.lang.NonNull;
 
 public interface AuthenticationService {
     PersonDto save(PersonDto input);
@@ -15,7 +15,7 @@ public interface AuthenticationService {
 
     PersonDto updateAuthenticatedPerson(Long id, PersonDto personDto);
 
-    void deleteAuthenticatedPerson(Long id);
+    void deleteAuthenticatedPerson(@NonNull Long id);
 
     List<PersonDto> saveAll(List<PersonDto> personDtos);
 }

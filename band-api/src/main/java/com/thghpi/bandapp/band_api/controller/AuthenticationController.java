@@ -3,14 +3,19 @@ import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.dto.LoginResponse;
 import com.thghpi.bandapp.band_api.service.connection.AuthenticationServiceImpl;
 
+import org.springframework.lang.NonNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -102,7 +107,7 @@ public class AuthenticationController {
      * @return a no content response if the deletion process is successful, otherwise an error response.
      */
     @DeleteMapping("/me/{id}")
-    public ResponseEntity<Void> deleteProfil(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProfil(@PathVariable @NonNull Long id) {
         authService.deleteAuthenticatedPerson(id);
         return ResponseEntity.noContent().build();
     }

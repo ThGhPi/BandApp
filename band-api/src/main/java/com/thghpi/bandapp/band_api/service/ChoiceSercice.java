@@ -2,7 +2,6 @@ package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.dto.ChoiceDto;
 
 import java.util.List;
-
 import org.springframework.lang.NonNull;
 
 public interface ChoiceSercice {

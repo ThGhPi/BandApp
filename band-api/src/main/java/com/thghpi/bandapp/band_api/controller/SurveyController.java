@@ -3,9 +3,9 @@ import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +33,7 @@ public class SurveyController {
      * @return the SurveyDto of the survey with the given id if successful, otherwise an error response.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<SurveyDto> getSurvey(@PathVariable Long id) {
+    public ResponseEntity<SurveyDto> getSurvey(@PathVariable @NonNull Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
@@ -86,7 +86,7 @@ public class SurveyController {
      * @return the list of SurveyDto of the created surveys if successful, otherwise an error response.
      */
     @PostMapping
-    public ResponseEntity<List<SurveyDto>> createSeveral(@RequestBody List<SurveyDto> surveys) {        
+    public ResponseEntity<List<SurveyDto>> createSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {        
         return ResponseEntity.ok(service.saveAll(surveys));
     }
     
@@ -112,7 +112,7 @@ public class SurveyController {
      * @throws IllegalArgumentException when finding a SurveyDto in the list without an id.
      */
     @PutMapping
-    public ResponseEntity<List<SurveyDto>> updateSeveral(@RequestBody List<SurveyDto> surveys) {
+    public ResponseEntity<List<SurveyDto>> updateSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {
         for (SurveyDto survey : surveys) {
             if (survey.getId() == null) {
                 throw new IllegalArgumentException("All surveys must have an ID for update");
@@ -128,7 +128,7 @@ public class SurveyController {
      * @return a no content response if the deletion process is successful, otherwise an error response.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSurvey(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSurvey(@PathVariable @NonNull Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -141,7 +141,7 @@ public class SurveyController {
      * @throws IllegalArgumentException when finding a SurveyDto in the list without an id.
      */
     @DeleteMapping
-    public ResponseEntity<Void> deleteSeveral(@RequestBody List<SurveyDto> surveys) {
+    public ResponseEntity<Void> deleteSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {
         for (SurveyDto surveyDto : surveys) {
             if (surveyDto.getId() == null) {
                 throw new IllegalArgumentException("All surveys must have an ID for deletion");

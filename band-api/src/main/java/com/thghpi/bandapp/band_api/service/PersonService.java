@@ -2,6 +2,8 @@ package com.thghpi.bandapp.band_api.service;
 
 import java.util.List;
 
+import org.springframework.lang.NonNull;
+
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 
 public interface PersonService {
@@ -9,7 +11,7 @@ public interface PersonService {
     // CREATE methods are not needed for this entity as it needs authentication management and is handled by the AuthenticationServiceImpl.
 
     // READ methods
-    PersonDto getById(Long id);
+    PersonDto getById(@NonNull Long id);
     List<PersonDto> getAll();
     List<PersonDto> getByGroupId(Long groupId);
 
@@ -17,6 +19,6 @@ public interface PersonService {
 	List<PersonDto> updateMany(List<PersonDto> personDtos);
 
     // DELETE methods
-    void deleteOne(Long id);
+    void deleteOne(@NonNull Long id);
     void deleteMany(List<PersonDto> personDtos);
 }

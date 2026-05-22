@@ -4,9 +4,11 @@ import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
 import java.util.List;
+import java.util.Objects;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +58,7 @@ public class SurveyServiceImpl implements SurveyService {
      * @return the SurveyDto of the retrieved survey.
      */
     @Override
-    public SurveyDto getById(Long id) {
+    public SurveyDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Survey with ID " + id + " not found"))
@@ -83,7 +85,9 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public SurveyDto save(SurveyDto surveyDto) {
         return mapper.toDto(
-            repository.save(mapper.toEntity(surveyDto))
+            repository.save(Objects.requireNonNull(
+                mapper.toEntity(surveyDto)
+            ))
         );
     }
 
@@ -93,7 +97,7 @@ public class SurveyServiceImpl implements SurveyService {
      * @return the list of saved SurveyDto objects.
      */
     @Override
-    public List<SurveyDto> saveAll(List<SurveyDto> surveyDtos) {
+    public List<SurveyDto> saveAll(@NonNull List<SurveyDto> surveyDtos) {
         return repository.saveAll(
             surveyDtos.stream()
                 .map(mapper::toEntity)
@@ -108,7 +112,7 @@ public class SurveyServiceImpl implements SurveyService {
      * @param Long id the id of the survey to delete.
      */
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(@NonNull Long id) {
         repository.deleteById(id);
     }
 
@@ -117,7 +121,7 @@ public class SurveyServiceImpl implements SurveyService {
      * @param List<SurveyDto> surveyDtos the list of SurveyDto to delete.
      */
     @Override
-    public void deleteAll(List<SurveyDto> surveyDtos) {
+    public void deleteAll(@NonNull List<SurveyDto> surveyDtos) {
         repository.deleteAll(
             surveyDtos.stream()
                 .map(mapper::toEntity)

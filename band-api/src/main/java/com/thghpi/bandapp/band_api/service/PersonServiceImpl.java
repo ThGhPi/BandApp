@@ -4,7 +4,9 @@ import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +32,7 @@ public class PersonServiceImpl implements PersonService {
      * @return the PersonDto of the person with the given id if found, otherwise throws an exception
      */
     @Override
-    public PersonDto getById(Long id) {
+    public PersonDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Person not found"))
@@ -83,7 +85,9 @@ public class PersonServiceImpl implements PersonService {
         for (PersonDto personDto : personDtos) {
             if (personDto.getId() == null) {
                 throw new IllegalArgumentException("Person ID must not be null for update");
-            } else if (!repository.existsById(personDto.getId())) {
+            } else if (!repository.existsById(
+                Objects.requireNonNull(personDto.getId())
+            )) {
                 throw new IllegalArgumentException("Person with ID " + personDto.getId() + " not found in database");
             }
         }
@@ -104,7 +108,7 @@ public class PersonServiceImpl implements PersonService {
      * @param id the id of the person to delete
      */
     @Override
-    public void deleteOne(Long id) {
+    public void deleteOne(@NonNull Long id) {
         repository.deleteById(id);
     }
 

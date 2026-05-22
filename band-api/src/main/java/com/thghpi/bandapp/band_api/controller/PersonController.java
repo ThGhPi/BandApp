@@ -3,8 +3,9 @@ import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.service.PersonServiceImpl;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class PersonController {
      * @return the PersonDto of the person with the given id if successful, otherwise an error response.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PersonDto> getPerson(@PathVariable Long id) {
+    public ResponseEntity<PersonDto> getPerson(@PathVariable @NonNull Long id) {
         PersonDto personDto = service.getById(id);
         return ResponseEntity.ok(personDto);
     }
@@ -78,7 +79,7 @@ public class PersonController {
      * @return a no content response if the deletion process is successful, otherwise an error response.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePerson(@PathVariable @NonNull Long id) {
         service.deleteOne(id);
         return ResponseEntity.noContent().build();
     }

@@ -4,6 +4,8 @@ import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
 
 import java.util.List;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
@@ -54,7 +56,9 @@ public class ChoiceServiceImpl implements ChoiceSercice {
      */
     @Override
     public ChoiceDto save(ChoiceDto choiceDto) {
-        return mapper.toDto(repository.save(mapper.toEntity(choiceDto)));
+        return mapper.toDto(repository.save(Objects.requireNonNull(
+            mapper.toEntity(choiceDto)
+        )));
     }
 
     /**
@@ -87,7 +91,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
      * @param List<ChoiceDto> choiceDtos the list of data transfer objects containing the choice information to delete
      */
     @Override
-    public void deleteAll(List<ChoiceDto> choiceDtos) {
+    public void deleteAll(@NonNull List<ChoiceDto> choiceDtos) {
         repository.deleteAll(
             choiceDtos.stream()
                 .map(mapper::toEntity)

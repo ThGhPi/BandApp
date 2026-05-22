@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -108,7 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @param Long id the ID of the person to delete
      */
     @Override
-    public void deleteAuthenticatedPerson(Long id) {
+    public void deleteAuthenticatedPerson(@NonNull Long id) {
         checkAuthenticatedPerson(id);
         repository.deleteById(id);
     }
