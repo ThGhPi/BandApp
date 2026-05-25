@@ -33,7 +33,7 @@ public class SecurityConfiguration {
 
     @Bean
     BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(passwordEncoderProperties.getStrength().intValue());
+        return new BCryptPasswordEncoder(passwordEncoderProperties.strength().intValue());
     }
 
     @Bean
@@ -82,7 +82,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Autoriser Angular (port 4200)
-        configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        configuration.setAllowedOrigins(corsProperties.allowedOrigins());
 
         // Ajouter OPTIONS pour preflight
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

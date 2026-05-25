@@ -142,7 +142,7 @@ public class JwtServiceImpl implements JwtService {
      * @return the expiration time in milliseconds for JWT tokens
      */
     private Long getJwtExpiration() {
-        return jwtProperties.getExpirationTime();
+        return jwtProperties.expirationTime();
     }
 
     /**
@@ -150,7 +150,7 @@ public class JwtServiceImpl implements JwtService {
      * @return the SecretKey used for signing JWTs
      */
     private SecretKey getSignInKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getSecretKey()));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.secretKey()));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.thghpi.bandapp.band_api.service.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.entity.Person;
@@ -14,8 +15,9 @@ import com.thghpi.bandapp.band_api.entity.Person;
         ChoiceMapper.class})
 public interface PersonMapper {
 
+    @Mapping(target = "password", ignore = true)
     Person toEntity(PersonDto personDto);
 
+    @Mapping(target = "trialPassword", ignore = true)
     PersonDto toDto(Person person);
-
 }

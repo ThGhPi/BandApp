@@ -1,5 +1,7 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.entity.Group;
+import com.thghpi.bandapp.band_api.repository.GroupRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class PersonServiceImpl implements PersonService {
     private final PersonMapper mapper;
     private final PersonRepository repository;
+    private final GroupRepository groupRepository;
 
     // CREATE methods are not needed for this entity as it needs authentication management and is handled by the AuthenticationServiceImpl.
 
@@ -61,8 +64,9 @@ public class PersonServiceImpl implements PersonService {
      * @return a list of PersonDto for all the persons in the given group
      */
     @Override
-    public List<PersonDto> getByGroupId(Long groupId) {
-        return repository.findByGroupId(groupId)
+    public List<PersonDto> getByGroupId(@NonNull Long groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        return repository.findByGroups(group)
             .stream()
             .map(mapper::toDto)
             .toList();

@@ -3,6 +3,7 @@ FROM maven:3.9.11-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 COPY pom.xml .
+RUN mvn dependency:go-offline # To cache dependencies when already downloaded before copying source code
 COPY src ./src
 RUN mvn clean package -DskipTests
 

@@ -1,4 +1,5 @@
 package com.thghpi.bandapp.band_api.repository;
+import com.thghpi.bandapp.band_api.entity.Group;
 import com.thghpi.bandapp.band_api.entity.Person;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
 
     Optional<Person> findByUsername(String username); // for authentication
 
-    Optional<Person> findByGroupId(Long groupId);
+    Optional<Person> findByGroups(Group group);
 
     List<Person> saveAll(List<Person> persons);
 

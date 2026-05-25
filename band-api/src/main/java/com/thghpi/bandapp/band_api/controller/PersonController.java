@@ -49,7 +49,7 @@ public class PersonController {
      * @return a list of PersonDto for all the persons in the database with the given group id.
      */
     @GetMapping("/group/{groupId}")
-    public ResponseEntity<List<PersonDto>> getByGroup(@PathVariable Long groupId) {
+    public ResponseEntity<List<PersonDto>> getByGroup(@PathVariable @NonNull Long groupId) {
         List<PersonDto> personDtos = service.getByGroupId(groupId);
         return ResponseEntity.ok(personDtos);
     }

@@ -13,7 +13,7 @@ public interface PersonService {
     // READ methods
     PersonDto getById(@NonNull Long id);
     List<PersonDto> getAll();
-    List<PersonDto> getByGroupId(Long groupId);
+    List<PersonDto> getByGroupId(@NonNull Long groupId);
 
     // UPDATE methods
 	List<PersonDto> updateMany(List<PersonDto> personDtos);

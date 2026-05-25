@@ -12,7 +12,7 @@ public class PasswordChecker {
     private final PasswordProperties passwordProperties;
 
     protected void checkPasswordStrength(String password) {
-        Pattern pattern = Pattern.compile(passwordProperties.getRegex());
+        Pattern pattern = Pattern.compile(passwordProperties.regex());
         if (!pattern.matcher(password).matches()) {
             throw new IllegalArgumentException("Password does not meet the required criteria.");
         }
