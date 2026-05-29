@@ -80,12 +80,12 @@ public class SurveyController {
     }
 
     /**
-     * For endpoint band-api/surveys POST request,
+     * For endpoint band-api/surveys/several POST request,
      * creates several new surveys in the database.
      * @param surveys the list of SurveyDto of the surveys to create, taken from the body of the request.
      * @return the list of SurveyDto of the created surveys if successful, otherwise an error response.
      */
-    @PostMapping
+    @PostMapping("/several")
     public ResponseEntity<List<SurveyDto>> createSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {        
         return ResponseEntity.ok(service.saveAll(surveys));
     }

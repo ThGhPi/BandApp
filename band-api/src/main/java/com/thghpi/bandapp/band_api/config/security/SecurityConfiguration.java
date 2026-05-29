@@ -27,8 +27,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration {
     private final CorsProperties corsProperties;
     private final PasswordEncoderProperties passwordEncoderProperties;
-    private final AppUserDetailsService appUserDetailsService;
-    private final AuthenticationProvider authenticationProvider;
+    private final AppUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -45,7 +44,7 @@ public class SecurityConfiguration {
     AuthenticationProvider authenticationProvider() {
 
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(
-            appUserDetailsService.userDetailsService()
+            userDetailsService
         );
         authProvider.setPasswordEncoder(passwordEncoder());
 
@@ -61,9 +60,14 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
                         /* Authentication paths */
-                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers(
+                            "/band-api/auth/login",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/swagger-ui.html"
+                        ).permitAll()
 
-                        .requestMatchers("/api/**").permitAll() // TODO: remove this line to
+                        .requestMatchers("/band-api/**").permitAll() // TODO: remove this line to
                                                                 // secure all API endpoints,
                                                                 // currently allowing all for
                                                                 // testing purposes
@@ -71,7 +75,7 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated())
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

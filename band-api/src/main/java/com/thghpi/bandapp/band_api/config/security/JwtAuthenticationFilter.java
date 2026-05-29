@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtServiceImpl jwtService;
-    private final UserDetailsService userDetailsService;
+    private final AppUserDetailsService userDetailsService;
 
     /**
      * Override of the doFilterInternal method to intercept incoming HTTP requests and perform JWT authentication.
@@ -53,7 +53,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        final String path = request.getServletPath();
 
+        if (
+            path.startsWith("/swagger-ui") ||
+            path.startsWith("/v3/api-docs")
+        ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         final String authHeader = request.getHeader("Authorization");
 
         // If Authorization header is missing or doesn't start with "Bearer",

@@ -34,8 +34,4 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
         "SELECT s FROM Survey s LEFT JOIN FETCH s.choices c LEFT JOIN FETCH c.persons WHERE s.scheduledEnd < :date ORDER BY s.scheduledEnd DESC LIMIT 5 OFFSET :offset"
     )
     List<Survey> findOld(LocalDate date, Long offset);
-
-    List<Survey> saveAll(List<Survey> surveys);
-
-    void deleteAll(List<Survey> surveys);
 }
