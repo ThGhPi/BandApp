@@ -15,4 +15,6 @@ public interface SurveyService {
 
     void deleteById(@NonNull Long id);
     void deleteAll(@NonNull List<SurveyDto> surveyDtos);
+	void checkSurveyClosure(SurveyDto surveyDto);
+	void checkSurveysClosure(List<SurveyDto> surveyDtos);
 }

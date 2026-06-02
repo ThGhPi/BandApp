@@ -22,8 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class SurveyServiceImpl implements SurveyService {
-    private final SurveyRepository repository;
     private final SurveyMapper mapper;
+    private final SurveyRepository repository;
+    private final ChoiceServiceImpl choiceService;
 
     /**
      * Retrieves the most recent surveys from the database (less than a month old).
@@ -84,6 +85,7 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public SurveyDto save(SurveyDto surveyDto) {
+        checkSurveyClosure(surveyDto);
         return mapper.toDto(
             repository.save(Objects.requireNonNull(
                 mapper.toEntity(surveyDto)
@@ -98,6 +100,7 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public List<SurveyDto> saveAll(@NonNull List<SurveyDto> surveyDtos) {
+        checkSurveysClosure(surveyDtos);
         return repository.saveAll(
             surveyDtos.stream()
                 .map(mapper::toEntity)
@@ -127,5 +130,51 @@ public class SurveyServiceImpl implements SurveyService {
                 .map(mapper::toEntity)
                 .toList()
         );
+    }
+
+    /**
+     * Checks if the given survey is closed and throws an exception if it is.
+     * @param SurveyDto surveyDto the SurveyDto to check.
+     * @throws IllegalArgumentException if the survey is closed with the list of closed survey IDs.
+     */
+    @Override
+    public void checkSurveysClosure(List<SurveyDto> surveyDtos) {
+        List<Long> ids = surveyDtos.stream()
+            .filter(surveyDto -> mapper.toEntity(surveyDto).isClosed())
+            .map(SurveyDto::getId)
+            .toList();
+        if (!ids.isEmpty()) {
+            if (ids.contains(null)) {
+                throw new IllegalArgumentException(
+                    "Can't create closed surveys. The scheduled end date must be after today."
+                );
+            }
+            throw new IllegalArgumentException(
+                "Can't update closed surveys : surveys with ids : " +
+                ids.toString() +
+                " are already closed."
+            );
+        }
+    }
+
+    /**
+     * Checks if the given survey is closed and throws an exception if it is.
+     * @param SurveyDto surveyDto the SurveyDto to check.
+     * @throws IllegalArgumentException if the survey is closed with it's ID.
+     */
+    @Override
+    public void checkSurveyClosure(SurveyDto surveyDto) {
+        if (mapper.toEntity(surveyDto).isClosed()) {
+            if (surveyDto.getId() == null) {
+                throw new IllegalArgumentException(
+                    "Can't create closed survey. The scheduled end date must be after today."
+                );
+            }
+            throw new IllegalArgumentException(
+                "Can't update closed survey : survey with id : " +
+                surveyDto.getId() +
+                " is already closed."
+            );
+        }
     }
 }

@@ -17,13 +17,24 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class Survey {
+    /**
+     * Identifiant du sondage attribué automatiquement à la création.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * La question du sondage.
+     */
     @Column(length = 255, nullable = false)
     private String question;
 
+    /**
+     * Date de fin du sondage.
+     * Le sondage est considéré comme clos
+     * à partir du lendemain de cette date.
+     */
     @Column(nullable = false, name = "scheduled_end")
     private LocalDate scheduledEnd;
 

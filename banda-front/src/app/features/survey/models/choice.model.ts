@@ -5,4 +5,5 @@ export interface Choice {
   url: string;
   votes: number;
   chosen: boolean;
+  surveyId: number;
 }
