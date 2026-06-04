@@ -30,8 +30,6 @@ public class SurveyServiceTest {
     private SurveyMapper mapper;
     @Mock
     private SurveyRepository repository;
-    @Mock
-    private ChoiceServiceImpl choiceService;
 
     @InjectMocks
     private SurveyServiceImpl service;

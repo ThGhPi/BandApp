@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class SurveyServiceImpl implements SurveyService {
     private final SurveyMapper mapper;
     private final SurveyRepository repository;
-    private final ChoiceServiceImpl choiceService;
 
     /**
      * Retrieves the most recent surveys from the database (less than a month old).

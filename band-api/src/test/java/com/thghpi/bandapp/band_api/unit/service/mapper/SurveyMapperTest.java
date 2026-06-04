@@ -1,20 +1,38 @@
 package com.thghpi.bandapp.band_api.unit.service.mapper;
+import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Survey;
+import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapperImpl;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
-
+import com.thghpi.bandapp.band_api.service.mapper.SurveyMapperImpl;
 
 import java.util.List;
 import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 /**
  * Unit Tests for the SurveyMapper class, which maps between Survey entities and SurveyDto objects.
  * Tests the mapping of the closed and totalVotes fields, as well as the mapping of choices using the ChoiceMapper.
  */
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+     SurveyMapperImpl.class,
+     ChoiceMapperImpl.class
+    })
 public class SurveyMapperTest {
-    private final SurveyMapper mapper = Mappers.getMapper(SurveyMapper.class);
+    @Autowired
+    private SurveyMapper mapper;
 
     /**
      * Tests the mapping of a Survey entity to a SurveyDto, including the calculation of the closed and totalVotes fields,
@@ -47,8 +65,10 @@ public class SurveyMapperTest {
                     )
                 )
             );
-        assert(mapper.toDto(survey1).getClosed() == false);
-        assert(mapper.toDto(survey1).getTotalVotes() == 0L);
+        SurveyDto surveyDto1 = mapper.toDto(survey1);
+        assertNotNull(surveyDto1);
+        assertFalse(surveyDto1.getClosed());
+        assertEquals(0L, surveyDto1.getTotalVotes());
         Survey survey2 = new Survey(
                 2L,
                 "Question ?",
@@ -56,8 +76,9 @@ public class SurveyMapperTest {
                 true,
                 List.of()
             );
-        assert(mapper.toDto(survey2).getClosed() == true);
-        assert(mapper.toDto(survey2).getTotalVotes() == 0L);
-        assert(mapper.toDto(survey1).getChoices().size() == 2);
+        SurveyDto surveyDto2 = mapper.toDto(survey2);
+        assertTrue(surveyDto2.getClosed());
+        assertEquals(0L, surveyDto2.getTotalVotes());
+        assertEquals(2, surveyDto1.getChoices().size());
     }
 }

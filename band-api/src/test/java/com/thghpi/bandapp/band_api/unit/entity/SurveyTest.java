@@ -4,6 +4,11 @@ import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +30,7 @@ public class SurveyTest {
                 true,
                 List.of()
             );
-        assert(survey1.isClosed() == false);
+        assertFalse(survey1.isClosed());
         Survey survey2 = new Survey(
                 2L,
                 "Question ?",
@@ -33,7 +38,7 @@ public class SurveyTest {
                 true,
                 List.of()
             );
-        assert(survey2.isClosed() == true);
+        assertTrue(survey2.isClosed());
         Survey survey3 = new Survey(
                 3L,
                 "Question ?",
@@ -41,7 +46,7 @@ public class SurveyTest {
                 true,
                 List.of()
             );
-        assert(survey3.isClosed() == false);
+        assertFalse(survey3.isClosed());
     }
 
     /**
@@ -57,7 +62,7 @@ public class SurveyTest {
                 true,
                 List.of()
             );
-        assert(survey.getTotalVotes() == 0L);
+        assertEquals(0L, survey.getTotalVotes());
         Choice choice1 = new Choice(
                 1L,
                 "Choice 1",
@@ -74,6 +79,8 @@ public class SurveyTest {
                 survey,
                 null
             );
+        survey.setChoices(List.of(choice1, choice2));
+        assertEquals(0L, survey.getTotalVotes());
         Person person1 = new Person(
             1L,
             "Taylor",
@@ -96,7 +103,6 @@ public class SurveyTest {
         );
         choice1.setPersons(List.of(person1, person2));
         choice2.setPersons(List.of(person1));
-        survey.setChoices(List.of(choice1, choice2));
-        assert(survey.getTotalVotes() == 2L);
+        assertEquals(2L, survey.getTotalVotes());
     }
 }

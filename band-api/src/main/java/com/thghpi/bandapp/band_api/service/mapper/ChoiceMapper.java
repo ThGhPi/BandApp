@@ -13,7 +13,7 @@ import org.mapstruct.Named;
 public interface ChoiceMapper {
     
     @Mapping(target = "votes", expression = "java(choice.getVotes())")
-    @Mapping(target = "surveyId", expression = "java(choice.getSurvey().getId())")
+    @Mapping(target = "surveyId", expression = "java(choice.getSurvey() != null ? choice.getSurvey().getId() : null)")
     ChoiceDto toDto(Choice choice);
 
     @Mapping(target = "persons", ignore = true)

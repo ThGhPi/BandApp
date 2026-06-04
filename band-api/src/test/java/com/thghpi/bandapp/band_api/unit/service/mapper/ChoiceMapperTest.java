@@ -5,6 +5,9 @@ import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -35,8 +38,8 @@ public class ChoiceMapperTest {
                 null,
                 null
             );
-        assert(mapper.toDto(choice1).getVotes() == 0L);
-        assert(mapper.toDto(choice1).getSurveyId() == null);
+        assertEquals(0L, mapper.toDto(choice1).getVotes());
+        assertNull(mapper.toDto(choice1).getSurveyId());
         Choice choice2 = new Choice(
                 2L,
                 "Choice 2",
@@ -79,8 +82,8 @@ public class ChoiceMapperTest {
             List.of(choice2)
         );
         choice2.setPersons(List.of(person1, person2));
-        assert(mapper.toDto(choice2).getVotes() == 2L);
-        assert(mapper.toDto(choice2).getSurveyId() == 1L);
+        assertEquals(2L, mapper.toDto(choice2).getVotes());
+        assertEquals(1L, mapper.toDto(choice2).getSurveyId());
     }
 
     /**
@@ -97,7 +100,7 @@ public class ChoiceMapperTest {
                 1L,
                 null
             );
-        assert(mapper.toEntity(choiceDto1).getSurvey().getId() == 1L);
+        assertEquals(1L, mapper.toEntity(choiceDto1).getSurvey().getId());
         ChoiceDto choiceDto2 = new ChoiceDto(
                 null,
                 "Choice 2",
@@ -106,6 +109,6 @@ public class ChoiceMapperTest {
                 null,
                 null
             );
-        assert(mapper.toEntity(choiceDto2).getSurvey() == null);
+        assertNull(mapper.toEntity(choiceDto2).getSurvey());
     }
 }

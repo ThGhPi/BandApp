@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
 
 /**
@@ -13,10 +15,12 @@ import lombok.AllArgsConstructor;
  * Existe exclusivement en lien avec un sondage, et ne peut pas exister sans lui.
  * Un choix peut être associé à une personne : cela représente un vote de cette personne.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Choice {
     /**
      * Identifiant du choix attribué automatiquement à la création.
@@ -68,6 +72,6 @@ public class Choice {
      * @return le nombre de personnes ayant une relation avec ce choix.
      */
     public Long getVotes() {
-        return (long) persons.size();
+        return persons == null ? 0L : (long) persons.size();
     }
 }

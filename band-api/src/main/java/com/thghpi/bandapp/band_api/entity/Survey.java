@@ -2,22 +2,27 @@ package com.thghpi.bandapp.band_api.entity;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 /**
  * Représente les sondages.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Survey {
     /**
      * Identifiant du sondage attribué automatiquement à la création.
@@ -63,9 +68,12 @@ public class Survey {
      * @return le nombre de personnes distinctes ayant une relation avec un choix lié au sondage.
      */
     public Long getTotalVotes() {
-    return choices.stream()
-        .flatMap(choice -> choice.getPersons().stream())
-        .distinct()
-        .count();
+        if (choices == null || choices.isEmpty()) {
+            return 0L;
+        }
+        return choices.stream()
+            .flatMap(choice -> choice.getPersons() != null ? choice.getPersons().stream() : Stream.empty())
+            .distinct()
+            .count();
     }
 }
