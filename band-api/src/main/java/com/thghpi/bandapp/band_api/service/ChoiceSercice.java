@@ -13,4 +13,5 @@ public interface ChoiceSercice {
 
     void deleteById(@NonNull Long id);
     void deleteAll(@NonNull List<ChoiceDto> choiceDtos);
+    ChoiceDto checkLinkComplement(ChoiceDto choiceDto);
 }

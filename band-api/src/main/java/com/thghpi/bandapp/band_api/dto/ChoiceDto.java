@@ -20,11 +20,11 @@ public class ChoiceDto {
     private String title;
     
     @Nullable
-    private Long surveyId;
-    @Nullable
     private String complement;
     @Nullable
     private String url;
+    @Nullable
+    private Long surveyId;
     @Nullable
     private Long votes;
 }

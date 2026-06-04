@@ -57,7 +57,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
     @Override
     public ChoiceDto save(ChoiceDto choiceDto) {
         return mapper.toDto(repository.save(Objects.requireNonNull(
-            mapper.toEntity(choiceDto)
+            mapper.toEntity(this.checkLinkComplement(choiceDto))
         )));
     }
 
@@ -70,6 +70,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
     public List<ChoiceDto> saveAll(@NonNull List<ChoiceDto> choiceDtos) {
         return repository.saveAll(
             choiceDtos.stream()
+                .map(this::checkLinkComplement)
                 .map(mapper::toEntity)
                 .toList())
             .stream()
@@ -99,4 +100,19 @@ public class ChoiceServiceImpl implements ChoiceSercice {
         );
     }
 
+    /**
+     * Checks if a choice has a URL and no complement, and sets the complement accordingly.
+     * @param ChoiceDto choiceDto the data transfer object containing the choice information to check
+     * @return the updated ChoiceDto
+     */
+    @Override
+    public ChoiceDto checkLinkComplement(ChoiceDto choiceDto) {
+        if (
+            !(choiceDto.getUrl() == null || choiceDto.getUrl().isBlank()) &&
+             (choiceDto.getComplement() == null || choiceDto.getComplement().isBlank())
+            ) {
+            choiceDto.setComplement("Cliquez ici pour suivre le lien");
+        }
+        return choiceDto;
+    }
 }

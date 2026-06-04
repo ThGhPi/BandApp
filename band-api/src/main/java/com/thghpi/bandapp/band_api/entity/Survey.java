@@ -1,13 +1,14 @@
 package com.thghpi.bandapp.band_api.entity;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.time.LocalDate;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * Représente les sondages.
@@ -15,6 +16,7 @@ import lombok.Data;
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class Survey {
     /**

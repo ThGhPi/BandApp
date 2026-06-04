@@ -1,12 +1,12 @@
 package com.thghpi.bandapp.band_api.entity;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
 
 /**
  * Représente les choix d'un sondage.

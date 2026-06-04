@@ -5,19 +5,25 @@ import com.thghpi.bandapp.band_api.service.ChoiceServiceImpl;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.time.LocalDate;
 
+import org.mockito.Mock;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+/**
+ * Unit tests for the SurveyServiceImpl class, focusing on the validation of survey closure logic.
+ * These tests ensure that the service correctly identifies closed surveys based on their scheduled end date
+ * and that it properly handles attempts to create or update closed surveys.
+ * The tests cover both single survey validation and bulk survey validation scenarios.
+ */
 @ExtendWith(MockitoExtension.class)
 public class SurveyServiceTest {
     @Mock
@@ -30,6 +36,9 @@ public class SurveyServiceTest {
     @InjectMocks
     private SurveyServiceImpl service;
 
+    /**
+     * Tests that the service correctly rejects attempts to create a single closed survey.
+     */
     @Test
     void shouldRejectClosedSurvey() {
         SurveyDto closedSurvey = new SurveyDto(
@@ -51,6 +60,9 @@ public class SurveyServiceTest {
         );
     }
 
+    /**
+     * Tests that the service correctly accepts attempts to create a single open survey.
+     */
     @Test
     void shouldAcceptOpenSurvey() {
         SurveyDto openSurvey = new SurveyDto(
@@ -65,6 +77,9 @@ public class SurveyServiceTest {
         assertDoesNotThrow(() -> service.checkSurveyClosure(openSurvey));
     }
 
+    /**
+     * Tests that the service correctly rejects attempts to update multiple closed surveys.
+     */
     @Test
     void shouldRejectClosedSurveys() {
         SurveyDto closedSurvey1 = new SurveyDto(
@@ -97,6 +112,9 @@ public class SurveyServiceTest {
         );
     }
 
+    /**
+     * Tests that the service correctly accepts attempts to update multiple open surveys.
+     */
     @Test
     void shouldAcceptOpenSurveys() {
         SurveyDto openSurvey1 = new SurveyDto(

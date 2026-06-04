@@ -1,20 +1,27 @@
 package com.thghpi.bandapp.band_api.unit.service.mapper;
-
 import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
-import java.time.LocalDate;
-import java.util.List;
 
+import java.util.List;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * Unit Tests for the SurveyMapper class, which maps between Survey entities and SurveyDto objects.
+ * Tests the mapping of the closed and totalVotes fields, as well as the mapping of choices using the ChoiceMapper.
+ */
 public class SurveyMapperTest {
     private final SurveyMapper mapper = Mappers.getMapper(SurveyMapper.class);
 
+    /**
+     * Tests the mapping of a Survey entity to a SurveyDto, including the calculation of the closed and totalVotes fields,
+     * and the mapping of choices using the ChoiceMapper.
+     */
     @Test
-    void shouldMapSurveyToSurveyDto() {
+    void shouldMapSurveyToDto() {
         Survey survey1 = new Survey(
                 1L,
                 "Question ?",
@@ -51,5 +58,6 @@ public class SurveyMapperTest {
             );
         assert(mapper.toDto(survey2).getClosed() == true);
         assert(mapper.toDto(survey2).getTotalVotes() == 0L);
+        assert(mapper.toDto(survey1).getChoices().size() == 2);
     }
 }
