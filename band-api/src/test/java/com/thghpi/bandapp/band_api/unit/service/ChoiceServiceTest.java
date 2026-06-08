@@ -6,13 +6,18 @@ import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests for the ChoiceServiceImpl class, focusing on the checkLinkComplement method which ensures that a complement is set when a URL is provided without a complement.
  * This is important to maintain a consistent user experience, as choices with URLs should have a clear call-to-action for users to follow the link.
  */
+@ExtendWith(MockitoExtension.class)
 public class ChoiceServiceTest {
     @Mock
     private ChoiceMapper mapper;
@@ -74,7 +79,7 @@ public class ChoiceServiceTest {
             null
         );
         ChoiceDto result2 = service.checkLinkComplement(choiceWithoutUrl2);
-        assertEquals(null, result1.getComplement());
+        assertNull(result1.getComplement());
         assertEquals("Some complement", result2.getComplement());
     }
 }

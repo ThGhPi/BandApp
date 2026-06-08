@@ -1,7 +1,7 @@
 package com.thghpi.bandapp.band_api.unit.service;
+import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
-import com.thghpi.bandapp.band_api.service.ChoiceServiceImpl;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
@@ -39,7 +40,7 @@ public class SurveyServiceTest {
      */
     @Test
     void shouldRejectClosedSurvey() {
-        SurveyDto closedSurvey = new SurveyDto(
+        SurveyDto closedSurveyDto = new SurveyDto(
             null,
             "Question ?",
             LocalDate.now().minusDays(1),
@@ -48,12 +49,19 @@ public class SurveyServiceTest {
             null,
             null
         );
+        Survey entity = new Survey();
+        entity.setQuestion(closedSurveyDto.getQuestion());
+        entity.setScheduledEnd(LocalDate.now().minusDays(1));
+        entity.setMultiplicity(true);
+
+        when(mapper.toEntity(closedSurveyDto))
+            .thenReturn(entity);
         IllegalArgumentException thrown = assertThrows(
             IllegalArgumentException.class,
-            () -> service.save(closedSurvey)
+            () -> service.save(closedSurveyDto)
         );
         assertEquals(
-            "Can't create closed surveys. The scheduled end date must be after today.",
+            "Can't create closed survey. The scheduled end date must be after today.",
             thrown.getMessage()
         );
     }
@@ -63,13 +71,11 @@ public class SurveyServiceTest {
      */
     @Test
     void shouldAcceptOpenSurvey() {
-        SurveyDto openSurvey = new SurveyDto(
+        Survey openSurvey = new Survey(
             null,
             "Question ?",
             LocalDate.now(),
             true,
-            null,
-            null,
             null
         );
         assertDoesNotThrow(() -> service.checkSurveyClosure(openSurvey));
@@ -80,22 +86,18 @@ public class SurveyServiceTest {
      */
     @Test
     void shouldRejectClosedSurveys() {
-        SurveyDto closedSurvey1 = new SurveyDto(
+        Survey closedSurvey1 = new Survey(
             2L,
             "Question ?",
             LocalDate.now().minusDays(1),
             false,
-            null,
-            null,
             null
         );
-        SurveyDto closedSurvey2 = new SurveyDto(
+        Survey closedSurvey2 = new Survey(
             1L,
             "Question ?",
             LocalDate.now().minusDays(1),
             true,
-            null,
-            null,
             null
         );
         IllegalArgumentException thrown = assertThrows(
@@ -115,22 +117,18 @@ public class SurveyServiceTest {
      */
     @Test
     void shouldAcceptOpenSurveys() {
-        SurveyDto openSurvey1 = new SurveyDto(
+        Survey openSurvey1 = new Survey(
             2L,
             "Question ?",
             LocalDate.now().plusDays(1),
             false,
-            null,
-            null,
             null
         );
-        SurveyDto openSurvey2 = new SurveyDto(
+        Survey openSurvey2 = new Survey(
             1L,
             "Question ?",
             LocalDate.now().plusDays(1),
             true,
-            null,
-            null,
             null
         );
         assertDoesNotThrow(() -> service.checkSurveysClosure(

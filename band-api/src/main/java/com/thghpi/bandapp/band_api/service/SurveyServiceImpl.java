@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
@@ -84,11 +85,12 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public SurveyDto save(SurveyDto surveyDto) {
-        checkSurveyClosure(surveyDto);
+        Survey survey = mapper.toEntity(surveyDto);
+        checkSurveyClosure(survey);
         return mapper.toDto(
-            repository.save(Objects.requireNonNull(
-                mapper.toEntity(surveyDto)
-            ))
+            repository.save(
+                Objects.requireNonNull(survey)
+            )
         );
     }
 
@@ -99,11 +101,11 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public List<SurveyDto> saveAll(@NonNull List<SurveyDto> surveyDtos) {
-        checkSurveysClosure(surveyDtos);
-        return repository.saveAll(
-            surveyDtos.stream()
-                .map(mapper::toEntity)
-                .toList())
+        List<Survey> surveys = surveyDtos.stream()
+            .map(mapper::toEntity)
+            .toList();
+        checkSurveysClosure(surveys);
+        return repository.saveAll(surveys)
             .stream()
             .map(mapper::toDto)
             .toList();
@@ -137,10 +139,10 @@ public class SurveyServiceImpl implements SurveyService {
      * @throws IllegalArgumentException if the survey is closed with the list of closed survey IDs.
      */
     @Override
-    public void checkSurveysClosure(List<SurveyDto> surveyDtos) {
-        List<Long> ids = surveyDtos.stream()
-            .filter(surveyDto -> mapper.toEntity(surveyDto).isClosed())
-            .map(SurveyDto::getId)
+    public void checkSurveysClosure(List<Survey> surveys) {
+        List<Long> ids = surveys.stream()
+            .filter(Survey::isClosed)
+            .map(Survey::getId)
             .toList();
         if (!ids.isEmpty()) {
             if (ids.contains(null)) {
@@ -162,16 +164,16 @@ public class SurveyServiceImpl implements SurveyService {
      * @throws IllegalArgumentException if the survey is closed with it's ID.
      */
     @Override
-    public void checkSurveyClosure(SurveyDto surveyDto) {
-        if (mapper.toEntity(surveyDto).isClosed()) {
-            if (surveyDto.getId() == null) {
+    public void checkSurveyClosure(Survey survey) {
+        if (survey.isClosed()) {
+            if (survey.getId() == null) {
                 throw new IllegalArgumentException(
                     "Can't create closed survey. The scheduled end date must be after today."
                 );
             }
             throw new IllegalArgumentException(
                 "Can't update closed survey : survey with id : " +
-                surveyDto.getId() +
+                survey.getId() +
                 " is already closed."
             );
         }
