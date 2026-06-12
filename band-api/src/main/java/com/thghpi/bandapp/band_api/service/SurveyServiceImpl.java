@@ -62,7 +62,9 @@ public class SurveyServiceImpl implements SurveyService {
     public SurveyDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Survey with ID " + id + " not found"))
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "Survey with ID " + id + " not found"
+                ))
             );
     }
 

@@ -1,8 +1,8 @@
 package com.thghpi.bandapp.band_api.dto;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 import org.springframework.lang.Nullable;
 
@@ -31,5 +31,5 @@ public class SurveyDto {
     @Nullable
     private Long totalVotes;
 
-    private List<ChoiceDto> choices = new ArrayList<ChoiceDto>();
+    private Set<ChoiceDto> choices = new LinkedHashSet<ChoiceDto>();
 }

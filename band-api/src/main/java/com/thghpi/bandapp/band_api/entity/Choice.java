@@ -1,7 +1,7 @@
 package com.thghpi.bandapp.band_api.entity;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -65,7 +65,7 @@ public class Choice {
         inverseJoinColumns = @JoinColumn(name = "person_id")
         )
     @Builder.Default
-    private List<Person> persons = new ArrayList<Person>();
+    private Set<Person> persons = new HashSet<Person>();
 
     /**
      * Compte le nombre de personnes ayant voté pour ce choix.

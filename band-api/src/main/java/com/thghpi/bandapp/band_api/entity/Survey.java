@@ -1,7 +1,7 @@
 package com.thghpi.bandapp.band_api.entity;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.stream.Stream;
 import java.time.LocalDate;
 
@@ -52,8 +52,9 @@ public class Survey {
     private Boolean multiplicity;
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     @Builder.Default
-    private List<Choice> choices = new ArrayList<Choice>();
+    private Set<Choice> choices = new LinkedHashSet<Choice>();
 
     /**
      * Détermine si le sondage est clos

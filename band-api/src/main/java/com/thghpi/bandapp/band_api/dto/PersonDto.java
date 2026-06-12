@@ -2,7 +2,9 @@ package com.thghpi.bandapp.band_api.dto;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,5 +23,5 @@ public class PersonDto {
     private PlaceDto address;
     private List<GroupDto> groups = new ArrayList<GroupDto>();
     private List<InstrumentDto> instruments = new ArrayList<InstrumentDto>();
-    private List<ChoiceDto> choices = new ArrayList<ChoiceDto>();
+    private Set<ChoiceDto> choices = new HashSet<ChoiceDto>();
 }

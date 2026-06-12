@@ -4,11 +4,9 @@ import com.thghpi.bandapp.band_api.entity.Survey;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
 public interface SurveyRepository extends JpaRepository<Survey,Long> {
     
     /**
@@ -17,9 +15,13 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
      * @param date Date de fin de sondage la moins récente retournée (strcit)
      * @return une liste de sondage avec leur choix et leurs votes
      */
-    @Query(
-        "SELECT s FROM Survey s LEFT JOIN FETCH s.choices c LEFT JOIN FETCH c.persons WHERE s.scheduledEnd >= :date ORDER BY s.scheduledEnd DESC"
-    )
+    @Query("""
+        SELECT DISTINCT s FROM Survey s 
+        LEFT JOIN FETCH s.choices c 
+        LEFT JOIN FETCH c.persons p
+        WHERE s.scheduledEnd >= :date 
+        ORDER BY s.scheduledEnd DESC
+        """)
     List<Survey> findRecent(LocalDate date);
     
     /**
@@ -30,8 +32,13 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
      * @param offset le nombre de résultats à ignorer pour la pagination
      * @return une liste de sondage avec leur choix et leurs votes
      */
-    @Query(
-        "SELECT s FROM Survey s LEFT JOIN FETCH s.choices c LEFT JOIN FETCH c.persons WHERE s.scheduledEnd < :date ORDER BY s.scheduledEnd DESC LIMIT 5 OFFSET :offset"
-    )
+    @Query("""
+        SELECT DISTINCT s FROM Survey s
+        LEFT JOIN FETCH s.choices c
+        LEFT JOIN FETCH c.persons p
+        WHERE s.scheduledEnd < :date
+        ORDER BY s.scheduledEnd DESC
+        LIMIT 5 OFFSET :offset
+    """)
     List<Survey> findOld(LocalDate date, Long offset);
 }

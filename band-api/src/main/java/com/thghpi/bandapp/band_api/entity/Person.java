@@ -2,7 +2,9 @@ package com.thghpi.bandapp.band_api.entity;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -79,7 +81,7 @@ public class Person implements UserDetails {
         inverseJoinColumns = @JoinColumn(name = "choice_id")
         )
     @Builder.Default
-    private List<Choice> choices = new ArrayList<Choice>();
+    private Set<Choice> choices = new HashSet<Choice>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

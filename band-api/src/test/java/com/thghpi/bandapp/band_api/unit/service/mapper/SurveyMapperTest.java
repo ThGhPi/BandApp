@@ -6,7 +6,7 @@ import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapperImpl;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapperImpl;
 
-import java.util.List;
+import java.util.Set;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
@@ -45,9 +45,9 @@ public class SurveyMapperTest {
                 "Question ?",
                 LocalDate.now().plusDays(1),
                 true,
-                List.of()
+                Set.of()
             );
-        survey1.setChoices(List.of(
+        survey1.setChoices(Set.of(
                 new Choice(
                         1L,
                         "Choice 1",
@@ -74,7 +74,7 @@ public class SurveyMapperTest {
                 "Question ?",
                 LocalDate.now().minusDays(1),
                 true,
-                List.of()
+                Set.of()
             );
         SurveyDto surveyDto2 = mapper.toDto(survey2);
         assertTrue(surveyDto2.getClosed());

@@ -4,7 +4,8 @@ import com.thghpi.bandapp.band_api.entity.Person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,7 +42,7 @@ public class ChoiceTest {
             null,
             null,
             null,
-            List.of(choice)
+            Set.of(choice)
         );
         Person person2 = new Person(
             2L,
@@ -56,9 +57,9 @@ public class ChoiceTest {
             null,
             null,
             null,
-            List.of(choice)
+            Set.of(choice)
         );
-        choice.setPersons(List.of(person1, person2));
+        choice.setPersons(Set.of(person1, person2));
         assertEquals(2L, choice.getVotes());
     }
 }

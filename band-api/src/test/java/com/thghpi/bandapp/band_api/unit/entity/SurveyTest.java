@@ -3,7 +3,7 @@ import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,7 +28,7 @@ public class SurveyTest {
                 "Question ?",
                 LocalDate.now().plusDays(1),
                 true,
-                List.of()
+                Set.of()
             );
         assertFalse(survey1.isClosed());
         Survey survey2 = new Survey(
@@ -36,7 +36,7 @@ public class SurveyTest {
                 "Question ?",
                 LocalDate.now().minusDays(1),
                 true,
-                List.of()
+                Set.of()
             );
         assertTrue(survey2.isClosed());
         Survey survey3 = new Survey(
@@ -44,7 +44,7 @@ public class SurveyTest {
                 "Question ?",
                 LocalDate.now(),
                 true,
-                List.of()
+                Set.of()
             );
         assertFalse(survey3.isClosed());
     }
@@ -60,7 +60,7 @@ public class SurveyTest {
                 "Question ?",
                 LocalDate.now().plusDays(1),
                 true,
-                List.of()
+                Set.of()
             );
         assertEquals(0L, survey.getTotalVotes());
         Choice choice1 = new Choice(
@@ -79,7 +79,7 @@ public class SurveyTest {
                 survey,
                 null
             );
-        survey.setChoices(List.of(choice1, choice2));
+        survey.setChoices(Set.of(choice1, choice2));
         assertEquals(0L, survey.getTotalVotes());
         Person person1 = new Person(
             1L,
@@ -89,7 +89,7 @@ public class SurveyTest {
             "alice.taylor@example.com",
             "blank",
             null, null, null, null, null, null,
-            List.of(choice1, choice2)
+            Set.of(choice1, choice2)
         );
         Person person2 = new Person(
             2L,
@@ -99,10 +99,10 @@ public class SurveyTest {
             "bob.smith@example.com",
             "blank",
             null, null, null, null, null, null,
-            List.of(choice1)
+            Set.of(choice1)
         );
-        choice1.setPersons(List.of(person1, person2));
-        choice2.setPersons(List.of(person1));
+        choice1.setPersons(Set.of(person1, person2));
+        choice2.setPersons(Set.of(person1));
         assertEquals(2L, survey.getTotalVotes());
     }
 }

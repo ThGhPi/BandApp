@@ -1,24 +1,21 @@
 package com.thghpi.bandapp.band_api.integration.controller;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
+import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.util.List;
 import java.time.LocalDate;
-
 
 /**
  * Integration tests for the SurveyController class.
@@ -27,11 +24,8 @@ import java.time.LocalDate;
  * The tests use MockMvc to perform HTTP requests and assert the responses.
  * @throws Exception if any of the HTTP requests fail or if the assertions fail.
  */
-@TestContainers
-@SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-public class SurveyControllerTest {
+public class SurveyControllerTest extends AbstractIntegrationTest {
     /**
      * MockMvc instance used to perform HTTP requests in the tests.
      */
@@ -244,8 +238,13 @@ public class SurveyControllerTest {
             .scheduledEnd(LocalDate.now().minusDays(20))
             .multiplicity(false)
             .build();
+        Survey survey3 = Survey.builder()
+            .question("Favorite town ?")
+            .scheduledEnd(LocalDate.now().minusYears(1))
+            .multiplicity(false)
+            .build();
         
-        repository.saveAll(List.of(survey1, survey2));
+        repository.saveAll(List.of(survey1, survey2, survey3));
 
         mockMvc.perform(get("/band-api/surveys"))
             .andExpect(status().isOk())

@@ -8,7 +8,7 @@ import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -64,7 +64,7 @@ public class ChoiceMapperTest {
             null,
             null,
             null,
-            List.of(choice2)
+            Set.of(choice2)
         );
         Person person2 = new Person(
             2L,
@@ -79,9 +79,9 @@ public class ChoiceMapperTest {
             null,
             null,
             null,
-            List.of(choice2)
+            Set.of(choice2)
         );
-        choice2.setPersons(List.of(person1, person2));
+        choice2.setPersons(Set.of(person1, person2));
         assertEquals(2L, mapper.toDto(choice2).getVotes());
         assertEquals(1L, mapper.toDto(choice2).getSurveyId());
     }
