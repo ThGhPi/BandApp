@@ -7,14 +7,17 @@ import java.util.List;
 import com.thghpi.bandapp.band_api.entity.enumeration.GroupType;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Entity(name = "work_group")
 @Builder
 @AllArgsConstructor
+@Entity(name = "work_group")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

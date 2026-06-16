@@ -5,9 +5,11 @@ import java.util.HashSet;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 /**
@@ -21,6 +23,7 @@ import lombok.AllArgsConstructor;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Choice {
     /**
      * Identifiant du choix attribué automatiquement à la création.

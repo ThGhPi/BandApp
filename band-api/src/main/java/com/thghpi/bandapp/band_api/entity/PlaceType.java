@@ -2,9 +2,11 @@ package com.thghpi.bandapp.band_api.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity(name = "place_type")
+@NoArgsConstructor
 public class PlaceType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -6,12 +6,17 @@ import java.util.List;
 import com.thghpi.bandapp.band_api.entity.enumeration.FileType;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Entity(name = "file_info")
 @Builder
+@AllArgsConstructor
+@Entity(name = "file_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FileInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

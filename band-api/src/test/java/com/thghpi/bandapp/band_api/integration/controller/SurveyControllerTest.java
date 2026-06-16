@@ -3,6 +3,7 @@ import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,11 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
     @Autowired
     private SurveyRepository repository;
 
+    @BeforeEach
+    void cleanDatabase() {
+        repository.deleteAll();
+    }
+
     /**
      * Test for creating a survey with valid data.
      * Tested endpoint : POST /band-api/surveys
@@ -48,11 +54,11 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
         String surveyJson = """
             {
                 "question": "Favorite color ?",
-                "scheduledEnd":  
+                "scheduledEnd": "
                 """
             + LocalDate.now().plusMonths(1).toString()
             + """
-                ,
+                ",
                 "multiplicity": false,
                 "choices": [
                     {"title": "Red"},
@@ -90,11 +96,11 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
         String surveyJson1 = """
             {
                 "question": "",
-                "scheduledEnd": 
+                "scheduledEnd": "
                 """
             + LocalDate.now().plusMonths(1).toString()
             + """
-                ,
+                ",
                 "multiplicity": false,
                 "choices": [
                     {"title": "Red"},
@@ -112,11 +118,11 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
         String surveyJson2 = """
             {
                 "question": "Favorite color ?",
-                "scheduledEnd": 
+                "scheduledEnd": "
                 """
             + LocalDate.now().minusYears(1).toString()
             + """
-                ,
+                ",
                 "multiplicity": false,
                 "choices": [
                     {"title": "Red"},
@@ -134,11 +140,11 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
         String surveyJson3 = """
             {
                 "question": "Favorite color ?",
-                "scheduledEnd": 
+                "scheduledEnd": "
                 """
             + LocalDate.now().plusMonths(1).toString()
             + """
-                ,
+                ",
                 "multiplicity": false,
                 "choices": []
             }
@@ -258,7 +264,7 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
      * Test for retrieving all surveys.
      * This test creates several surveys with future scheduled end dates
      * and one survey with a past scheduled end date.
-     * Tested endpoint : GET /band-api/surveys 
+     * Tested endpoint : GET /band-api/surveys/all
      * @throws Exception
      */
     @Test
@@ -281,7 +287,7 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
         
         repository.saveAll(List.of(survey1, survey2, survey3));
 
-        mockMvc.perform(get("/band-api/surveys"))
+        mockMvc.perform(get("/band-api/surveys/all"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$[0].question").value("Favorite color ?"))

@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.ArrayList;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

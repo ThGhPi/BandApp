@@ -15,13 +15,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Person implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

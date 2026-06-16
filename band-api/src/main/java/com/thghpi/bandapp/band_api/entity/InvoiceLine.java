@@ -3,12 +3,17 @@ package com.thghpi.bandapp.band_api.entity;
 import java.math.BigDecimal;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data 
-@Entity(name = "invoice_line")
 @Builder
+@AllArgsConstructor
+@Entity(name = "invoice_line")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InvoiceLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

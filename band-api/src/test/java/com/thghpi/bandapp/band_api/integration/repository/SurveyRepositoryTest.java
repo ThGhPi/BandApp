@@ -3,16 +3,17 @@ import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
-import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
+import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
-import java.util.List;
 import java.util.Set;
+import java.util.List;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,6 +33,13 @@ public class SurveyRepositoryTest extends AbstractIntegrationTest {
 
     @Autowired
     private SurveyRepository repository;
+
+    @BeforeEach
+    void cleanDatabase() {
+        choiceRepository.deleteAll();
+        repository.deleteAll();
+        personRepository.deleteAll();
+    }
 
     @Test
     void shouldSaveSurvey() {
