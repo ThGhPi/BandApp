@@ -1,7 +1,9 @@
 package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -58,14 +60,14 @@ public class SurveyController {
     }
 
     /**
-     * For endpoint band-api/surveys/page/{pageNumber} GET request,
+     * For endpoint band-api/surveys/before/{date} GET request,
      * returns the list of older surveys.
      * @param pageNumber the page number of the surveys to retrieve, taken from the path variable of the request.
      * @return a list of SurveyDto for the older surveys.
      */
-    @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<List<SurveyDto>> getOlderSurveys(@PathVariable Long pageNumber) {
-        return ResponseEntity.ok(service.getPrevious(pageNumber));
+    @GetMapping("/before/{date}")
+    public ResponseEntity<SurveyPageDto> getOlderSurveys(@PathVariable LocalDate date) {
+        return ResponseEntity.ok(service.getPrevious(date));
     }
 
     /**

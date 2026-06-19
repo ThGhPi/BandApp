@@ -13,7 +13,7 @@ services:
   band-api:
     build: 
       context: ./band-api
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile${DOCKERFILE_EXTENSION}
     container_name: band-api
     restart: always
     depends_on:
@@ -49,6 +49,8 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql
       - ./db:/docker-entrypoint-initdb.d
+    
+    
   adminer:
     image: adminer
     container_name: adminer_ui

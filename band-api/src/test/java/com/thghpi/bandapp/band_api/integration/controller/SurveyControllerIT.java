@@ -26,7 +26,7 @@ import java.time.LocalDate;
  * @throws Exception if any of the HTTP requests fail or if the assertions fail.
  */
 @AutoConfigureMockMvc
-public class SurveyControllerTest extends AbstractIntegrationTest {
+public class SurveyControllerIT extends AbstractIntegrationTest {
     /**
      * MockMvc instance used to perform HTTP requests in the tests.
      */
@@ -167,32 +167,32 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
     void shouldReturnOldSurveys() throws Exception {
         Survey survey1 = Survey.builder()
             .question("Favorite color ?")
-            .scheduledEnd(LocalDate.now().minusYears(1))
+            .scheduledEnd(LocalDate.now().minusMonths(2))
             .multiplicity(false)
             .build();
         Survey survey2 = Survey.builder()
             .question("Favorite pet ?")
-            .scheduledEnd(LocalDate.now().minusYears(1))
+            .scheduledEnd(LocalDate.now().minusMonths(3))
             .multiplicity(false)
             .build();
         Survey survey3 = Survey.builder()
             .question("Favorite instrument ?")
-            .scheduledEnd(LocalDate.now().minusYears(1))
+            .scheduledEnd(LocalDate.now().minusMonths(4))
             .multiplicity(false)
             .build();
         Survey survey4 = Survey.builder()
             .question("Favorite food ?")
-            .scheduledEnd(LocalDate.now().minusYears(1))
+            .scheduledEnd(LocalDate.now().minusMonths(5))
             .multiplicity(false)
             .build();
         Survey survey5 = Survey.builder()
             .question("Favorite drink ?")
-            .scheduledEnd(LocalDate.now().minusYears(1))
+            .scheduledEnd(LocalDate.now().minusMonths(6))
             .multiplicity(false)
             .build();
         Survey survey6 = Survey.builder()
             .question("Favorite town ?")
-            .scheduledEnd(LocalDate.now().minusYears(1))
+            .scheduledEnd(LocalDate.now().minusMonths(7))
             .multiplicity(false)
             .build();
         Survey survey7 = Survey.builder()
@@ -203,26 +203,28 @@ public class SurveyControllerTest extends AbstractIntegrationTest {
         
         repository.saveAll(List.of(survey1, survey2, survey3, survey4, survey5, survey6, survey7));
 
-        mockMvc.perform(get("/band-api/surveys/page/1"))
+        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(1)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$[0].question").value("Favorite color ?"))
-            .andExpect(jsonPath("$[1].question").value("Favorite pet ?"))
-            .andExpect(jsonPath("$[2].question").value("Favorite instrument ?"))
-            .andExpect(jsonPath("$[3].question").value("Favorite food ?"))
-            .andExpect(jsonPath("$[4].question").value("Favorite drink ?"))
-            .andExpect(jsonPath("$[5]").doesNotExist());
+            .andExpect(jsonPath("$.surveys").isArray())
+            .andExpect(jsonPath("$.surveys[0].question").value("Favorite color ?"))
+            .andExpect(jsonPath("$.surveys[1].question").value("Favorite pet ?"))
+            .andExpect(jsonPath("$.surveys[2].question").value("Favorite instrument ?"))
+            .andExpect(jsonPath("$.surveys[3].question").value("Favorite food ?"))
+            .andExpect(jsonPath("$.surveys[4].question").value("Favorite drink ?"))
+            .andExpect(jsonPath("$.surveys[5]").doesNotExist())
+            .andExpect(jsonPath("$.hasNext").value(true));
         
-        mockMvc.perform(get("/band-api/surveys/page/2"))
+        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(6)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$[0].question").value("Favorite town ?"))
-            .andExpect(jsonPath("$[1]").doesNotExist());
+            .andExpect(jsonPath("$.surveys").isArray())
+            .andExpect(jsonPath("$.surveys[0].question").value("Favorite town ?"))
+            .andExpect(jsonPath("$.surveys[1]").doesNotExist())
+            .andExpect(jsonPath("$.hasNext").value(false));
         
-        mockMvc.perform(get("/band-api/surveys/page/3"))
+        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(7)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$[0]").doesNotExist());
+            .andExpect(jsonPath("$.surveys").isArray())
+            .andExpect(jsonPath("$.surveys[0]").doesNotExist());
     }
 
     /**

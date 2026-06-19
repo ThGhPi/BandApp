@@ -15,19 +15,31 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * 
+ * Integration tests for the SurveyRepository interface and implementation by JPA et hibernate.
+ * These tests verify the behavior of data persistence and ACIDity during interaction with database,
+ * including saving a survey, retrieving surveys by id, and handling invalid input.
+ * The tests use autowired repositories for persons and choices entities to test the relations with surveys.
+ * @throws Exception if any request to database or any assertion fail.
  */
-public class SurveyRepositoryTest extends AbstractIntegrationTest {
+public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
+    /**
+     * PersonRepository instance to test relationship between survey, choice and person
+     */
     @Autowired
     PersonRepository personRepository;
 
+    /**
+     * ChoiceRepository instance to test relationship with survey and person
+     */
     @Autowired
     ChoiceRepository choiceRepository;
 
@@ -52,6 +64,8 @@ public class SurveyRepositoryTest extends AbstractIntegrationTest {
         Survey saved = repository.save(survey);
 
         assertNotNull(saved.getId());
+
+        
     }
 
     @Test
@@ -132,5 +146,71 @@ public class SurveyRepositoryTest extends AbstractIntegrationTest {
         assertEquals(2,recentSurveys.size());
         assertEquals(recentSurveys.getFirst(), surveys.getFirst());
         assertEquals(recentSurveys.getLast(), surveys.get(1));
+    }
+
+    @Test
+    void shouldFindOldSurveys() {
+        Person person1 = personRepository.save(Person.builder()
+            .lastname("Stone")
+            .firstname("Alice")
+            .username("aliceStone")
+            .email("alice.stone@exemple.com")
+            .password("password1")
+            .role(Role.MEMBER)
+            .build());
+        Person person2 = personRepository.save(Person.builder()
+            .lastname("Smith")
+            .firstname("Bob")
+            .username("bobSmith")
+            .email("bob.smith@exemple.com")
+            .password("password2")
+            .role(Role.MEMBER)
+            .build());
+
+        Survey survey1 = Survey.builder()
+            .question("Favorite color ?")
+            .scheduledEnd(LocalDate.now().minusDays(35))
+            .multiplicity(true)
+            .build();
+        Survey survey2 = Survey.builder()
+            .question("Favorite pet ?")
+            .scheduledEnd(LocalDate.now().minusDays(40))
+            .multiplicity(false)
+            .build();
+        Survey survey3 = Survey.builder()
+            .question("Favorite town ?")
+            .scheduledEnd(LocalDate.now().minusDays(1))
+            .multiplicity(false)
+            .build();
+
+        List<Survey> surveys = List.of(
+            repository.save(survey1),
+            repository.save(survey2),
+            repository.save(survey3)
+        );
+
+        Choice choice1 = Choice.builder()
+            .title("choix1")
+            .persons(Set.of(person1))
+            .survey(surveys.getFirst())
+            .build();
+        Choice choice2 = Choice.builder()
+            .title("choix1")
+            .persons(Set.of(person1, person2))
+            .survey(surveys.getFirst())
+            .build();
+        choiceRepository.save(choice1);
+        choiceRepository.save(choice2);
+
+        Page<Survey> surveyPage = repository.findByScheduledEndBeforeOrderByScheduledEndDesc(
+            LocalDate.now().minusMonths(1), PageRequest.of(0,5)
+        );
+        assertNotNull(surveyPage);
+        assertFalse(surveyPage.hasNext());
+        List<Survey> oldSurveys = surveyPage.getContent();
+        assertFalse(oldSurveys.isEmpty());
+        assertEquals(2,oldSurveys.size());
+        assertEquals(oldSurveys.getFirst().getId(), surveys.getFirst().getId());
+        assertEquals(oldSurveys.getLast().getId(), surveys.get(1).getId());
     }
 }

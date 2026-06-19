@@ -1,13 +1,15 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
 import com.thghpi.bandapp.band_api.entity.Survey;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.lang.NonNull;
 
 public interface SurveyService {
     List<SurveyDto> getRecent();
-    List<SurveyDto> getPrevious(Long pageNumber);
+    SurveyPageDto getPrevious(LocalDate date);
     SurveyDto getById(@NonNull Long id);
     List<SurveyDto> getAll();
 

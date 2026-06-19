@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
@@ -9,6 +10,8 @@ import java.util.Objects;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,17 +43,22 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     /**
-     * Retrieves the previous surveys from the database (more than a month old).
-     * @param Long pageNumber the page number of the surveys to retrieve.
-     * @return a list of the previous SurveyDto objects.
+     * Retrieves the surveys closed before the given date from the database with pagination.
+     * @param LocalDate date the page number of the surveys to retrieve.
+     * @return a SurveyPageDto with five most recent survey older than the given date.
      */
     @Override
-    public List<SurveyDto> getPrevious(Long pageNumber) {
-        LocalDate date = LocalDate.now().minusMonths(1);
-        return repository.findOld(date, pageNumber*5)
-            .stream()
-            .map(mapper::toDto)
-            .toList();
+    public SurveyPageDto getPrevious(LocalDate date) {
+        Page<Survey> surveyPage = 
+            repository.findByScheduledEndBeforeOrderByScheduledEndDesc(
+                date, PageRequest.of(0,5)
+            );
+        return new SurveyPageDto(
+            surveyPage.getContent().stream()
+                .map(mapper::toDto)
+                .toList(),
+            surveyPage.hasNext()
+        );
     }
 
     /**

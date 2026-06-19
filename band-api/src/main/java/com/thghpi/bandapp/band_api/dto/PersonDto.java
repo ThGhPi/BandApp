@@ -1,6 +1,7 @@
 package com.thghpi.bandapp.band_api.dto;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,9 +20,10 @@ public class PersonDto {
     private String email;
     private String trialPassword;
     private Role role;
+    private LocalDate birthday;
     private String phoneNumber;
     private PlaceDto address;
     private List<GroupDto> groups = new ArrayList<GroupDto>();
     private List<InstrumentDto> instruments = new ArrayList<InstrumentDto>();
-    private Set<ChoiceDto> choices = new HashSet<ChoiceDto>();
+    private Set<Long> choiceIds = new HashSet<Long>();
 }
