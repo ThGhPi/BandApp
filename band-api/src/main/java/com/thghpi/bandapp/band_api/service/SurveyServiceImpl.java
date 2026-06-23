@@ -1,7 +1,9 @@
 package com.thghpi.bandapp.band_api.service;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
+import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
-import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
@@ -65,14 +67,13 @@ public class SurveyServiceImpl implements SurveyService {
      * Retrieves the survey with the given id from the database.
      * @param Longid the id of the survey to retrieve.
      * @return the SurveyDto of the retrieved survey.
+     * @throws NotFoundException if the id is not found in database
      */
     @Override
     public SurveyDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(
-                    "Survey with ID " + id + " not found"
-                ))
+                .orElseThrow(() -> new NotFoundException(new NotFoundMessage(id, Survey.class)))
             );
     }
 

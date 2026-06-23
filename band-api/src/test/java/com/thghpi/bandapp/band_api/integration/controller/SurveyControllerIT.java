@@ -47,7 +47,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     /**
      * Test for creating a survey with valid data.
      * Tested endpoint : POST /band-api/surveys
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldCreateSurvey() throws Exception {
@@ -89,7 +89,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      * Test for creating a survey with invalid data,
      * such as an empty question, a past scheduled end date, or no choices.
      * Tested endpoint : POST /band-api/surveys
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldNotCreateSurveyWithInvalidData() throws Exception {
@@ -161,7 +161,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      * This test creates several surveys with past scheduled end dates and one survey with a future scheduled end date.
      * It then performs GET requests to the /band-api/surveys/page/{pageNumber}
      * endpoint to retrieve the old surveys in pages and asserts the responses.
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldReturnOldSurveys() throws Exception {
@@ -232,7 +232,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      * This test creates several surveys with future scheduled end dates
      * and one survey with a past scheduled end date.
      * Tested endpoint : GET /band-api/surveys 
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldReturnCurrentSurveys() throws Exception {
@@ -267,7 +267,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      * This test creates several surveys with future scheduled end dates
      * and one survey with a past scheduled end date.
      * Tested endpoint : GET /band-api/surveys/all
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldReturnAllSurveys() throws Exception {
@@ -302,7 +302,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      * Test for retrieving a survey by its ID.
      * This test creates a survey, and try to retrive it by it's ID.
      * Tested endpoint : GET /band-api/surveys/{id}
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldReturnSurveyById() throws Exception {
@@ -329,12 +329,14 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      * Test for retrieving a non-existing survey by its ID.
      * This test tries to retrieve a survey that does not exist.
      * Tested endpoint : GET /band-api/surveys/{id}
-     * @throws Exception
+     * @throws Exception when test fail
      */
     @Test
     void shouldReturnNotFoundForNonExistingSurvey() throws Exception {
         mockMvc.perform(get("/band-api/surveys/9999"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.message")
+                .value("Survey with ID 9999 not found"));
     }
 
     @Test

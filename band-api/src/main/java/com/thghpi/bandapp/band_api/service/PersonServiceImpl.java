@@ -1,6 +1,9 @@
 package com.thghpi.bandapp.band_api.service;
-import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 import com.thghpi.bandapp.band_api.entity.Group;
+import com.thghpi.bandapp.band_api.entity.Person;
+import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.repository.GroupRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
@@ -11,6 +14,7 @@ import java.util.Objects;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,13 +36,14 @@ public class PersonServiceImpl implements PersonService {
      * retrieves the corresponding Person entity from the repository,
      * converts it to a PersonDto using the mapper and returns it.
      * @param id the id of the person to retrieve
-     * @return the PersonDto of the person with the given id if found, otherwise throws an exception
+     * @return the PersonDto of the person with the given id if found
+     * @throws NotFoundException if the id is not found in database
      */
     @Override
     public PersonDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found"))
+                .orElseThrow(() -> new NotFoundException(new NotFoundMessage(id, Person.class)))
             );
     }
 
@@ -62,10 +67,12 @@ public class PersonServiceImpl implements PersonService {
      * converts them to PersonDto using the mapper and returns the list.
      * @param groupId the id of the group for which to retrieve persons
      * @return a list of PersonDto for all the persons in the given group
+     * @throws NotFoundException if when the groupId is not found in database
      */
     @Override
     public List<PersonDto> getByGroupId(@NonNull Long groupId) {
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        Group group = groupRepository.findById(groupId)
+            .orElseThrow(() -> new NotFoundException(new NotFoundMessage(groupId, Group.class)));
         return repository.findByGroups(group)
             .stream()
             .map(mapper::toDto)
@@ -82,7 +89,9 @@ public class PersonServiceImpl implements PersonService {
      * converts them to Person entities using the mapper,
      * saves them to the repository and returns the updated list of PersonDto.
      * @param personDtos the list of PersonDto with updates
-     * @return the list of updated PersonDto if the update process is successful, otherwise an error response
+     * @return the list of updated PersonDto if the update process is successful
+     * @throws IllegalArgumentException when encountering a person without id in the list
+     * @throws NotFoundException when encountering a person with an id not found in database
      */
     @Override
     public List<PersonDto> updateMany(List<PersonDto> personDtos) {
@@ -92,7 +101,7 @@ public class PersonServiceImpl implements PersonService {
             } else if (!repository.existsById(
                 Objects.requireNonNull(personDto.getId())
             )) {
-                throw new IllegalArgumentException("Person with ID " + personDto.getId() + " not found in database");
+                throw new NotFoundException(new NotFoundMessage(personDto.getId(), Person.class));
             }
         }
         return repository.saveAll(

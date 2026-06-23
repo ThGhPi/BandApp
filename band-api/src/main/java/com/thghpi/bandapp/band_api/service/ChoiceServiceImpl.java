@@ -1,4 +1,6 @@
 package com.thghpi.bandapp.band_api.service;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
 import com.thghpi.bandapp.band_api.dto.ChoiceDto;
 import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
@@ -12,10 +14,13 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thghpi.bandapp.band_api.entity.Choice;
+
+
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ChoiceServiceImpl implements ChoiceSercice {
+public class ChoiceServiceImpl implements ChoiceService {
     
     private final ChoiceMapper mapper;
     private final ChoiceRepository repository;
@@ -30,7 +35,7 @@ public class ChoiceServiceImpl implements ChoiceSercice {
     public ChoiceDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Choice with ID " + id + " not found"))
+                .orElseThrow(() -> new NotFoundException(new NotFoundMessage(id, Choice.class)))
             );
     }
 

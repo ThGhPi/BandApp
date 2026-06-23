@@ -4,7 +4,7 @@ import com.thghpi.bandapp.band_api.dto.ChoiceDto;
 import java.util.List;
 import org.springframework.lang.NonNull;
 
-public interface ChoiceSercice {
+public interface ChoiceService {
     ChoiceDto getById(@NonNull Long id);
     List<ChoiceDto> getBySurveyId(Long surveyId);
 
