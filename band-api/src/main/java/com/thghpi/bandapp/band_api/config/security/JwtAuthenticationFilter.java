@@ -7,7 +7,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.lang.NonNull;
@@ -32,9 +31,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
-    private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtServiceImpl jwtService;
     private final AppUserDetailsService userDetailsService;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
     /**
      * Override of the doFilterInternal method to intercept incoming HTTP requests and perform JWT authentication.

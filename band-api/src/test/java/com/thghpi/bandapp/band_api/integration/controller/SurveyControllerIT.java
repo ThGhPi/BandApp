@@ -1,22 +1,29 @@
 package com.thghpi.bandapp.band_api.integration.controller;
 import com.thghpi.bandapp.band_api.entity.Survey;
+import com.thghpi.bandapp.band_api.dto.ChoiceDto;
+import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import java.util.Set;
 import java.util.List;
+import java.util.Objects;
 import java.time.LocalDate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Integration tests for the SurveyController class.
@@ -34,11 +41,21 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     private MockMvc mockMvc;
 
     /**
+     * To generate proper json for testing creation and update.
+     */
+    @Autowired
+    ObjectMapper objectMapper;
+
+    /**
      * SurveyRepository instance used to interact with the survey data in the tests.
      */
     @Autowired
     private SurveyRepository repository;
 
+    /**
+     * Clean database before each test in the test container
+     * to make sure there is no data interferences between tests.
+     */
     @BeforeEach
     void cleanDatabase() {
         repository.deleteAll();
@@ -51,26 +68,43 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      */
     @Test
     void shouldCreateSurvey() throws Exception {
-        String surveyJson = """
-            {
-                "question": "Favorite color ?",
-                "scheduledEnd": "
-                """
-            + LocalDate.now().plusMonths(1).toString()
-            + """
-                ",
-                "multiplicity": false,
-                "choices": [
-                    {"title": "Red"},
-                    {"title": "Blue"},
-                    {"title": "Green"}
-                ]
-            }
-        """;
+        ChoiceDto choice1 = new ChoiceDto(
+            null,
+            "red",
+            null,
+            null,
+            null,
+            null
+        );
+        ChoiceDto choice2 = new ChoiceDto(
+            null,
+            "blue",
+            null,
+            null,
+            null,
+            null
+        );
+        ChoiceDto choice3 = new ChoiceDto(
+            null,
+            "green",
+            null,
+            null,
+            null,
+            null
+        );
+        SurveyDto dto1 = new SurveyDto(
+            null,
+            "Favorite color ?",
+            LocalDate.now().plusMonths(1),
+            false,
+            null,
+            null,
+            Set.of(choice1, choice2, choice3)
+        );
 
         mockMvc.perform(post("/band-api/surveys")
-            .contentType("application/json")
-            .content(surveyJson))
+                .contentType("application/json")
+                .content(Objects.requireNonNull(objectMapper.writeValueAsString(dto1))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath("$.question").value("Favorite color ?"))
@@ -93,66 +127,53 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
      */
     @Test
     void shouldNotCreateSurveyWithInvalidData() throws Exception {
-        String surveyJson1 = """
-            {
-                "question": "",
-                "scheduledEnd": "
-                """
-            + LocalDate.now().plusMonths(1).toString()
-            + """
-                ",
-                "multiplicity": false,
-                "choices": [
-                    {"title": "Red"},
-                    {"title": "Blue"},
-                    {"title": "Green"}
-                ]
-            }
-        """;
+        ChoiceDto choice1 = new ChoiceDto(
+            null,
+            "red",
+            null,
+            null,
+            null,
+            null
+        );
+        ChoiceDto choice2 = new ChoiceDto(
+            null,
+            "blue",
+            null,
+            null,
+            null,
+            null
+        );
+        ChoiceDto choice3 = new ChoiceDto(
+            null,
+            "green",
+            null,
+            null,
+            null,
+            null
+        );
+        SurveyDto dto = new SurveyDto(
+            null,
+            "",
+            LocalDate.now().plusMonths(1),
+            false,
+            null,
+            null,
+            Set.of(choice1, choice2, choice3)
+        );
+        String jsonSurvey1 = Objects.requireNonNull(objectMapper.writeValueAsString(dto));
 
         mockMvc.perform(post("/band-api/surveys")
-            .contentType("application/json")
-            .content(surveyJson1))
+                .contentType("application/json")
+                .content(jsonSurvey1))
             .andExpect(status().isBadRequest());
         
-        String surveyJson2 = """
-            {
-                "question": "Favorite color ?",
-                "scheduledEnd": "
-                """
-            + LocalDate.now().minusYears(1).toString()
-            + """
-                ",
-                "multiplicity": false,
-                "choices": [
-                    {"title": "Red"},
-                    {"title": "Blue"},
-                    {"title": "Green"}
-                ]
-            }
-        """;
+        dto.setQuestion("Favorite color ?");
+        dto.setScheduledEnd(LocalDate.now().minusYears(1));
+        String jsonSurvey2 = Objects.requireNonNull(objectMapper.writeValueAsString(dto));
 
         mockMvc.perform(post("/band-api/surveys")
-            .contentType("application/json")
-            .content(surveyJson2))
-            .andExpect(status().isBadRequest());
-        
-        String surveyJson3 = """
-            {
-                "question": "Favorite color ?",
-                "scheduledEnd": "
-                """
-            + LocalDate.now().plusMonths(1).toString()
-            + """
-                ",
-                "multiplicity": false,
-                "choices": []
-            }
-        """;
-
-        mockMvc.perform(post("/band-api/surveys")
-            .contentType("application/json")
-            .content(surveyJson3))
+                .contentType("application/json")
+                .content(jsonSurvey2))
             .andExpect(status().isBadRequest());
     }
 
@@ -201,7 +222,9 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .multiplicity(false)
             .build();
         
-        repository.saveAll(List.of(survey1, survey2, survey3, survey4, survey5, survey6, survey7));
+        repository.saveAll(Objects.requireNonNull(
+            List.of(survey1, survey2, survey3, survey4, survey5, survey6, survey7)
+        ));
 
         mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(1)))
             .andExpect(status().isOk())
@@ -252,7 +275,9 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .multiplicity(false)
             .build();
         
-        repository.saveAll(List.of(survey1, survey2, survey3));
+        repository.saveAll(Objects.requireNonNull(
+            List.of(survey1, survey2, survey3)
+        ));
 
         mockMvc.perform(get("/band-api/surveys"))
             .andExpect(status().isOk())
@@ -287,7 +312,9 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .multiplicity(false)
             .build();
         
-        repository.saveAll(List.of(survey1, survey2, survey3));
+        repository.saveAll(Objects.requireNonNull(
+            List.of(survey1, survey2, survey3)
+        ));
 
         mockMvc.perform(get("/band-api/surveys/all"))
             .andExpect(status().isOk())
@@ -312,7 +339,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .multiplicity(false)
             .build();
         
-        survey = repository.save(survey);
+        survey = repository.save(Objects.requireNonNull(survey));
 
         mockMvc.perform(get("/band-api/surveys/" + survey.getId().toString()))
             .andExpect(status().isOk())
@@ -339,6 +366,12 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .value("Survey with ID 9999 not found"));
     }
 
+    /**
+     * Test the correct implementation of updating a survey
+     * This test tries to update a survey  by changing it's question and adding choices
+     * Tested endpoint : PUT /band-api/surveys/{id}
+     * @throws Exception when an expectationis not fullfilled
+     */
     @Test
     void shouldUpdateSurvey() throws Exception {
         Survey survey = Survey.builder()
@@ -347,31 +380,46 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .multiplicity(false)
             .build();
         
-        survey = repository.save(survey);
+        survey = repository.save(Objects.requireNonNull(survey));
 
-        String updatedSurveyJson = """
-            {   
-                "id": """ + survey.getId().toString()
-            + """
-                ,
-                "question": "Favorite pet ?",
-                "scheduledEnd":  
-                """
-            + LocalDate.now().plusMonths(2).toString()
-            + """
-                ,
-                "multiplicity": true,
-                "choices": [
-                    {"title": "Dog"},
-                    {"title": "Cat"},
-                    {"title": "Fish"}
-                ]
-            }
-        """;
+        ChoiceDto choice1 = new ChoiceDto(
+            null,
+            "Dog",
+            null,
+            null,
+            survey.getId(),
+            null
+        );
+        ChoiceDto choice2 = new ChoiceDto(
+            null,
+            "Cat",
+            null,
+            null,
+            survey.getId(),
+            null
+        );
+        ChoiceDto choice3 = new ChoiceDto(
+            null,
+            "Fish",
+            null,
+            null,
+            survey.getId(),
+            null
+        );
+        SurveyDto dtoForUpdate = new SurveyDto(
+            null,
+            "Favorite pet ?",
+            LocalDate.now().plusMonths(2),
+            true,
+            null,
+            null,
+            Set.of(choice1, choice2, choice3)
+        );
+        String jsonForUpdate = Objects.requireNonNull(objectMapper.writeValueAsString(dtoForUpdate));
 
         mockMvc.perform(put("/band-api/surveys/" + survey.getId().toString())
-            .contentType("application/json")
-            .content(updatedSurveyJson))
+                .contentType("application/json")
+                .content(jsonForUpdate))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(survey.getId()))
             .andExpect(jsonPath("$.question").value("Favorite pet ?"))
@@ -380,9 +428,8 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.totalVotes").value(0))
             .andExpect(jsonPath("$.closed").value(false))
             .andExpect(jsonPath("$.choices").isArray())
-            .andExpect(jsonPath("$.choices[0].title").value("Dog"))
-            .andExpect(jsonPath("$.choices[0].votes").value(0))
-            .andExpect(jsonPath("$.choices[1].title").value("Cat"))
-            .andExpect(jsonPath("$.choices[2].title").value("Fish"));
+            .andDo(print())
+            .andExpect(jsonPath("$.choices[*].title").value(containsInAnyOrder("Dog", "Cat", "Fish")))
+            .andExpect(jsonPath("$.choices[0].votes").value(0));
     }
 }

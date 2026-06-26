@@ -20,4 +20,6 @@ public interface SurveyService {
     void deleteAll(@NonNull List<SurveyDto> surveyDtos);
 	void checkSurveyClosure(Survey survey);
 	void checkSurveysClosure(List<Survey> surveys);
+    void checkSurveyData(SurveyDto survey);
+    void checkSurveysData(List<SurveyDto> surveys);
 }

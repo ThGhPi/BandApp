@@ -96,6 +96,7 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public SurveyDto save(SurveyDto surveyDto) {
+        checkSurveyData(surveyDto);
         Survey survey = mapper.toEntity(surveyDto);
         checkSurveyClosure(survey);
         return mapper.toDto(
@@ -112,9 +113,12 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public List<SurveyDto> saveAll(@NonNull List<SurveyDto> surveyDtos) {
-        List<Survey> surveys = surveyDtos.stream()
-            .map(mapper::toEntity)
-            .toList();
+        checkSurveysData(surveyDtos);
+        List<Survey> surveys = Objects.requireNonNull(
+            surveyDtos.stream()
+                .map(mapper::toEntity)
+                .toList()
+            );
         checkSurveysClosure(surveys);
         return repository.saveAll(surveys)
             .stream()
@@ -137,17 +141,17 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public void deleteAll(@NonNull List<SurveyDto> surveyDtos) {
-        repository.deleteAll(
+        repository.deleteAll(Objects.requireNonNull(
             surveyDtos.stream()
                 .map(mapper::toEntity)
                 .toList()
-        );
+        ));
     }
 
     /**
-     * Checks if the given survey is closed and throws an exception if it is.
+     * Checks if there are closed survey in the provided list and throws an exception there are.
      * @param SurveyDto surveyDto the SurveyDto to check.
-     * @throws IllegalArgumentException if the survey is closed with the list of closed survey IDs.
+     * @throws IllegalArgumentException if there are closed surveys, with the list of closed survey IDs.
      */
     @Override
     public void checkSurveysClosure(List<Survey> surveys) {
@@ -186,6 +190,52 @@ public class SurveyServiceImpl implements SurveyService {
                 "Can't update closed survey : survey with id : " +
                 survey.getId() +
                 " is already closed."
+            );
+        }
+    }
+
+    /**
+     * Checks if the given survey has invalid data and throws an exception if it does.
+     * @param SurveyDto survey the SurveyDto to check.
+     * @throws IllegalArgumentException if the survey question isn't conform (blank or exceeding 255 in length) with it's ID.
+     */
+    @Override
+    public void checkSurveyData(SurveyDto survey) {
+        if (survey.getQuestion().isBlank() || survey.getQuestion().length() > 255) {
+            if (survey.getId() == null) {
+                throw new IllegalArgumentException(
+                    "Can't create survey with invalid data. The question must not be blank nor exceed 255 characters."
+                );
+            }
+            throw new IllegalArgumentException(
+                "Can't update survey with invalid data : the question of survey with id : " +
+                survey.getId() +
+                " must not be blank nor exceed 255 characters."
+            );
+        }
+    }
+
+    /**
+     * Checks if there are surveys with invalid data in the provided list.
+     * @param List<SurveyDto> surveys the list of SurveyDto to check.
+     * @throws IllegalArgumentException if there are surveys with invalid data, with the list of invalid survey IDs.
+     */
+    @Override
+    public void checkSurveysData(List<SurveyDto> surveys) {
+        List<Long> ids = surveys.stream()
+            .filter(survey -> survey.getQuestion().isBlank() || survey.getQuestion().length() > 255)
+            .map(SurveyDto::getId)
+            .toList();
+        if (!ids.isEmpty()) {
+            if (ids.contains(null)) {
+                throw new IllegalArgumentException(
+                    "Can't create surveys with invalid data. The question must not be blank nor exceed 255 characters."
+                );
+            }
+            throw new IllegalArgumentException(
+                "Can't update surveyw with invalid data : the question of surveys with id : " +
+                ids.toString() +
+                " must not be blank nor exceed 255 characters."
             );
         }
     }

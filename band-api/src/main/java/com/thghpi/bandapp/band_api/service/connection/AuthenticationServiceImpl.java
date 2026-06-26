@@ -5,6 +5,8 @@ import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 
 import java.util.List;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -127,6 +129,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             passwordChecker.checkPasswordStrength(dto.getTrialPassword());
         });
         return repository.saveAll(
+            Objects.requireNonNull(
             personDtos.stream()
                 .map(dto -> {
                     Person person = mapper.toEntity(dto);
@@ -134,7 +137,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     return person;
                 })
                 .toList()
-            ).stream()
+            )).stream()
                 .map(mapper::toDto)
                 .toList();
     }

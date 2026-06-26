@@ -3,18 +3,14 @@ import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 
@@ -77,6 +73,7 @@ public class SurveyController {
      * @return the SurveyDto of the created survey if successful, otherwise an error response.
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<SurveyDto> createSurvey(@RequestBody SurveyDto surveyDto) {
         return ResponseEntity.ok(service.save(surveyDto));
     }
@@ -88,6 +85,7 @@ public class SurveyController {
      * @return the list of SurveyDto of the created surveys if successful, otherwise an error response.
      */
     @PostMapping("/several")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<List<SurveyDto>> createSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {        
         return ResponseEntity.ok(service.saveAll(surveys));
     }

@@ -5,11 +5,10 @@ import java.util.HashSet;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 /**
@@ -22,7 +21,6 @@ import lombok.AllArgsConstructor;
 @Entity
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Choice {
     /**
@@ -76,5 +74,21 @@ public class Choice {
      */
     public Long getVotes() {
         return persons == null ? 0L : (long) persons.size();
+    }
+
+    /**
+     * Override equals methode of Object to ensure correct behavior
+     * in the set for relationship with Survey
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Choice other)) return false;
+        return id != null && id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

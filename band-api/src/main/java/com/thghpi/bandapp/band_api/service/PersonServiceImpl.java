@@ -105,10 +105,11 @@ public class PersonServiceImpl implements PersonService {
             }
         }
         return repository.saveAll(
+            Objects.requireNonNull(
             personDtos.stream()
                 .map(mapper::toEntity)
                 .toList()
-        ).stream()
+        )).stream()
             .map(mapper::toDto)
             .toList();
     }
@@ -135,10 +136,10 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public void deleteMany(List<PersonDto> personDtos) {
-        repository.deleteAll(
+        repository.deleteAll(Objects.requireNonNull(
             personDtos.stream()
                 .map(mapper::toEntity)
                 .toList()
-        );
+        ));
     }
 }

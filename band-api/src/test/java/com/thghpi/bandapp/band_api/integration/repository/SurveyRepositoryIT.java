@@ -10,6 +10,7 @@ import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
 import java.util.Set;
 import java.util.List;
+import java.util.Objects;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
@@ -55,11 +56,11 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
     @Test
     void shouldSaveSurvey() {
-        Survey survey = Survey.builder()
+        Survey survey = Objects.requireNonNull(Survey.builder()
             .question("Question ?")
             .scheduledEnd(LocalDate.now().plusMonths(1))
             .multiplicity(false)
-            .build();
+            .build());
         
         Survey saved = repository.save(survey);
 
@@ -70,14 +71,14 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFindSurveyById() {
-        Survey survey = Survey.builder()
+        Survey survey = Objects.requireNonNull(Survey.builder()
             .question("Question ?")
             .scheduledEnd(LocalDate.now().plusMonths(1))
             .multiplicity(false)
-            .build();
+            .build());
         
         Survey saved = repository.save(survey);
-        Long surveyId = saved.getId();
+        Long surveyId = Objects.requireNonNull(saved.getId());
 
         assertEquals(
             saved,
@@ -88,22 +89,24 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFindRecentSurveys() {
-        Person person1 = personRepository.save(Person.builder()
+        Person person1 = personRepository.save(Objects.requireNonNull(
+            Person.builder()
             .lastname("Stone")
             .firstname("Alice")
             .username("aliceStone")
             .email("alice.stone@exemple.com")
             .password("password1")
             .role(Role.MEMBER)
-            .build());
-        Person person2 = personRepository.save(Person.builder()
+            .build()));
+        Person person2 = personRepository.save(Objects.requireNonNull(
+            Person.builder()
             .lastname("Smith")
             .firstname("Bob")
             .username("bobSmith")
             .email("bob.smith@exemple.com")
             .password("password2")
             .role(Role.MEMBER)
-            .build());
+            .build()));
 
         Survey survey1 = Survey.builder()
             .question("Favorite color ?")
@@ -122,9 +125,9 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
             .build();
 
         List<Survey> surveys = List.of(
-            repository.save(survey1),
-            repository.save(survey2),
-            repository.save(survey3)
+            repository.save(Objects.requireNonNull(survey1)),
+            repository.save(Objects.requireNonNull(survey2)),
+            repository.save(Objects.requireNonNull(survey3))
         );
 
         Choice choice1 = Choice.builder()
@@ -137,8 +140,8 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
             .persons(Set.of(person1, person2))
             .survey(surveys.getFirst())
             .build();
-        choiceRepository.save(choice1);
-        choiceRepository.save(choice2);
+        choiceRepository.save(Objects.requireNonNull(choice1));
+        choiceRepository.save(Objects.requireNonNull(choice2));
 
         List<Survey> recentSurveys = repository.findRecent(LocalDate.now().minusMonths(1));
 
@@ -150,22 +153,24 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFindOldSurveys() {
-        Person person1 = personRepository.save(Person.builder()
+        Person person1 = personRepository.save(Objects.requireNonNull(
+            Person.builder()
             .lastname("Stone")
             .firstname("Alice")
             .username("aliceStone")
             .email("alice.stone@exemple.com")
             .password("password1")
             .role(Role.MEMBER)
-            .build());
-        Person person2 = personRepository.save(Person.builder()
+            .build()));
+        Person person2 = personRepository.save(Objects.requireNonNull(
+            Person.builder()
             .lastname("Smith")
             .firstname("Bob")
             .username("bobSmith")
             .email("bob.smith@exemple.com")
             .password("password2")
             .role(Role.MEMBER)
-            .build());
+            .build()));
 
         Survey survey1 = Survey.builder()
             .question("Favorite color ?")
@@ -184,9 +189,9 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
             .build();
 
         List<Survey> surveys = List.of(
-            repository.save(survey1),
-            repository.save(survey2),
-            repository.save(survey3)
+            repository.save(Objects.requireNonNull(survey1)),
+            repository.save(Objects.requireNonNull(survey2)),
+            repository.save(Objects.requireNonNull(survey3))
         );
 
         Choice choice1 = Choice.builder()
@@ -199,8 +204,8 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
             .persons(Set.of(person1, person2))
             .survey(surveys.getFirst())
             .build();
-        choiceRepository.save(choice1);
-        choiceRepository.save(choice2);
+        choiceRepository.save(Objects.requireNonNull(choice1));
+        choiceRepository.save(Objects.requireNonNull(choice2));
 
         Page<Survey> surveyPage = repository.findByScheduledEndBeforeOrderByScheduledEndDesc(
             LocalDate.now().minusMonths(1), PageRequest.of(0,5)

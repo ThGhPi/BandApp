@@ -1,12 +1,14 @@
 package com.thghpi.bandapp.band_api.service;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.dto.ChoiceDto;
 import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
-import java.util.List;
+import java.util.Set;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +16,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thghpi.bandapp.band_api.entity.Choice;
 
 
 @Service
@@ -42,14 +43,14 @@ public class ChoiceServiceImpl implements ChoiceService {
     /**
      * Retrieves all choices associated with a specific survey ID.
      * @param Long surveyId the ID of the survey for which to retrieve choices
-     * @return a list of ChoiceDto objects corresponding to the specified survey ID
+     * @return a set of ChoiceDto objects corresponding to the specified survey ID
      */
     @Override
-    public List<ChoiceDto> getBySurveyId(Long surveyId) {
+    public Set<ChoiceDto> getBySurveyId(Long surveyId) {
         return repository.findAllBySurveyId(surveyId)
             .stream()
             .map(mapper::toDto)
-            .toList();
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -68,19 +69,20 @@ public class ChoiceServiceImpl implements ChoiceService {
 
     /**
      * Saves multiple choices to the database.
-     * @param List<ChoiceDto> choiceDtos the list of data transfer objects containing the choice information to save
-     * @return the list of saved ChoiceDto objects
+     * @param Set<ChoiceDto> choiceDtos the list of data transfer objects containing the choice information to save
+     * @return the set of saved ChoiceDto objects
      */
     @Override
-    public List<ChoiceDto> saveAll(@NonNull List<ChoiceDto> choiceDtos) {
+    public Set<ChoiceDto> saveAll(@NonNull Set<ChoiceDto> choiceDtos) {
         return repository.saveAll(
+            Objects.requireNonNull(
             choiceDtos.stream()
                 .map(this::checkLinkComplement)
                 .map(mapper::toEntity)
-                .toList())
-            .stream()
+                .toList()
+            )).stream()
             .map(mapper::toDto)
-            .toList();
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -94,15 +96,16 @@ public class ChoiceServiceImpl implements ChoiceService {
 
     /**
      * Deletes multiple choices from the database.
-     * @param List<ChoiceDto> choiceDtos the list of data transfer objects containing the choice information to delete
+     * @param Set<ChoiceDto> choiceDtos the set of data transfer objects containing the choice information to delete
      */
     @Override
-    public void deleteAll(@NonNull List<ChoiceDto> choiceDtos) {
+    public void deleteAll(@NonNull Set<ChoiceDto> choiceDtos) {
         repository.deleteAll(
+            Objects.requireNonNull(
             choiceDtos.stream()
                 .map(mapper::toEntity)
                 .toList()
-        );
+        ));
     }
 
     /**

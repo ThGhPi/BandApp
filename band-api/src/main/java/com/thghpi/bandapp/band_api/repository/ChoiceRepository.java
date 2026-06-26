@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ChoiceRepository extends JpaRepository<Choice, Long> {
 
     List<Choice> findAllBySurveyId(Long surveyId);
+
 }
