@@ -1,4 +1,5 @@
 package com.thghpi.bandapp.band_api.controller.exception;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
             .body(new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
+                exception.getMessage()
+            )
+        );
+    }
+
+    /**
+     * Catch and handle the NotFoundException exceptions to generate error 404 Not Found http response
+     * @return a 404 NOT FOUND error with a message countaining the id and the entity type concerned
+     */
+    @ExceptionHandler(BadCUException.class)
+    public ResponseEntity<ErrorResponse> handleBadCreationOrUpdate(BadCUException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
                 exception.getMessage()
             )
         );

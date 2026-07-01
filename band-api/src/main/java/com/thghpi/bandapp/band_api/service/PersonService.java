@@ -17,6 +17,7 @@ public interface PersonService {
 
     // UPDATE methods
 	List<PersonDto> updateMany(List<PersonDto> personDtos);
+    void checkIdsForUpdate(List<PersonDto> personDtos);
 
     // DELETE methods
     void deleteOne(@NonNull Long id);

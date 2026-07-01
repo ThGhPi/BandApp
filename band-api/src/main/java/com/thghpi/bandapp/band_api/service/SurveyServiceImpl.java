@@ -1,5 +1,7 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
@@ -161,15 +163,15 @@ public class SurveyServiceImpl implements SurveyService {
             .toList();
         if (!ids.isEmpty()) {
             if (ids.contains(null)) {
-                throw new IllegalArgumentException(
-                    "Can't create closed surveys. The scheduled end date must be after today."
-                );
+                throw new BadCUException(new BadCUMessage(
+                    true, Survey.class, "that are already closed",
+                    null, "The scheduled end date must be after today"
+                ));
             }
-            throw new IllegalArgumentException(
-                "Can't update closed surveys : surveys with ids : " +
-                ids.toString() +
-                " are already closed."
-            );
+            throw new BadCUException(new BadCUMessage(
+                false, Survey.class, "that are already closed",
+                ids, "are already closed"
+            ));
         }
     }
 
@@ -182,43 +184,43 @@ public class SurveyServiceImpl implements SurveyService {
     public void checkSurveyClosure(Survey survey) {
         if (survey.isClosed()) {
             if (survey.getId() == null) {
-                throw new IllegalArgumentException(
-                    "Can't create closed survey. The scheduled end date must be after today."
-                );
+                throw new BadCUException(new BadCUMessage(
+                    true, Survey.class, "that are already closed",
+                    null, "The scheduled end date must be after today"
+                ));
             }
-            throw new IllegalArgumentException(
-                "Can't update closed survey : survey with id : " +
-                survey.getId() +
-                " is already closed."
-            );
+            throw new BadCUException(new BadCUMessage(
+                false, Survey.class, "that is already closed",
+                List.of(survey.getId()), " is already closed"
+            ));
         }
     }
 
     /**
      * Checks if the given survey has invalid data and throws an exception if it does.
      * @param SurveyDto survey the SurveyDto to check.
-     * @throws IllegalArgumentException if the survey question isn't conform (blank or exceeding 255 in length) with it's ID.
+     * @throws BadCUException if the survey question isn't conform (blank or exceeding 255 in length) with it's ID.
      */
     @Override
     public void checkSurveyData(SurveyDto survey) {
         if (survey.getQuestion().isBlank() || survey.getQuestion().length() > 255) {
             if (survey.getId() == null) {
-                throw new IllegalArgumentException(
-                    "Can't create survey with invalid data. The question must not be blank nor exceed 255 characters."
-                );
+                throw new BadCUException(new BadCUMessage(
+                    true, Survey.class, "with invalid data",
+                    null, "The question must not be blank nor exceed 255 characters"
+                ));
             }
-            throw new IllegalArgumentException(
-                "Can't update survey with invalid data : the question of survey with id : " +
-                survey.getId() +
-                " must not be blank nor exceed 255 characters."
-            );
+            throw new BadCUException(new BadCUMessage(
+                false, Survey.class, "with invalid data",
+                List.of(survey.getId()), "must not be blank nor exceed 255 characters"
+            ));
         }
     }
 
     /**
      * Checks if there are surveys with invalid data in the provided list.
      * @param List<SurveyDto> surveys the list of SurveyDto to check.
-     * @throws IllegalArgumentException if there are surveys with invalid data, with the list of invalid survey IDs.
+     * @throws BadCUException if there are surveys with invalid data, with the list of invalid survey IDs.
      */
     @Override
     public void checkSurveysData(List<SurveyDto> surveys) {
@@ -228,15 +230,15 @@ public class SurveyServiceImpl implements SurveyService {
             .toList();
         if (!ids.isEmpty()) {
             if (ids.contains(null)) {
-                throw new IllegalArgumentException(
-                    "Can't create surveys with invalid data. The question must not be blank nor exceed 255 characters."
-                );
+                throw new BadCUException(new BadCUMessage(
+                    true, Survey.class, "with invalid data",
+                    null, "The question must not be blank nor exceed 255 characters"
+                ));
             }
-            throw new IllegalArgumentException(
-                "Can't update surveyw with invalid data : the question of surveys with id : " +
-                ids.toString() +
-                " must not be blank nor exceed 255 characters."
-            );
+            throw new BadCUException(new BadCUMessage(
+                false, Survey.class, "with invalid data",
+                ids, "must not have their question blank nor exceeding 255 characters"
+            ));
         }
     }
 }

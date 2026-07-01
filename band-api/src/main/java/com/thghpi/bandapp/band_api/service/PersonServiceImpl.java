@@ -1,5 +1,7 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 import com.thghpi.bandapp.band_api.entity.Group;
 import com.thghpi.bandapp.band_api.entity.Person;
@@ -90,20 +92,10 @@ public class PersonServiceImpl implements PersonService {
      * saves them to the repository and returns the updated list of PersonDto.
      * @param personDtos the list of PersonDto with updates
      * @return the list of updated PersonDto if the update process is successful
-     * @throws IllegalArgumentException when encountering a person without id in the list
-     * @throws NotFoundException when encountering a person with an id not found in database
      */
     @Override
     public List<PersonDto> updateMany(List<PersonDto> personDtos) {
-        for (PersonDto personDto : personDtos) {
-            if (personDto.getId() == null) {
-                throw new IllegalArgumentException("Person ID must not be null for update");
-            } else if (!repository.existsById(
-                Objects.requireNonNull(personDto.getId())
-            )) {
-                throw new NotFoundException(new NotFoundMessage(personDto.getId(), Person.class));
-            }
-        }
+        checkIdsForUpdate(personDtos);
         return repository.saveAll(
             Objects.requireNonNull(
             personDtos.stream()
@@ -141,5 +133,31 @@ public class PersonServiceImpl implements PersonService {
                 .map(mapper::toEntity)
                 .toList()
         ));
+    }
+
+    /**
+     * A method to check the validity of alist of personDtos passed for update
+     * @throws BadCUException when encountering a person without id in the list or if one or several ids can't be found in database
+     */
+    @Override
+    public void checkIdsForUpdate(List<PersonDto> personDtos) {
+        for (PersonDto personDto : personDtos) {
+            if (personDto.getId() == null) {
+                throw new BadCUException(new BadCUMessage(
+                    false, Person.class, "without ID",
+                    null, null
+                ));
+            }
+        }
+        List<Long> ids = personDtos.stream()
+            .map(PersonDto::getId)
+            .filter(id -> !repository.existsById(Objects.requireNonNull(id)))
+            .toList();
+        if (!ids.isEmpty()) {
+            throw new BadCUException(new BadCUMessage(
+                false, Person.class, "with invalid IDs",
+                ids, "don't exist in database"
+            ));
+        }
     }
 }

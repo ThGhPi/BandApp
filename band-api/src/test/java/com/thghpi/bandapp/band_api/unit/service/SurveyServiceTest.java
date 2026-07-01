@@ -3,6 +3,7 @@ import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
 import java.util.List;
@@ -36,13 +37,13 @@ public class SurveyServiceTest {
     private SurveyServiceImpl service;
 
     /**
-     * Tests that the service correctly rejects attempts to create a single closed survey.
+     * Tests that the service correctly rejects attempts to create a single survey with invalid data.
      */
     @Test
-    void shouldRejectClosedSurvey() {
+    void shouldRejectInvalidSurvey() {
         SurveyDto closedSurveyDto = new SurveyDto(
             null,
-            "Question ?",
+            "",
             LocalDate.now().minusDays(1),
             true,
             null,
@@ -50,19 +51,25 @@ public class SurveyServiceTest {
             null
         );
         Survey entity = new Survey();
-        entity.setQuestion(closedSurveyDto.getQuestion());
+        entity.setQuestion("Question ?");
         entity.setScheduledEnd(LocalDate.now().minusDays(1));
         entity.setMultiplicity(true);
 
-        when(mapper.toEntity(closedSurveyDto))
-            .thenReturn(entity);
-        IllegalArgumentException thrown = assertThrows(
-            IllegalArgumentException.class,
-            () -> service.save(closedSurveyDto)
+        BadCUException thrown = assertThrows(
+            BadCUException.class,
+            () -> service.checkSurveyClosure(entity)
         );
         assertEquals(
-            "Can't create closed survey. The scheduled end date must be after today.",
+            "Can't create Survey that are already closed. The scheduled end date must be after today.",
             thrown.getMessage()
+        );
+        BadCUException thrown2 = assertThrows(
+            BadCUException.class,
+            () -> service.checkSurveyData(closedSurveyDto)
+        );
+        assertEquals(
+            "Can't create Survey with invalid data. The question must not be blank nor exceed 255 characters.",
+            thrown2.getMessage()
         );
     }
 
@@ -82,13 +89,15 @@ public class SurveyServiceTest {
     }
 
     /**
-     * Tests that the service correctly rejects attempts to update multiple closed surveys.
+     * Tests that the service correctly rejects attempts to update : 
+     * - multiple closed surveys,
+     * - multiple surveys with invalid data.
      */
     @Test
-    void shouldRejectClosedSurveys() {
+    void shouldRejectInvalidSurveys() {
         Survey closedSurvey1 = new Survey(
             2L,
-            "Question ?",
+            "Question QuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestion ?",
             LocalDate.now().minusDays(1),
             false,
             null
@@ -100,15 +109,43 @@ public class SurveyServiceTest {
             true,
             null
         );
-        IllegalArgumentException thrown = assertThrows(
-            IllegalArgumentException.class,
+        BadCUException thrown1 = assertThrows(
+            BadCUException.class,
             () -> service.checkSurveysClosure(
                 List.of(closedSurvey1, closedSurvey2)
             )
         );
         assertEquals(
-            "Can't update closed surveys : surveys with ids : [2, 1] are already closed.",
-            thrown.getMessage()
+            "Can't update Survey that are already closed : Survey with IDs : [2, 1] are already closed.",
+            thrown1.getMessage()
+        );
+        SurveyDto dto1 = new SurveyDto(
+            2L,
+            "Question QuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestion ?",
+            LocalDate.now().minusDays(1),
+            false,
+            null,
+            null,
+            null
+        );
+        SurveyDto dto2 = new SurveyDto(
+            1L,
+            "",
+            LocalDate.now().minusDays(1),
+            false,
+            null,
+            null,
+            null
+        );
+        BadCUException thrown2 = assertThrows(
+            BadCUException.class,
+            () -> service.checkSurveysData(
+                List.of(dto1, dto2)
+            )
+        );
+        assertEquals(
+            "Can't update Survey with invalid data : Survey with IDs : [2, 1] must not have their question blank nor exceeding 255 characters.",
+            thrown2.getMessage()
         );
     }
 

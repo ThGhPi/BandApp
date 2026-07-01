@@ -79,6 +79,8 @@ public class Choice {
     /**
      * Override equals methode of Object to ensure correct behavior
      * in the set for relationship with Survey
+     * @param Object o object to compare with the this instance
+     * @return true when o and the instance have the same attributes or when id is non null is the same and their of type Choice, otherwise false
      */
     @Override
     public boolean equals(Object o) {

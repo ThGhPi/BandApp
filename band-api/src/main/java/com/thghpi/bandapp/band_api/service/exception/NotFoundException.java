@@ -3,7 +3,8 @@ package com.thghpi.bandapp.band_api.service.exception;
 import java.lang.RuntimeException;
 
 /**
- * A class to be used for exception generation when an id is not found for a certain entity type
+ * A class to be used for exception generation
+ * when an id is not found for a certain entity type
  */
 public class NotFoundException extends RuntimeException {
 
