@@ -70,7 +70,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     void shouldCreateSurvey() throws Exception {
         ChoiceDto choice1 = new ChoiceDto(
             null,
-            "red",
+            "Red",
             null,
             null,
             null,
@@ -78,7 +78,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         );
         ChoiceDto choice2 = new ChoiceDto(
             null,
-            "blue",
+            "Blue",
             null,
             null,
             null,
@@ -86,7 +86,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         );
         ChoiceDto choice3 = new ChoiceDto(
             null,
-            "green",
+            "Green",
             null,
             null,
             null,
@@ -113,10 +113,11 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.totalVotes").value(0))
             .andExpect(jsonPath("$.closed").value(false))
             .andExpect(jsonPath("$.choices").isArray())
-            .andExpect(jsonPath("$.choices[0].title").value("Red"))
+            .andExpect(jsonPath("$.choices[0].id").value("1"))
             .andExpect(jsonPath("$.choices[0].votes").value(0))
-            .andExpect(jsonPath("$.choices[1].title").value("Blue"))
-            .andExpect(jsonPath("$.choices[2].title").value("Green"));
+            .andExpect(jsonPath("$.choices[1].id").value("2"))
+            .andExpect(jsonPath("$.choices[2].id").value("3"))
+            .andExpect(jsonPath("$.choices[3]").doesNotExist());
     }
 
     /**

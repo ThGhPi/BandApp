@@ -1,6 +1,7 @@
 package com.thghpi.bandapp.band_api.controller.exception;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
+import com.thghpi.bandapp.band_api.service.exception.InvalidPasswordException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +30,25 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Catch and handle the NotFoundException exceptions to generate error 404 Not Found http response
-     * @return a 404 NOT FOUND error with a message countaining the id and the entity type concerned
+     * Catch and handle the BadCUException exceptions to generate error 400 Bad Request http response
+     * @return a 400 BAD REQUEST error with a message countaining the id given by the user, the entity type concerned, and the reason for failure
      */
     @ExceptionHandler(BadCUException.class)
     public ResponseEntity<ErrorResponse> handleBadCreationOrUpdate(BadCUException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage()
+            )
+        );
+    }
+
+    /**
+     * Catch and handle the InvalidPasswordException exceptions to generate error 400 Bad Request http response
+     * @return a 400 BAD REQUEST error with a message indicating the password does not meet the required criteria
+     */
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPassword(InvalidPasswordException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .body(new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),

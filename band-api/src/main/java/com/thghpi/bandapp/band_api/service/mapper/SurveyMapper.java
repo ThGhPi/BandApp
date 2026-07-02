@@ -4,6 +4,8 @@ import com.thghpi.bandapp.band_api.entity.Survey;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(
     componentModel = "spring",
@@ -16,4 +18,10 @@ public interface SurveyMapper {
     SurveyDto toDto(Survey survey);
         
     Survey toEntity(SurveyDto survey);
+
+    @AfterMapping
+    default void linkChoices(@MappingTarget Survey survey) {
+        survey.getChoices()
+            .forEach(choice -> choice.setSurvey(survey));
+    }
 }

@@ -51,6 +51,9 @@ public class Survey {
     @Column(nullable = false)
     private Boolean multiplicity;
 
+    /**
+     * Liste des choix du sondage.
+     */
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
     @Builder.Default
@@ -76,5 +79,23 @@ public class Survey {
             .flatMap(choice -> choice.getPersons() != null ? choice.getPersons().stream() : Stream.empty())
             .distinct()
             .count();
+    }
+
+    /**
+     * Ajoute un choix au sondage et met à jour la relation bidirectionnelle.
+     * @param Choice choice le choix à ajouter
+     */
+    public void addChoice(Choice choice) {
+        choices.add(choice);
+        choice.setSurvey(this);
+    }
+
+    /**
+     * Supprime un choix du sondage et met à jour la relation bidirectionnelle.
+     * @param Choice choice le choix à supprimer
+     */
+    public void removeChoice(Choice choice) {
+        choices.remove(choice);
+        choice.setSurvey(null);
     }
 }

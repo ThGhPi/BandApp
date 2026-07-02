@@ -12,23 +12,33 @@ import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 
 import java.util.List;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import lombok.RequiredArgsConstructor;
-
+/**
+ * Service implementation for managing Person entities. 
+ * This class provides methods to perform CRUD operations on Person entities,
+ * including retrieving, updating, and deleting persons.
+ * It uses a PersonMapper to convert between Person and PersonDto ,
+ * and interacts with the PersonRepository and GroupRepository for database operations.
+ * PersonServiceImpl implements the PersonService interface, ensuring that all required methods are provided.
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
+    /** The PersonMapper instance to be injected */
     private final PersonMapper mapper;
+    /** The PersonRepository instance to be injected */
     private final PersonRepository repository;
+    /** The GroupRepository instance to be injected */
     private final GroupRepository groupRepository;
 
-    // CREATE methods are not needed for this entity as it needs authentication management and is handled by the AuthenticationServiceImpl.
+    // CREATE methods are not needed for this entity as it needs authentication management
+    // and is handled by the AuthenticationServiceImpl.
 
     // READ methods
 
@@ -74,7 +84,9 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<PersonDto> getByGroupId(@NonNull Long groupId) {
         Group group = groupRepository.findById(groupId)
-            .orElseThrow(() -> new NotFoundException(new NotFoundMessage(groupId, Group.class)));
+            .orElseThrow(() -> new NotFoundException(new NotFoundMessage(
+                groupId, Group.class
+            )));
         return repository.findByGroups(group)
             .stream()
             .map(mapper::toDto)
@@ -136,7 +148,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     /**
-     * A method to check the validity of alist of personDtos passed for update
+     * A method to check the validity of a list of personDtos passed for update
      * @throws BadCUException when encountering a person without id in the list or if one or several ids can't be found in database
      */
     @Override

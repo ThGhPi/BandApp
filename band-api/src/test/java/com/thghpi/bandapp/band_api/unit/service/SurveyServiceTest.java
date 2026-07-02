@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
@@ -28,11 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  */
 @ExtendWith(MockitoExtension.class)
 public class SurveyServiceTest {
+    /** The SurveyMapper instance to be mocked */
     @Mock
     private SurveyMapper mapper;
+    /** The SurveyRepository instance to be mocked */
     @Mock
     private SurveyRepository repository;
-
+    /** The SurveyServiceImpl instance to be tested, with mocked dependencies injected */
     @InjectMocks
     private SurveyServiceImpl service;
 
