@@ -1,9 +1,8 @@
 package com.thghpi.bandapp.band_api.dto;
 
-import org.springframework.lang.Nullable;
-
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import org.springframework.lang.Nullable;
 
 /**
  * DTO représentant un choix dans un sondage.

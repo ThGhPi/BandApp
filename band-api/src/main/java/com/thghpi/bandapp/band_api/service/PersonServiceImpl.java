@@ -156,7 +156,7 @@ public class PersonServiceImpl implements PersonService {
         for (PersonDto personDto : personDtos) {
             if (personDto.getId() == null) {
                 throw new BadCUException(new BadCUMessage(
-                    false, Person.class, "without ID",
+                    false, Person.class, "with null ID",
                     null, null
                 ));
             }
