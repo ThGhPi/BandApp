@@ -10,4 +10,8 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
     Optional<Person> findByUsername(String username); // for authentication
 
     Optional<Person> findByGroups(Group group);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
 }

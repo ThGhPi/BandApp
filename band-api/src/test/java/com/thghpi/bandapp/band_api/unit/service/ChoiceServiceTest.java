@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Tests for the ChoiceServiceImpl class, focusing on the checkLinkComplement method which ensures that a complement is set when a URL is provided without a complement.
+ * Tests for the {@link ChoiceServiceImpl} class, focusing on the checkLinkComplement method which ensures that a complement is set when a URL is provided without a complement.
  * This is important to maintain a consistent user experience, as choices with URLs should have a clear call-to-action for users to follow the link.
  */
 @ExtendWith(MockitoExtension.class)

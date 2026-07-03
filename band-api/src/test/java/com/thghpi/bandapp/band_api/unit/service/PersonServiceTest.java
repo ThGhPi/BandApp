@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
- * Unit tests for the PersonServiceImpl class, focusing on the validation of person ID logic.
+ * Unit tests for the {@link PersonServiceImpl} class, focusing on the validation of person ID logic.
  * These tests ensure that the service correctly identifies invalid person IDs during update operations
  * and that it properly handles attempts to update persons with null or non-existing IDs.
  * PersonServiceTest

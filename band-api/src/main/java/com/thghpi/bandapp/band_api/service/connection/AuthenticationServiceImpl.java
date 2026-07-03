@@ -1,6 +1,8 @@
 package com.thghpi.bandapp.band_api.service.connection;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.entity.Person;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 
@@ -39,11 +41,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public PersonDto save(PersonDto input) {
         passwordChecker.checkPasswordStrength(input.getTrialPassword());
+        checkUsernameAndEmailUsage(input.getUsername(), input.getEmail());
         Person person = mapper.toEntity(input);
         person.setPassword(passwordEncoder.encode(input.getTrialPassword()));
         return mapper.toDto(repository.save(person));
     }
 
+    
     /**
      * Authenticates a person using their username and password.
      * @param input the data transfer object containing the person's authentication information
@@ -103,7 +107,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         updatedPerson.setId(id);
         return mapper.toDto(repository.save(updatedPerson));
     }
-
+    
     /**
      * Deletes the authenticated person's account.
      * The method checks if the authenticated user's ID matches the ID provided
@@ -115,7 +119,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         checkAuthenticatedPerson(id);
         repository.deleteById(id);
     }
-
+    
     /**
      * Saves all provided person data transfer objects.
      * Checks the strength of each person's password using the PasswordChecker
@@ -130,7 +134,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         });
         return repository.saveAll(
             Objects.requireNonNull(
-            personDtos.stream()
+                personDtos.stream()
                 .map(dto -> {
                     Person person = mapper.toEntity(dto);
                     person.setPassword(passwordEncoder.encode(dto.getTrialPassword()));
@@ -151,7 +155,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Person person = repository.findByUsername(authentication.getName()).orElseThrow();
         if (!person.getId().equals(id)) {
-            throw new IllegalArgumentException("You can only update your own profile.");
+            throw new BadCUException(new BadCUMessage(
+                false, Person.class, null, List.of(id), "is not your current authenticated profile"
+            ));
+        }
+    }
+
+    /**
+     * Checks if the provided username and email are already in use.
+     * If either the username or email already exists in the repository,
+     * a BadCUException is thrown with an appropriate message.
+     * @param String username the username to check for uniqueness
+     * @param String email the email to check for uniqueness
+     * @throws BadCUException if the username or email already exists in the repository
+     */
+    private void checkUsernameAndEmailUsage(String username, String email) {
+        if (repository.existsByUsername(username)) {
+            throw new BadCUException(new BadCUMessage(
+                true, Person.class, null, null, "Username already exists"
+            ));
+        }
+        if (repository.existsByEmail(email)) {
+            throw new BadCUException(new BadCUMessage(
+                true, Person.class, null, null, "Email already exists"
+            ));
         }
     }
 }

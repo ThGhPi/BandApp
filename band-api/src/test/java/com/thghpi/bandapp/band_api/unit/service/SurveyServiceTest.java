@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
- * Unit tests for the SurveyServiceImpl class, focusing on the validation of survey closure logic.
+ * Unit tests for the {@link SurveyServiceImpl} class, focusing on the validation of survey closure logic.
  * These tests ensure that the service correctly identifies closed surveys based on their scheduled end date
  * and that it properly handles attempts to create or update closed surveys.
  * The tests cover both single survey validation and bulk survey validation scenarios.

@@ -22,6 +22,7 @@ import org.mapstruct.factory.Mappers;
  * The target for tests are the adaption brought to account for fields that need to be calculated (votes) or mapped from an id to an entity (surveyId to survey).
  */
 public class ChoiceMapperTest {
+    /** The ChoiceMapper instance used for testing. */
     private final ChoiceMapper mapper = Mappers.getMapper(ChoiceMapper.class);
 
     /**
