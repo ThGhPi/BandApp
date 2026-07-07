@@ -48,7 +48,8 @@ public interface PersonMapper {
         }
         
         return choices.stream()
-            .filter(choiceDto -> choiceDto != null && choiceDto.getId() != null)
+            .filter(choice -> choice != null)
+            .filter(choice -> choice.getId() != null)
             .map(Choice::getId)
             .collect(Collectors.toSet());
     }

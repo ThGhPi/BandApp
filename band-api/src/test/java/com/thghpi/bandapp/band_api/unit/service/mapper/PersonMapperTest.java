@@ -53,7 +53,7 @@ public class PersonMapperTest {
             "blank", Role.MEMBER,
             null, null, null,
             null, null,
-            Set.of(choice1, choice2, null)
+            Set.of(choice1, choice2)
         );
 
         PersonDto dto = mapper.toDto(person1);

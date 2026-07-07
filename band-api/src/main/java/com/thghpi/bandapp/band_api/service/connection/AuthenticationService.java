@@ -16,7 +16,7 @@ public interface AuthenticationService {
     PersonDto getAuthenticatedPerson();
 
     // UPDATE - authenticated person only
-    PersonDto changePassword(List<PersonDto> personList);
+    void changePassword(List<PersonDto> personList);
     PersonDto updateAuthenticatedPerson(Long id, PersonDto personDto);
 
     // DELETE - authenticated person only

@@ -3,27 +3,34 @@ import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
-import com.thghpi.bandapp.band_api.service.connection.AuthenticationService;
+import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.connection.JwtServiceImpl;
 import com.thghpi.bandapp.band_api.service.connection.PasswordChecker;
-import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
+import com.thghpi.bandapp.band_api.service.connection.AuthenticationServiceImpl;
+
+import org.mockito.Mock;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+
+import java.util.Objects;
 
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Unit tests for the {@link AuthenticationService} class.
  * AuthenticationServiceTest
  */
+@ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTest {
     @Mock
     private PersonMapper mapper;
@@ -38,71 +45,61 @@ public class AuthenticationServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
     @InjectMocks
-    private AuthenticationService authenticationService;
+    private AuthenticationServiceImpl service;
 
-    @Test
-    void shouldSaveValidNewPerson() {
-        PersonDto input = new PersonDto(
-            null, "John", "Doe", "johndoe",
-            "john.doe@example.com", "Password123!",
-            Role.MEMBER, null, null, null,
-            null, null, null
-        );
-        PersonDto output = new PersonDto(
+    private PersonDto input;
+    private PersonDto output = new PersonDto(
             1L, "John", "Doe", "johndoe",
             "john.doe@example.com", null,
             Role.MEMBER, null, null, null,
             null, null, null
         );
-        Person person = new Person(
+    private Person person = new Person(
+            null, "John", "Doe", "johndoe",
+            "john.doe@example.com", "encodedPassword",
+            Role.MEMBER, null, null, null,
+            null, null, null
+        );
+
+    /**
+     * Reset the input dto and the entituy person used by the tests.
+     */
+    @BeforeEach
+    void setUp() {
+        input = new PersonDto(
             null, "John", "Doe", "johndoe",
             "john.doe@example.com", "Password123!",
             Role.MEMBER, null, null, null,
             null, null, null
         );
+        person.setId(null);
+    }
+    
+    /**
+     * Test the comportment of save method when there are no problems
+     */
+    @Test
+    void shouldSaveValidNewPerson() {
         when(passwordEncoder.encode(input.getTrialPassword())).thenReturn("encodedPassword");
-        when(mapper.toDto(repository.save(person))).thenReturn(output);
+        when(mapper.toDto(repository.save(Objects.requireNonNull(person)))).thenReturn(output);
         when(mapper.toEntity(input)).thenReturn(person);
         when(repository.existsByUsername(input.getUsername())).thenReturn(false);
         when(repository.existsByEmail(input.getEmail())).thenReturn(false);
         doNothing().when(passwordChecker).checkPasswordStrength(input.getTrialPassword());
-
-        PersonDto result = assertDoesNotThrow(() -> authenticationService.save(input));
+        
+        PersonDto result = assertDoesNotThrow(() -> service.save(input));
         assertEquals(output, result);
     }
 
+    /**
+     * Test the comportment of save method when there are already existing username or email in database
+     */
     @Test
     void shouldRefuseRegistrationWithInvalidData() {
-        // TODO: Implement test for refusing registration with invalid data
-    }
-
-    @Test
-    void shouldChangePasswordForAuthenticatedPerson() {
-        // TODO: Implement test for changing password for authenticated person
-    }
-
-    @Test
-    void shouldRefusePasswordChangeForUnauthenticatedPerson() {
-        // TODO: Implement test for refusing password change for unauthenticated person
-    }
-
-    @Test
-    void shouldUpdateAuthenticatedPerson() {
-        // TODO: Implement test for updating authenticated person
-    }
-
-    @Test
-    void shouldRefuseUpdateForUnauthenticatedPerson() {
-        // TODO: Implement test for refusing update for unauthenticated person
-    }
-
-    @Test
-    void shouldDeleteAuthenticatedPerson() {
-        // TODO: Implement test for deleting authenticated person
-    }
-
-    @Test
-    void shouldRefuseDeletionForUnauthenticatedPerson() {
-        // TODO: Implement test for refusing deletion for unauthenticated person
+        when(repository.existsByUsername(input.getUsername())).thenReturn(true);
+        doNothing().when(passwordChecker).checkPasswordStrength(input.getTrialPassword());
+        
+        BadCUException thrown = assertThrows(BadCUException.class, () -> service.save(input));
+        assertEquals(thrown.getMessage(), "Can't create Person. Username already exists in database.");
     }
 }

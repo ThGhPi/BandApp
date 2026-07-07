@@ -105,23 +105,29 @@ public class PersonServiceTest {
             .thenReturn(false);
         when(repository.existsById(3L))
             .thenReturn(false);
+        for (int i = 0; i < 3; i++) {
+            personDtoList.get(i).setId((long) i + 1);
+        }
         BadCUException thrown = assertThrows(
             BadCUException.class,
             () -> service.checkIdsForUpdate(personDtoList)
         );
         assertEquals(
-            "Can't update Person with invalid IDs. Person with ID [1, 2, 3] don't exist in database.",
+            "Can't update Person with invalid IDs : Person with IDs [1, 2, 3] don't exist in database.",
             thrown.getMessage()
         );
     }
-
+    
     /**
      * Tests that the service correctly accepts a list of PersonDto instances with valid IDs.
-     */
-    @Test
-    void shouldAcceptValidPersonDtoList() {
-        when(repository.existsById(1L))
-            .thenReturn(true);
+    */
+   @Test
+   void shouldAcceptValidPersonDtoList() {       
+       for (int i = 0; i < 3; i++) {
+           personDtoList.get(i).setId((long) i + 1);
+       }
+       when(repository.existsById(1L))
+       .thenReturn(true);
         when(repository.existsById(2L))
             .thenReturn(true);
         when(repository.existsById(3L))

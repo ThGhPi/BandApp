@@ -4,12 +4,17 @@ import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.config.properties.JwtProperties;
 import com.thghpi.bandapp.band_api.config.security.AppUserDetailsService;
+import com.thghpi.bandapp.band_api.service.connection.JwtService;
 import com.thghpi.bandapp.band_api.service.connection.JwtServiceImpl;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 
@@ -52,7 +58,11 @@ public class JwtServiceTest {
             "jy19b6M7BTKnaL38W92vMuldkwW7gREFc+W+hgNq7fOdd0EzphdgnAIxXI49TthIVeOlGhg+DvUC2ZHn7abzGg",
             3_600_000L
         );
-        jwtService = new JwtServiceImpl(jwtProperties);
+        Clock fixedClock = Clock.fixed(
+            Instant.parse("2026-07-03T12:00:00Z"),
+            ZoneOffset.UTC
+        );
+        jwtService = new JwtServiceImpl(jwtProperties, fixedClock);
 
         Person person1 = new Person(
             1L, "Taylor", "Alice",
@@ -66,12 +76,14 @@ public class JwtServiceTest {
             .thenReturn(Optional.of(person1));
         AppUserDetailsService userDetailsService = new AppUserDetailsService(repository);
         userDetails = userDetailsService.loadUserByUsername("aliceT");
+        Instant now = Instant.now(fixedClock);
+        Instant end = now.plusMillis(3_600_000);
         token = Jwts
                 .builder()
                 .subject(userDetails.getUsername())
                 .audience().add(userDetails.getAuthorities().toString()).and()
-                .expiration(new Date(System.currentTimeMillis() + 3_600_000))
-                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(Date.from(end))
+                .issuedAt(Date.from(now))
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.secretKey())), Jwts.SIG.HS512)
                 .compact();
     }
@@ -106,18 +118,20 @@ public class JwtServiceTest {
             "jy19b6M7BTKnaL38W92vMuldkwW7gREFc+W+hgNq7fOdd0EzphdgnAIxXI49TthIVeOlGhg+DvUC2ZHn7abzGg",
             3_600_000L
         );
+        Clock clock = Clock.fixed(
+            Instant.parse("2026-07-03T12:00:00Z"),
+            ZoneOffset.UTC
+        );
+        Date now = Date.from(Instant.now(clock).minusMillis(5000));
+        Date expiredDate = Date.from(Instant.now(clock).minusMillis(3000));
+
         String testToken = Jwts.builder()
         .subject(userDetails.getUsername())
                 .audience().add(userDetails.getAuthorities().toString()).and()
-                .expiration(new Date(System.currentTimeMillis() + 3000))
-                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(expiredDate)
+                .issuedAt(now)
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.secretKey())), Jwts.SIG.HS512)
                 .compact();
-        try {
-            Thread.sleep(4000); // Wait for 4 seconds to ensure the token is expired
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        assertFalse(jwtService.isTokenValid(testToken, userDetails));
+        assertThrows(ExpiredJwtException.class, () -> jwtService.isTokenValid(testToken, userDetails));
     }
 }

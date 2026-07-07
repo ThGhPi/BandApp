@@ -23,13 +23,13 @@ public class BadCUException extends RuntimeException {
      */
     public static String writeMessage(BadCUMessage message) {
         String writtenMessage = "Can't " +
-            (message.creation() ? "create" : "update") +
-            " " + message.entity().getSimpleName() +
-            " " + message.reason();
+            (message.creation() ? "create" : "update")
+            + " " + message.entity().getSimpleName()
+            + (message.reason() == null ? "" : " " + message.reason());
         if (message.ids() != null) {
             writtenMessage = writtenMessage.concat(
                 " : " + message.entity().getSimpleName()
-                + " with IDs : " + message.ids().toString()
+                + " with IDs " + message.ids().toString()
                 + " " + message.details()
             );
         } else if (message.details() != null) {

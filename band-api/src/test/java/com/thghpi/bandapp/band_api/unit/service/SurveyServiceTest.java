@@ -117,7 +117,7 @@ public class SurveyServiceTest {
             )
         );
         assertEquals(
-            "Can't update Survey that are already closed : Survey with IDs : [2, 1] are already closed.",
+            "Can't update Survey that are already closed : Survey with IDs [2, 1] are already closed.",
             thrown1.getMessage()
         );
         SurveyDto dto1 = new SurveyDto(
@@ -145,7 +145,7 @@ public class SurveyServiceTest {
             )
         );
         assertEquals(
-            "Can't update Survey with invalid data : Survey with IDs : [2, 1] must not have their question blank nor exceeding 255 characters.",
+            "Can't update Survey with invalid data : Survey with IDs [2, 1] must not have their question blank nor exceeding 255 characters.",
             thrown2.getMessage()
         );
     }

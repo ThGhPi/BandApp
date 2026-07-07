@@ -1,10 +1,10 @@
 package com.thghpi.bandapp.band_api.service.connection;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.entity.Person;
-import com.thghpi.bandapp.band_api.service.exception.BadCUException;
-import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
-import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
+import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +19,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+/**
+ * AuthenticationServiceImpl
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -41,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public PersonDto save(PersonDto input) {
         passwordChecker.checkPasswordStrength(input.getTrialPassword());
-        checkUsernameAndEmailUsage(input.getUsername(), input.getEmail());
+        checkUsernameAndEmailUsage(input.getUsername(), input.getEmail(), true);
         Person person = mapper.toEntity(input);
         person.setPassword(passwordEncoder.encode(input.getTrialPassword()));
         return mapper.toDto(repository.save(person));
@@ -72,13 +75,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return the updated person's data transfer object
      */
     @Override
-    public PersonDto changePassword(List<PersonDto> personList) {
+    public void changePassword(List<PersonDto> personList) {
         authenticate(personList.getFirst());
         Person person = mapper.toEntity(getAuthenticatedPerson());
         String newPassword = personList.getLast().getTrialPassword();
         passwordChecker.checkPasswordStrength(newPassword);
         person.setPassword(passwordEncoder.encode(newPassword));
-        return mapper.toDto(repository.save(person));
+        repository.save(person);
     }
 
     /**
@@ -103,6 +106,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public PersonDto updateAuthenticatedPerson(Long id, PersonDto personDto) {
         checkAuthenticatedPerson(id);
+        checkUsernameAndEmailUsage(
+            personDto.getUsername(), personDto.getEmail(), false
+        );
         Person updatedPerson = mapper.toEntity(personDto);
         updatedPerson.setId(id);
         return mapper.toDto(repository.save(updatedPerson));
@@ -169,15 +175,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @param String email the email to check for uniqueness
      * @throws BadCUException if the username or email already exists in the repository
      */
-    private void checkUsernameAndEmailUsage(String username, String email) {
+    private void checkUsernameAndEmailUsage(String username, String email, Boolean creation) {
         if (repository.existsByUsername(username)) {
             throw new BadCUException(new BadCUMessage(
-                true, Person.class, null, null, "Username already exists"
+                creation, Person.class, null, null, "Username already exists in database"
             ));
         }
         if (repository.existsByEmail(email)) {
             throw new BadCUException(new BadCUMessage(
-                true, Person.class, null, null, "Email already exists"
+                creation, Person.class, null, null, "Email already exists in database"
             ));
         }
     }

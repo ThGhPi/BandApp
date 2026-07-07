@@ -67,13 +67,12 @@ public class AuthenticationController {
      * Takes the body of the request as a list of PersonDto for endpoint band-api/auth/me,
      * and returns the PersonDto with the user information when the password renewal process is successful.
      * @param personList the list of PersonDto for password renewal, taken from the body of the request.
-     * @return the updated PersonDto if the password renewal process is successful, otherwise an error response.
      */
     @PutMapping("/me")
     public ResponseEntity<PersonDto> renewPassword(@RequestBody List<PersonDto> personList) {
-        PersonDto currentPerson = authService.changePassword(personList);
+        authService.changePassword(personList);
         
-        return ResponseEntity.ok(currentPerson);
+        return ResponseEntity.noContent().build();
     }
     
     /**

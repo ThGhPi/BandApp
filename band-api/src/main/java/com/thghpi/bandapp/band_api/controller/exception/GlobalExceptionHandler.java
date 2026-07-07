@@ -1,6 +1,9 @@
 package com.thghpi.bandapp.band_api.controller.exception;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
+
+import io.jsonwebtoken.ExpiredJwtException;
+
 import com.thghpi.bandapp.band_api.service.exception.InvalidPasswordException;
 
 import org.springframework.http.HttpStatus;
@@ -57,4 +60,12 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwt(ExpiredJwtException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
+            .body(new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                exception.getMessage()
+            ));
+    }
 }

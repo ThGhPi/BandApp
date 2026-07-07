@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
+import java.time.Clock;
+import java.time.Instant;
+
 import javax.crypto.SecretKey;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,10 @@ public class JwtServiceImpl implements JwtService {
      * injected from the application configuration.
      */
     private final JwtProperties jwtProperties;
+    /**
+     * The injected central clock from {@link TimeConfiguration}
+     */
+    private final Clock clock;
 
     /**
      * Method to generate a JWT token for the given user details without any extra claims.
@@ -62,13 +69,15 @@ public class JwtServiceImpl implements JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+        final Instant now = Instant.now(clock);
+        final Instant expirationTime = now.plusMillis(getJwtExpiration());
         return Jwts
                 .builder()
                 .subject(userDetails.getUsername())
                 .audience().add(userDetails.getAuthorities().toString()).and()
                 .claims(extraClaims)
-                .expiration(new Date(System.currentTimeMillis() + getJwtExpiration()))
-                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(Date.from(expirationTime))
+                .issuedAt(Date.from(now))
                 .signWith(getSignInKey(), getSigningAlgorithm())
                 .compact();
     }
@@ -99,7 +108,7 @@ public class JwtServiceImpl implements JwtService {
      * @return true if the token is expired, false otherwise
      */
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(Date.from(Instant.now(clock)));
     }
     
     /**
@@ -132,6 +141,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts
                 .parser()
                 .verifyWith(getSignInKey())
+                .clock(() -> Date.from(Instant.now(clock)))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
