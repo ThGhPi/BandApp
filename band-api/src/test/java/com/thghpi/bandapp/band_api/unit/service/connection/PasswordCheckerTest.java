@@ -1,6 +1,6 @@
 package com.thghpi.bandapp.band_api.unit.service.connection;
 import com.thghpi.bandapp.band_api.service.connection.PasswordChecker;
-import com.thghpi.bandapp.band_api.config.properties.PasswordProperties;
+import com.thghpi.bandapp.band_api.configuration.properties.PasswordProperties;
 import com.thghpi.bandapp.band_api.service.exception.InvalidPasswordException;
 
 import org.junit.jupiter.api.Test;

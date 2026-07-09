@@ -1,6 +1,6 @@
-package com.thghpi.bandapp.band_api.config.security;
-import com.thghpi.bandapp.band_api.config.properties.CorsProperties;
-import com.thghpi.bandapp.band_api.config.properties.PasswordEncoderProperties;
+package com.thghpi.bandapp.band_api.configuration.security;
+import com.thghpi.bandapp.band_api.configuration.properties.CorsProperties;
+import com.thghpi.bandapp.band_api.configuration.properties.PasswordEncoderProperties;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

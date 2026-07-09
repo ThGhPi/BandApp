@@ -4,9 +4,9 @@ import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
-import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.connection.JwtServiceImpl;
 import com.thghpi.bandapp.band_api.service.connection.PasswordChecker;
+import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 import com.thghpi.bandapp.band_api.service.connection.AuthenticationServiceImpl;
 
 import org.mockito.Mock;
@@ -99,7 +99,7 @@ public class AuthenticationServiceTest {
         when(repository.existsByUsername(input.getUsername())).thenReturn(true);
         doNothing().when(passwordChecker).checkPasswordStrength(input.getTrialPassword());
         
-        BadCUException thrown = assertThrows(BadCUException.class, () -> service.save(input));
+        ExistenceConflictException thrown = assertThrows(ExistenceConflictException.class, () -> service.save(input));
         assertEquals(thrown.getMessage(), "Can't create Person. Username already exists in database.");
     }
 }

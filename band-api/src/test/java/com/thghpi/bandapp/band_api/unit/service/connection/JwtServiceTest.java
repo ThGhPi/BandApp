@@ -2,8 +2,8 @@ package com.thghpi.bandapp.band_api.unit.service.connection;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
-import com.thghpi.bandapp.band_api.config.properties.JwtProperties;
-import com.thghpi.bandapp.band_api.config.security.AppUserDetailsService;
+import com.thghpi.bandapp.band_api.configuration.properties.JwtProperties;
+import com.thghpi.bandapp.band_api.configuration.security.AppUserDetailsService;
 import com.thghpi.bandapp.band_api.service.connection.JwtService;
 import com.thghpi.bandapp.band_api.service.connection.JwtServiceImpl;
 

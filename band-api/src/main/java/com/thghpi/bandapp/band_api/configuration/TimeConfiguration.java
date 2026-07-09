@@ -1,7 +1,8 @@
-package com.thghpi.bandapp.band_api.config;
+package com.thghpi.bandapp.band_api.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import java.time.Clock;
 
@@ -17,6 +18,7 @@ public class TimeConfiguration {
      * @return a clock sybchronized with the System time
      */
     @Bean
+    @ConditionalOnMissingBean(Clock.class)
     public Clock clock() {
         return Clock.systemUTC();
     }

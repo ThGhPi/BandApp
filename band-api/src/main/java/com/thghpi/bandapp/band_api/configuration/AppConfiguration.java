@@ -1,5 +1,5 @@
-package com.thghpi.bandapp.band_api.config;
-import com.thghpi.bandapp.band_api.config.properties.*;
+package com.thghpi.bandapp.band_api.configuration;
+import com.thghpi.bandapp.band_api.configuration.properties.*;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -15,7 +15,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+/**
+ * Controller class for handling person-related requests,
+ * including retrieving, updating, and deleting persons.
+ * It uses the PersonServiceImpl to perform the necessary operations and returns appropriate responses.
+ * PersonController
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/band-api/persons")

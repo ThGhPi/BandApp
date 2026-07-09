@@ -5,6 +5,8 @@ import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictMessage;
+import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 
 import java.util.List;
 import java.util.Objects;
@@ -137,6 +139,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public List<PersonDto> saveAll(List<PersonDto> personDtos) {
         personDtos.forEach(dto -> {
             passwordChecker.checkPasswordStrength(dto.getTrialPassword());
+            checkUsernameAndEmailUsage(dto.getUsername(), dto.getEmail(), true);
         });
         return repository.saveAll(
             Objects.requireNonNull(
@@ -156,8 +159,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Verifies that the authenticated person's ID matches the provided ID.
      * If the IDs do not match, an IllegalArgumentException is thrown.
      * @param Long id the ID to verify against the authenticated person's ID
+     * @throws BadCUException if the authenticated person's ID does not match the provided ID
      */
-    private void checkAuthenticatedPerson(Long id) {
+    @Override
+    public void checkAuthenticatedPerson(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Person person = repository.findByUsername(authentication.getName()).orElseThrow();
         if (!person.getId().equals(id)) {
@@ -175,14 +180,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @param String email the email to check for uniqueness
      * @throws BadCUException if the username or email already exists in the repository
      */
-    private void checkUsernameAndEmailUsage(String username, String email, Boolean creation) {
+    @Override
+    public void checkUsernameAndEmailUsage(String username, String email, Boolean creation) {
         if (repository.existsByUsername(username)) {
-            throw new BadCUException(new BadCUMessage(
+            throw new ExistenceConflictException(new ExistenceConflictMessage(
                 creation, Person.class, null, null, "Username already exists in database"
             ));
         }
         if (repository.existsByEmail(email)) {
-            throw new BadCUException(new BadCUMessage(
+            throw new ExistenceConflictException(new ExistenceConflictMessage(
                 creation, Person.class, null, null, "Email already exists in database"
             ));
         }

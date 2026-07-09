@@ -31,22 +31,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @throws Exception if any request to database or any assertion fail.
  */
 public class SurveyRepositoryIT extends AbstractIntegrationTest {
-
-    /**
-     * PersonRepository instance to test relationship between survey, choice and person
-     */
+    /** PersonRepository instance to test relationship between survey, choice and person */
     @Autowired
     PersonRepository personRepository;
-
-    /**
-     * ChoiceRepository instance to test relationship with survey and person
-     */
+    /** ChoiceRepository instance to test relationship with survey and person */
     @Autowired
     ChoiceRepository choiceRepository;
-
+    /** SurveyRepository instance to test survey-related operations */
     @Autowired
     private SurveyRepository repository;
 
+    /** Clean the database before each test */
     @BeforeEach
     void cleanDatabase() {
         choiceRepository.deleteAll();
@@ -54,6 +49,9 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
         personRepository.deleteAll();
     }
 
+    /**
+     * Test that a survey can be saved
+     */
     @Test
     void shouldSaveSurvey() {
         Survey survey = Objects.requireNonNull(Survey.builder()
@@ -65,10 +63,11 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
         Survey saved = repository.save(survey);
 
         assertNotNull(saved.getId());
-
-        
     }
 
+    /**
+     * Test that a survey can be found by its id
+     */
     @Test
     void shouldFindSurveyById() {
         Survey survey = Objects.requireNonNull(Survey.builder()
@@ -87,6 +86,9 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
         );
     }
 
+    /**
+     * Test that recent surveys can be found
+     */
     @Test
     void shouldFindRecentSurveys() {
         Person person1 = personRepository.save(Objects.requireNonNull(
@@ -151,6 +153,9 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
         assertEquals(recentSurveys.getLast(), surveys.get(1));
     }
 
+    /**
+     * Test that old surveys can be found
+     */
     @Test
     void shouldFindOldSurveys() {
         Person person1 = personRepository.save(Objects.requireNonNull(

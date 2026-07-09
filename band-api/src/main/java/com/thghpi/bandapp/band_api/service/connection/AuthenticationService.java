@@ -22,4 +22,8 @@ public interface AuthenticationService {
     // DELETE - authenticated person only
     void deleteAuthenticatedPerson(@NonNull Long id);
 
+    // CHECK - for registration and update
+    void checkAuthenticatedPerson(Long id);
+    void checkUsernameAndEmailUsage(String username, String email, Boolean creation);
+
 }

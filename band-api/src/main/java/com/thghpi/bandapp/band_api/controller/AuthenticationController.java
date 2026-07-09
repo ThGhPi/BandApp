@@ -4,6 +4,7 @@ import com.thghpi.bandapp.band_api.dto.LoginResponse;
 import com.thghpi.bandapp.band_api.service.connection.AuthenticationServiceImpl;
 
 import org.springframework.lang.NonNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,11 +13,18 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controller class for handling authentication-related requests,
+ * including user registration, login, password renewal, and profile management.
+ * It uses the AuthenticationServiceImpl to perform the necessary operations and returns appropriate responses.
+ * AuthenticationController
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/band-api/auth")
@@ -30,9 +38,12 @@ public class AuthenticationController {
      * @return the registered PersonDto if the registration process is successful, otherwise an error response.
      */
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<PersonDto> register(@RequestBody PersonDto toRegisterPersonDto) {
         PersonDto registeredPersonDto = authService.save(toRegisterPersonDto);
-        return ResponseEntity.ok(registeredPersonDto);
+        return ResponseEntity
+            .status(HttpStatus.CREATED.value())
+            .body(registeredPersonDto);
     }
 
     /**
@@ -43,9 +54,12 @@ public class AuthenticationController {
      * @return the list of registered PersonDto if the registration process is successful, otherwise an error response.
      */
     @PostMapping("/register/many")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<List<PersonDto>> registerMany(@RequestBody List<PersonDto> personDtos) {
         List<PersonDto> registeredPersons = authService.saveAll(personDtos);
-        return ResponseEntity.ok(registeredPersons);
+        return ResponseEntity
+            .status(HttpStatus.CREATED.value())
+            .body(registeredPersons);
     }
     
 
@@ -67,6 +81,7 @@ public class AuthenticationController {
      * Takes the body of the request as a list of PersonDto for endpoint band-api/auth/me,
      * and returns the PersonDto with the user information when the password renewal process is successful.
      * @param personList the list of PersonDto for password renewal, taken from the body of the request.
+     * @return a no content response if the password renewal process is successful, otherwise an error response.
      */
     @PutMapping("/me")
     public ResponseEntity<PersonDto> renewPassword(@RequestBody List<PersonDto> personList) {

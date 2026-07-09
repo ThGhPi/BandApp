@@ -1,4 +1,4 @@
-package com.thghpi.bandapp.band_api.config.security;
+package com.thghpi.bandapp.band_api.configuration.security;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 
 import org.springframework.stereotype.Service;

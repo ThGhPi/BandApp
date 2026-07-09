@@ -1,5 +1,5 @@
 package com.thghpi.bandapp.band_api.service.connection;
-import com.thghpi.bandapp.band_api.config.properties.PasswordProperties;
+import com.thghpi.bandapp.band_api.configuration.properties.PasswordProperties;
 import com.thghpi.bandapp.band_api.service.exception.InvalidPasswordException;
 
 import java.util.regex.Pattern;

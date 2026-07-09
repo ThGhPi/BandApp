@@ -5,6 +5,12 @@ import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
+import java.util.Set;
+import java.util.List;
+import java.util.Objects;
+import java.time.LocalDate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,12 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
-import java.util.Set;
-import java.util.List;
-import java.util.Objects;
-import java.time.LocalDate;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Integration tests for the SurveyController class.
@@ -69,36 +69,21 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldCreateSurvey() throws Exception {
         ChoiceDto choice1 = new ChoiceDto(
-            null,
-            "Red",
-            null,
-            null,
-            null,
-            null
+            null, "Red", null,
+            null, null, null
         );
         ChoiceDto choice2 = new ChoiceDto(
-            null,
-            "Blue",
-            null,
-            null,
-            null,
-            null
+            null, "Blue", null,
+            null, null, null
         );
         ChoiceDto choice3 = new ChoiceDto(
-            null,
-            "Green",
-            null,
-            null,
-            null,
-            null
+            null, "Green", null,
+            null, null, null
         );
         SurveyDto dto1 = new SurveyDto(
-            null,
-            "Favorite color ?",
+            null, "Favorite color ?",
             LocalDate.now().plusMonths(1),
-            false,
-            null,
-            null,
+            false, null, null,
             Set.of(choice1, choice2, choice3)
         );
 
@@ -129,36 +114,21 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldNotCreateSurveyWithInvalidData() throws Exception {
         ChoiceDto choice1 = new ChoiceDto(
-            null,
-            "red",
-            null,
-            null,
-            null,
-            null
+            null, "red", null,
+            null, null, null
         );
         ChoiceDto choice2 = new ChoiceDto(
-            null,
-            "blue",
-            null,
-            null,
-            null,
-            null
+            null, "blue", null,
+            null, null, null
         );
         ChoiceDto choice3 = new ChoiceDto(
-            null,
-            "green",
-            null,
-            null,
-            null,
-            null
+            null, "green", null,
+            null, null, null
         );
         SurveyDto dto = new SurveyDto(
-            null,
-            "",
+            null, "",
             LocalDate.now().plusMonths(1),
-            false,
-            null,
-            null,
+            false, null, null,
             Set.of(choice1, choice2, choice3)
         );
         String jsonSurvey1 = Objects.requireNonNull(objectMapper.writeValueAsString(dto));
@@ -364,7 +334,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/band-api/surveys/9999"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message")
-                .value("Survey with ID 9999 not found"));
+                .value("Survey with ID 9999 not found."));
     }
 
     /**
@@ -384,36 +354,21 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         survey = repository.save(Objects.requireNonNull(survey));
 
         ChoiceDto choice1 = new ChoiceDto(
-            null,
-            "Dog",
-            null,
-            null,
-            survey.getId(),
-            null
+            null, "Dog", null,
+            null, survey.getId(), null
         );
         ChoiceDto choice2 = new ChoiceDto(
-            null,
-            "Cat",
-            null,
-            null,
-            survey.getId(),
-            null
+            null, "Cat", null,
+            null, survey.getId(), null
         );
         ChoiceDto choice3 = new ChoiceDto(
-            null,
-            "Fish",
-            null,
-            null,
-            survey.getId(),
-            null
+            null, "Fish", null,
+            null, survey.getId(), null
         );
         SurveyDto dtoForUpdate = new SurveyDto(
-            null,
-            "Favorite pet ?",
+            null, "Favorite pet ?",
             LocalDate.now().plusMonths(2),
-            true,
-            null,
-            null,
+            true, null, null,
             Set.of(choice1, choice2, choice3)
         );
         String jsonForUpdate = Objects.requireNonNull(objectMapper.writeValueAsString(dtoForUpdate));
