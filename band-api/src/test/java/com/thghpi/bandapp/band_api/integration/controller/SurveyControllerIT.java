@@ -34,21 +34,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
  */
 @AutoConfigureMockMvc
 public class SurveyControllerIT extends AbstractIntegrationTest {
-    /**
-     * MockMvc instance used to perform HTTP requests in the tests.
-     */
+    /** MockMvc instance used to perform HTTP requests in the tests. */
     @Autowired
     private MockMvc mockMvc;
-
-    /**
-     * To generate proper json for testing creation and update.
-     */
+    /** To generate proper json for testing creation and update. */
     @Autowired
     ObjectMapper objectMapper;
-
-    /**
-     * SurveyRepository instance used to interact with the survey data in the tests.
-     */
+    /** SurveyRepository instance used to interact with the survey data in the tests. */
     @Autowired
     private SurveyRepository repository;
 

@@ -6,6 +6,7 @@ import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictMessage;
+import com.thghpi.bandapp.band_api.service.exception.FailedPasswordChangeException;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 
 import java.util.List;
@@ -78,12 +79,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public void changePassword(List<PersonDto> personList) {
-        authenticate(personList.getFirst());
         Person person = mapper.toEntity(getAuthenticatedPerson());
-        String newPassword = personList.getLast().getTrialPassword();
-        passwordChecker.checkPasswordStrength(newPassword);
-        person.setPassword(passwordEncoder.encode(newPassword));
-        repository.save(person);
+        if (passwordEncoder.matches(
+                personList.getFirst().getTrialPassword(),
+                person.getPassword()
+        )) {
+            final String newPassword = personList.getLast().getTrialPassword();
+            passwordChecker.checkPasswordStrength(newPassword);
+            person.setPassword(passwordEncoder.encode(newPassword));
+            repository.save(person);
+        }
+        throw new FailedPasswordChangeException("Couldn't update password. There is a mismatch.");
     }
 
     /**

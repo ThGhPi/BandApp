@@ -79,12 +79,13 @@ public class AuthenticationController {
 
     /**
      * Takes the body of the request as a list of PersonDto for endpoint band-api/auth/me,
-     * and returns the PersonDto with the user information when the password renewal process is successful.
+     * and returns an no content ResponseEntity when the password renewal process is successful.
      * @param personList the list of PersonDto for password renewal, taken from the body of the request.
-     * @return a no content response if the password renewal process is successful, otherwise an error response.
+     * @return a no content ResponseEntity if the password renewal process is successful, otherwise an error response.
      */
     @PutMapping("/me")
-    public ResponseEntity<PersonDto> renewPassword(@RequestBody List<PersonDto> personList) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> renewPassword(@RequestBody List<PersonDto> personList) {
         authService.changePassword(personList);
         
         return ResponseEntity.noContent().build();

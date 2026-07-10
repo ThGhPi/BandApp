@@ -1,5 +1,8 @@
 package com.thghpi.bandapp.band_api.service.exception;
 
+/**
+ * ExistenceConflictException for managing conflict error between existing and new entities
+ */
 public class ExistenceConflictException extends RuntimeException {
 
     /**

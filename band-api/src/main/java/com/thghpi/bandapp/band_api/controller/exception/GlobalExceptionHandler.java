@@ -1,11 +1,7 @@
 package com.thghpi.bandapp.band_api.controller.exception;
-import com.thghpi.bandapp.band_api.service.exception.BadCUException;
-import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
+import com.thghpi.bandapp.band_api.service.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
-
-import com.thghpi.bandapp.band_api.service.exception.InvalidPasswordException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +73,20 @@ public class GlobalExceptionHandler {
                 exception.getMessage()
             )
         );
+    }
+
+    /**
+     * Catch and handle the ExpiredJwtException exceptions to generate error 403 Forbidden http response
+     * @param FailedPasswordChangeException exception the exception thrown when the password change failed to a wrong password
+     * @return a 403 FORBIDDEN error with a message indicating the password provided did not fit
+     */
+    @ExceptionHandler(FailedPasswordChangeException.class)
+    public ResponseEntity<ErrorResponse> handleFailedPasswordChange(FailedPasswordChangeException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
+            .body(new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                exception.getMessage()
+            ));
     }
 
     /**

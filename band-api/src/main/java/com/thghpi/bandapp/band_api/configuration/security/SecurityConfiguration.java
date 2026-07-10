@@ -66,7 +66,7 @@ public class SecurityConfiguration {
                             "/v3/api-docs/**",
                             "/swagger-ui.html"
                         ).permitAll()
-
+                        .requestMatchers("/band-api/auth/me/**").authenticated()
                         .requestMatchers("/band-api/**").permitAll() // TODO: remove this line to
                                                                 // secure all API endpoints,
                                                                 // currently allowing all for
