@@ -377,7 +377,8 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.closed").value(false))
             .andExpect(jsonPath("$.choices").isArray())
             .andDo(print())
-            .andExpect(jsonPath("$.choices[*].title").value(containsInAnyOrder("Dog", "Cat", "Fish")))
-            .andExpect(jsonPath("$.choices[0].votes").value(0));
+            .andExpect(jsonPath("$.choices[*].title").value(
+                Objects.requireNonNull(containsInAnyOrder("Dog", "Cat", "Fish"))
+            )).andExpect(jsonPath("$.choices[0].votes").value(0));
     }
 }

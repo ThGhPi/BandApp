@@ -1,7 +1,7 @@
 package com.thghpi.bandapp.band_api.service;
+import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
-import com.thghpi.bandapp.band_api.entity.Survey;
 
 import java.time.LocalDate;
 import java.util.List;

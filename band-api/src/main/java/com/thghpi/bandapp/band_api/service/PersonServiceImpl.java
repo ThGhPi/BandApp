@@ -1,14 +1,14 @@
 package com.thghpi.bandapp.band_api.service;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
-import com.thghpi.bandapp.band_api.service.exception.BadCUException;
-import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 import com.thghpi.bandapp.band_api.entity.Group;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.repository.GroupRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
+import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Objects;

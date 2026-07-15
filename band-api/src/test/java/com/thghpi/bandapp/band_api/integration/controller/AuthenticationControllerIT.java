@@ -256,6 +256,11 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
             .andExpect(status().isNoContent());
     }
 
+    /**
+     * Test for failed password change becaus of wrong initial password
+     * Tested endpoint : PUT /band-api/auth/me
+     * @throws Exception when test fails
+     */
     @Test
     public void shouldRefusePasswordChange() throws Exception {
         String initialPassword = "InitPassword123!";

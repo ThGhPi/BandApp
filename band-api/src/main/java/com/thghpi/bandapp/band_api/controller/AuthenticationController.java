@@ -84,11 +84,12 @@ public class AuthenticationController {
      * @return a no content ResponseEntity if the password renewal process is successful, otherwise an error response.
      */
     @PutMapping("/me")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> renewPassword(@RequestBody List<PersonDto> personList) {
         authService.changePassword(personList);
-        
-        return ResponseEntity.noContent().build();
+        ResponseEntity<Void> response = ResponseEntity.noContent().build();
+        System.out.println(response.getStatusCode());
+        throw new RuntimeException("Does work as expected" + response.getStatusCode());
+        // return response;
     }
     
     /**

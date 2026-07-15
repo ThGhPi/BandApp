@@ -1,10 +1,8 @@
 package com.thghpi.bandapp.band_api.service;
+import com.thghpi.bandapp.band_api.dto.PersonDto;
 
 import java.util.List;
-
 import org.springframework.lang.NonNull;
-
-import com.thghpi.bandapp.band_api.dto.PersonDto;
 
 public interface PersonService {
 

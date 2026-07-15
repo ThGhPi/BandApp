@@ -1,7 +1,7 @@
 package com.thghpi.bandapp.band_api.unit.service;
 import com.thghpi.bandapp.band_api.dto.ChoiceDto;
-import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
 import com.thghpi.bandapp.band_api.service.ChoiceServiceImpl;
+import com.thghpi.bandapp.band_api.repository.ChoiceRepository;
 import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 
 import org.mockito.Mock;
