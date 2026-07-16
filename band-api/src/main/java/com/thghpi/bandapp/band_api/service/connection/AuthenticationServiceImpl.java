@@ -75,21 +75,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Checks the strength of the new password using the PasswordChecker
      * and then encodes it and saves the updated person entity to the repository.
      * @param List<PersonDto> personList the list of person data transfer objects
-     * @return the updated person's data transfer object
      */
     @Override
     public void changePassword(List<PersonDto> personList) {
         Person person = mapper.toEntity(getAuthenticatedPerson());
-        if (passwordEncoder.matches(
+        if (!passwordEncoder.matches(
                 personList.getFirst().getTrialPassword(),
                 person.getPassword()
         )) {
-            final String newPassword = personList.getLast().getTrialPassword();
-            passwordChecker.checkPasswordStrength(newPassword);
-            person.setPassword(passwordEncoder.encode(newPassword));
-            repository.save(person);
+            throw new FailedPasswordChangeException("Couldn't update password. There is a mismatch.");
         }
-        throw new FailedPasswordChangeException("Couldn't update password. There is a mismatch.");
+        final String newPassword = personList.getLast().getTrialPassword();
+        passwordChecker.checkPasswordStrength(newPassword);
+        person.setPassword(passwordEncoder.encode(newPassword));
+        repository.save(person);
     }
 
     /**

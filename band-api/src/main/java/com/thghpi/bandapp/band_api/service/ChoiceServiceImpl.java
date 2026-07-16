@@ -116,8 +116,8 @@ public class ChoiceServiceImpl implements ChoiceService {
     @Override
     public ChoiceDto checkLinkComplement(ChoiceDto choiceDto) {
         if (
-            !(choiceDto.getUrl() == null || choiceDto.getUrl().isBlank()) &&
-             (choiceDto.getComplement() == null || choiceDto.getComplement().isBlank())
+            !(choiceDto.getUrl() == null || Objects.requireNonNull(choiceDto.getUrl()).isBlank()) &&
+             (choiceDto.getComplement() == null || Objects.requireNonNull(choiceDto.getComplement()).isBlank())
             ) {
             choiceDto.setComplement("Cliquez ici pour suivre le lien");
         }

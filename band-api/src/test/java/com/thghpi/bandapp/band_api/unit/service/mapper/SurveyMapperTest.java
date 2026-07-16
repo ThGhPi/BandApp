@@ -6,6 +6,7 @@ import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapperImpl;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapperImpl;
 
+import java.util.Objects;
 import java.util.Set;
 import java.time.LocalDate;
 
@@ -67,7 +68,7 @@ public class SurveyMapperTest {
             );
         SurveyDto surveyDto1 = mapper.toDto(survey1);
         assertNotNull(surveyDto1);
-        assertFalse(surveyDto1.getClosed());
+        assertFalse(Objects.requireNonNull(surveyDto1.getClosed()));
         assertEquals(0L, surveyDto1.getTotalVotes());
         Survey survey2 = new Survey(
                 2L,
@@ -77,7 +78,7 @@ public class SurveyMapperTest {
                 Set.of()
             );
         SurveyDto surveyDto2 = mapper.toDto(survey2);
-        assertTrue(surveyDto2.getClosed());
+        assertTrue(Objects.requireNonNull(surveyDto2.getClosed()));
         assertEquals(0L, surveyDto2.getTotalVotes());
         assertEquals(2, surveyDto1.getChoices().size());
     }
