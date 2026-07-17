@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -142,13 +143,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
     @Test
     public void shouldLoginUserSuccessfully() throws Exception {
         String rightPassword = "RightPassword123!";
-        Person person = new Person(
-            null, "Bob", "Williams",
-            "bobwilliams", "bob.williams@example.com",
-            passwordEncoder.encode(rightPassword), Role.MEMBER, null,
-            null, null, null, null, null
-        );
-        person = repository.save(Objects.requireNonNull(person));
+        Person person = savePerson(rightPassword);
         
         PersonDto trial1Dto = new PersonDto(
             null, null, null,
@@ -175,13 +170,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         String rightPassword = "RightPassword123!";
         String wrongPassword = "WrongPassword123!";
         
-        Person person = new Person(
-            null, "Bob", "Williams",
-            "bobwilliams", "bob.williams@example.com",
-            passwordEncoder.encode(rightPassword), Role.MEMBER, null,
-            null, null, null, null, null
-        );
-        repository.save(Objects.requireNonNull(person));
+        Person person = savePerson(rightPassword);
 
         PersonDto trial1Dto = new PersonDto(
             null, null, null,
@@ -209,13 +198,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
     public void shouldChangePasswordSuccessfully() throws Exception {
         String initialPassword = "InitPassword123!";
         String newPassword = "NewPassword123!";
-        Person person = repository.save(Objects.requireNonNull(new Person(
-            null, "Doe", "John",
-            "johndoe", "john.doe@example.com",
-            passwordEncoder.encode(initialPassword), Role.MEMBER,
-            null, null, null, null,
-            null, null
-        )));
+        Person person = savePerson(initialPassword);
         List<PersonDto> passwordChangeDtos = List.of(
             new PersonDto(
                 null, null, null, person.getUsername(),
@@ -231,19 +214,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
             )
         );
 
-        MvcResult loginResult = mockMvc.perform(
-        post("/band-api/auth/login")
-            .contentType("application/json")
-            .content(Objects.requireNonNull(
-                objectMapper.writeValueAsString(passwordChangeDtos.getFirst())
-            ))
-        ).andExpect(status().isOk())
-            .andReturn();
-
-        String token = JsonPath.read(
-            loginResult.getResponse().getContentAsString(),
-            "$.token"
-        );
+        String token = login(person, initialPassword);
         
         mockMvc.perform(
             put("/band-api/auth/me")
@@ -257,7 +228,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
     }
 
     /**
-     * Test for failed password change becaus of wrong initial password
+     * Test for failed password change because of wrong initial password
      * Tested endpoint : PUT /band-api/auth/me
      * @throws Exception when test fails
      */
@@ -266,13 +237,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         String initialPassword = "InitPassword123!";
         String wrongPassword = "WrongPassword";
         String newPassword = "NewPassword123!";
-        Person person = repository.save(Objects.requireNonNull(new Person(
-            null, "Doe", "John",
-            "johndoe", "john.doe@example.com",
-            passwordEncoder.encode(initialPassword), Role.MEMBER,
-            null, null, null, null,
-            null, null
-        )));
+        Person person = savePerson(initialPassword);
         List<PersonDto> passwordChangeDtos = List.of(
             new PersonDto(
                 null, null, null, person.getUsername(),
@@ -297,9 +262,120 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         ).andExpect(status().isForbidden())
             .andExpect(jsonPath("$").doesNotExist());
     }
-    
-    @Test
-    void shouldRefuseToProvideProfil() {
 
+    /**
+     * Test for successfull user profil read
+     * Tested endpoint : GET /band-api/auth/me
+     * @throws Exception when test fails
+     */
+    @Test
+    void shouldReturnProfil() throws Exception {
+        String password = "Password123!";
+        Person person = savePerson(password);
+
+        String token = login(person, password);
+
+        mockMvc.perform(
+            get("/band-api/auth/me")
+            .header("Authorization", "Bearer " + token)
+        ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.username").isString())
+            .andExpect(jsonPath("$.username").value(person.getUsername()))
+            .andExpect(jsonPath("$.trialPassword").doesNotExist());
+    }
+
+    /**
+     * Test for failed user profile read because of not authenticated user
+     * Tested endpoint : GET /band-api/auth/me
+     * @throws Exception when test fails
+     */
+    @Test
+    void shouldRefuseToProvideProfil() throws Exception {
+        savePerson();
+        mockMvc.perform(
+            get("/band-api/auth/me")
+        ).andExpect(status().isForbidden());
+    }
+
+    /**
+     * Test for failed user profile update
+     * because of unauthenticated user and wrong person id
+     * Tested endpoint : GET /band-api/auth/me
+     * @throws Exception when test fails
+     */
+    @Test
+    void shouldRefuseToUpdateProfil() throws Exception {
+        String password = "Password123!";
+        Person person = savePerson(password);
+        String newMail = "j91" + person.getEmail();
+
+        PersonDto personDto = new PersonDto(
+            person.getId(), person.getLastname(), person.getFirstname(),
+            person.getUsername(), newMail, null,
+            person.getRole(), person.getBirthday(), person.getPhoneNumber(),
+            null, null, null, null
+        );
+
+        mockMvc.perform(
+            put("/band-api/auth/me/" + person.getId())
+            .contentType("application/json")
+            .content(Objects.requireNonNull(
+                objectMapper.writeValueAsString(personDto)
+            ))
+        ).andExpect(status().isForbidden());
+
+        String token = login(person, password);
+
+        mockMvc.perform(
+            put("/band-api/auth/me/" + person.getId() + 1)
+            .header("Authorization", "Bearer " + token)
+            .contentType("application/json")
+            .content(Objects.requireNonNull(
+                objectMapper.writeValueAsString(personDto)
+            ))
+        ).andExpect(status().isBadRequest());
+
+    }
+
+    /**
+     * 
+     * @return the saved person
+     */
+    private Person savePerson() {
+        String password = "Password123!";
+        return savePerson(password);
+    }
+
+    private Person savePerson(String password) {
+        return repository.save(new Person(
+            null, "Doe", "John",
+            "johndoe", "john.doe@example.com",
+            passwordEncoder.encode(password), Role.MEMBER,
+            null, null, null, null,
+            null, null
+        ));
+    }
+
+    private String login(Person person, String password) throws Exception {
+        PersonDto loginDto = new PersonDto(
+            null, null, null, person.getUsername(),
+            null, password, null, null,
+            null, null, null,
+            null, null
+        );
+
+        MvcResult loginResult = mockMvc.perform(
+            post("/band-api/auth/login")
+            .contentType("application/json")
+            .content(Objects.requireNonNull(
+                objectMapper.writeValueAsString(loginDto)
+            ))
+        ).andExpect(status().isOk())
+            .andReturn();
+
+        return JsonPath.read(
+            loginResult.getResponse().getContentAsString(), "$.token"
+        );
     }
 }

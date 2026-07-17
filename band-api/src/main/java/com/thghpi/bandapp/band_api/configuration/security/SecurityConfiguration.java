@@ -61,11 +61,13 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         /* Authentication paths */
                         .requestMatchers(
+                            "/band-api/auth/register",
                             "/band-api/auth/login",
                             "/swagger-ui/**",
                             "/v3/api-docs/**",
                             "/swagger-ui.html"
                         ).permitAll()
+                        .requestMatchers("/band-api/auth/me").authenticated()
                         .requestMatchers("/band-api/auth/me/**").authenticated()
                         .requestMatchers("/band-api/**").permitAll() // TODO: remove this line to
                                                                 // secure all API endpoints,

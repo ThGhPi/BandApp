@@ -102,4 +102,20 @@ public class GlobalExceptionHandler {
                 exception.getMessage()
             ));
     }
+
+    /**
+     * Catch and handle the ExpiredJwtException exceptions to generate error 401 Unauthorized http response
+     * @param ExpiredJwtException exception the exception thrown when a JWT token has expired
+     * @return a 401 UNAUTHORIZED error with a message indicating the token has expired
+     */
+    @ExceptionHandler(IDontKnowException.class)
+    public ResponseEntity<ErrorResponse> handleOtherRuntime(IDontKnowException exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .body(new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                exception.getMessage()
+            ));
+    }
+
+
 }

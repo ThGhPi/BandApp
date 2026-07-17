@@ -8,7 +8,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
  * IntegrationTestConfiguration is a Spring Test Configuration class that sets up a PostgreSQLContainer for integration testing.
- * It provides a PostgreSQLContainer bean that can be used to run integration tests against a real
+ * It provides a PostgreSQLContainer bean that can be used to run integration tests against a real Postgre database
  */
 @TestConfiguration(proxyBeanMethods = false)
 public class IntegrationTestConfiguration {
