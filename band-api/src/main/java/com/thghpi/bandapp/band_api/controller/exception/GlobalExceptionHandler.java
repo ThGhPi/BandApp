@@ -3,6 +3,7 @@ package com.thghpi.bandapp.band_api.controller.exception;
 import com.thghpi.bandapp.band_api.service.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +60,20 @@ public class GlobalExceptionHandler {
             )
         );
     }
+    /**
+     * Catch and handle the DataIntegrityViolationException exceptions to generate error 409 Conflict http response
+     * @param DataIntegrityViolationException exception the exception thrown by the dao when a conflict occurs due to an existing entity in database
+     * @return a 409 CONFLICT error with a message countaining the id given by the user, the entity type concerned, and the reason for failure
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleExistenceConflict(DataIntegrityViolationException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT.value())
+            .body(new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                exception.getMessage()
+            )
+        );
+    }
 
     /**
      * Catch and handle the InvalidPasswordException exceptions to generate error 400 Bad Request http response
@@ -104,12 +119,26 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Catch and handle the ExpiredJwtException exceptions to generate error 401 Unauthorized http response
-     * @param ExpiredJwtException exception the exception thrown when a JWT token has expired
-     * @return a 401 UNAUTHORIZED error with a message indicating the token has expired
+     * Catch and handle the IDontKnowException exceptions to generate error 500 INTERNAL_SERVER_ERROR http response
+     * @param IDontKnowException exception the exception thrown when a strange thing happen
+     * @return a 500 INTERNAL_SERVER_ERROR error with a message indicating something strange happened
      */
     @ExceptionHandler(IDontKnowException.class)
-    public ResponseEntity<ErrorResponse> handleOtherRuntime(IDontKnowException exception) {
+    public ResponseEntity<ErrorResponse> handleIDontKnowWhat(IDontKnowException exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .body(new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                exception.getMessage()
+            ));
+    }
+
+    /**
+     * Catch and handle the RuntimeException exceptions to generate error 500 INTERNAL_SERVER_ERROR http response
+     * @param RuntimeException exception the exception thrown when it's the death of me
+     * @return a 500 INTERNAL_SERVER_ERROR error with a message indicating i don't know what
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleOtherRuntime(RuntimeException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .body(new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

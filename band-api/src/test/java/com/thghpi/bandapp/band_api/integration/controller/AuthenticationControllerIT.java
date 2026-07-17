@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -279,7 +280,8 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
             get("/band-api/auth/me")
             .header("Authorization", "Bearer " + token)
         ).andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(1))
+            .andDo(print())
+            .andExpect(jsonPath("$.id").value(person.getId()))
             .andExpect(jsonPath("$.username").isString())
             .andExpect(jsonPath("$.username").value(person.getUsername()))
             .andExpect(jsonPath("$.trialPassword").doesNotExist());
@@ -292,7 +294,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
      */
     @Test
     void shouldRefuseToProvideProfil() throws Exception {
-        savePerson();
+        savePerson(null);
         mockMvc.perform(
             get("/band-api/auth/me")
         ).andExpect(status().isForbidden());
@@ -301,7 +303,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
     /**
      * Test for failed user profile update
      * because of unauthenticated user and wrong person id
-     * Tested endpoint : GET /band-api/auth/me
+     * Tested endpoint : PUT /band-api/auth/me
      * @throws Exception when test fails
      */
     @Test
@@ -339,24 +341,101 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
     }
 
     /**
-     * 
-     * @return the saved person
-     */
-    private Person savePerson() {
+     * Test for succesfull user profile update
+     * Tested endpoint : PUT /band-api/auth/me
+     * @throws Exception when test fails
+     */    
+    @Test
+    void shouldUpdateSuccessfully() throws Exception {
         String password = "Password123!";
-        return savePerson(password);
+        Person person = savePerson(password);
+        String newMail = "j91" + person.getEmail();
+
+        PersonDto personDto = new PersonDto(
+            person.getId(), person.getLastname(), person.getFirstname(),
+            person.getUsername(), newMail, null,
+            person.getRole(), person.getBirthday(), person.getPhoneNumber(),
+            null, null, null, null
+        );
+
+        String token = login(person, password);
+
+        mockMvc.perform(
+            put("/band-api/auth/me/" + person.getId())
+            .header("Authorization", "Bearer " + token)
+            .contentType("application/json")
+            .content(Objects.requireNonNull(
+                objectMapper.writeValueAsString(personDto)
+            ))
+        ).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(person.getId()))
+            .andExpect(jsonPath("$.email").value(newMail));
     }
 
+    /**
+     * Test for failed user profile deletion
+     * because of unauthenticated user and wrong person id
+     * Tested endpoint : DELETE /band-api/auth/me
+     * @throws Exception when test fails
+     */
+    @Test
+    void shouldRefuseProfileDeletion() throws Exception {
+                String password = "Password123!";
+        Person person = savePerson(password);
+
+        mockMvc.perform(
+            delete("/band-api/auth/me/" + person.getId())
+        ).andExpect(status().isForbidden());
+
+        String token = login(person, password);
+
+        mockMvc.perform(
+            delete("/band-api/auth/me/" + person.getId() + 1)
+            .header("Authorization", "Bearer " + token)
+        ).andExpect(status().isBadRequest());
+
+    }
+
+        /**
+     * Test for succesfull user profile update
+     * Tested endpoint : PUT /band-api/auth/me
+     * @throws Exception when test fails
+     */    
+    @Test
+    void shouldDeleteSuccessfully() throws Exception {
+        String password = "Password123!";
+        Person person = savePerson(password);
+
+        String token = login(person, password);
+
+        mockMvc.perform(
+            delete("/band-api/auth/me/" + person.getId())
+            .header("Authorization", "Bearer " + token)
+        ).andExpect(status().isNoContent());
+    }
+
+    /**
+     * Reusable method that returns a saved Person using the repository
+     * and default passworld "Passworld123!" when the argument password is null.
+     * @param String password can be null
+     * @return the saved person with the given password or default passworld
+     */
     private Person savePerson(String password) {
         return repository.save(new Person(
             null, "Doe", "John",
             "johndoe", "john.doe@example.com",
-            passwordEncoder.encode(password), Role.MEMBER,
-            null, null, null, null,
-            null, null
+            passwordEncoder.encode(password != null ? password : "Password123!"),
+            Role.MEMBER, null, null, null,
+            null, null, null
         ));
     }
 
+    /**
+     * Reusable method to authenticate a person using a given password
+     * @param Person person the person to authenticate (it's username will be used)
+     * @param String password the password used for authetication trial
+     * @return a valid token if successfull, throw Exception otherwise
+     */
     private String login(Person person, String password) throws Exception {
         PersonDto loginDto = new PersonDto(
             null, null, null, person.getUsername(),

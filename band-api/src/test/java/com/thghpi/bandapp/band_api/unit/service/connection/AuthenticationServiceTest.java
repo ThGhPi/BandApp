@@ -100,6 +100,9 @@ public class AuthenticationServiceTest {
         doNothing().when(passwordChecker).checkPasswordStrength(input.getTrialPassword());
         
         ExistenceConflictException thrown = assertThrows(ExistenceConflictException.class, () -> service.save(input));
-        assertEquals(thrown.getMessage(), "Can't create Person. Username already exists in database.");
+        assertEquals(
+            "Can't create Person. " + input.getUsername() + " already exists in database.",
+            thrown.getMessage()
+        );
     }
 }

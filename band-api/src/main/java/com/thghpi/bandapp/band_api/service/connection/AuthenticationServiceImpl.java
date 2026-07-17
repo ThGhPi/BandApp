@@ -7,6 +7,7 @@ import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictMessage;
 import com.thghpi.bandapp.band_api.service.exception.FailedPasswordChangeException;
+import com.thghpi.bandapp.band_api.service.exception.IDontKnowException;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public PersonDto save(PersonDto input) {
         passwordChecker.checkPasswordStrength(input.getTrialPassword());
-        checkUsernameAndEmailUsage(input.getUsername(), input.getEmail(), true);
+        checkUsernameAndEmailUsage(input.getUsername(), input.getEmail(), input.getId());
         Person person = mapper.toEntity(input);
         person.setPassword(passwordEncoder.encode(input.getTrialPassword()));
         return mapper.toDto(repository.save(person));
@@ -78,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public void changePassword(List<PersonDto> personList) {
-        Person person = mapper.toEntity(getAuthenticatedPerson());
+        Person person = getAuthenticatedPerson();
         if (!passwordEncoder.matches(
                 personList.getFirst().getTrialPassword(),
                 person.getPassword()
@@ -96,10 +97,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return the authenticated person's data transfer object
      */
     @Override
-    public PersonDto getAuthenticatedPerson() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Person person = repository.findByUsername(authentication.getName()).orElseThrow();
-        return mapper.toDto(person);
+    public PersonDto getAuthenticatedPersonDto() {
+        return mapper.toDto(getAuthenticatedPerson());
     }
 
     /**
@@ -112,12 +111,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public PersonDto updateAuthenticatedPerson(Long id, PersonDto personDto) {
-        checkAuthenticatedPerson(id);
+        Person oldPerson = checkAuthenticatedPerson(id);
         checkUsernameAndEmailUsage(
-            personDto.getUsername(), personDto.getEmail(), false
+            personDto.getUsername(), personDto.getEmail(), id
         );
         Person updatedPerson = mapper.toEntity(personDto);
         updatedPerson.setId(id);
+        updatedPerson.setPassword(oldPerson.getPassword());
         return mapper.toDto(repository.save(updatedPerson));
     }
     
@@ -144,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public List<PersonDto> saveAll(List<PersonDto> personDtos) {
         personDtos.forEach(dto -> {
             passwordChecker.checkPasswordStrength(dto.getTrialPassword());
-            checkUsernameAndEmailUsage(dto.getUsername(), dto.getEmail(), true);
+            checkUsernameAndEmailUsage(dto.getUsername(), dto.getEmail(), dto.getId());
         });
         return repository.saveAll(
             Objects.requireNonNull(
@@ -167,7 +167,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @throws BadCUException if the authenticated person's ID does not match the provided ID
      */
     @Override
-    public void checkAuthenticatedPerson(Long id) {
+    public Person checkAuthenticatedPerson(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Person person = repository.findByUsername(authentication.getName()).orElseThrow();
         if (!person.getId().equals(id)) {
@@ -175,6 +175,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 false, Person.class, null, List.of(id), "is not your current authenticated profile"
             ));
         }
+        return person;
     }
 
     /**
@@ -186,16 +187,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @throws BadCUException if the username or email already exists in the repository
      */
     @Override
-    public void checkUsernameAndEmailUsage(String username, String email, Boolean creation) {
-        if (repository.existsByUsername(username)) {
-            throw new ExistenceConflictException(new ExistenceConflictMessage(
-                creation, Person.class, null, null, "Username already exists in database"
-            ));
+    public void checkUsernameAndEmailUsage(String username, String email, Long id) {
+        if (id != null) {
+            if (repository.existsByUsernameAndIdNot(username, id)) {
+                throw new ExistenceConflictException(new ExistenceConflictMessage(
+                    false, Person.class, null,
+                    List.of(id), username + " already exists in database"
+                ));
+            }
+            if (repository.existsByEmailAndIdNot(email, id)) {
+                throw new ExistenceConflictException(new ExistenceConflictMessage(
+                    false, Person.class, null,
+                    List.of(id), email + " already exists in database"
+                ));
+            }
+            
+        } else {
+            if (repository.existsByUsername(username)) {
+                throw new ExistenceConflictException(new ExistenceConflictMessage(
+                    true, Person.class, null,
+                    null, username + " already exists in database"
+                ));
+            }
+            if (repository.existsByEmail(email)) {
+                throw new ExistenceConflictException(new ExistenceConflictMessage(
+                    true, Person.class, null,
+                    null, email + " already exists in database"
+                ));
+            }
         }
-        if (repository.existsByEmail(email)) {
-            throw new ExistenceConflictException(new ExistenceConflictMessage(
-                creation, Person.class, null, null, "Email already exists in database"
-            ));
-        }
+    }
+
+    private Person getAuthenticatedPerson() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return repository.findByUsername(authentication.getName()).orElseThrow();
     }
 }

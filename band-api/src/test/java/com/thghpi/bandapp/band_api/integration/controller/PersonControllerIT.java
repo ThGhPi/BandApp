@@ -24,20 +24,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+/**
+ * PersonControllerIT is class to test integration when solliciting the PersonController
+ * It tests person reading (all, by groups and by id), update and deletion by an admin (unit and multiple ones)
+ */
 @AutoConfigureMockMvc
 public class PersonControllerIT extends AbstractIntegrationTest {
+    /** The repository used to create persons when needed */
     @Autowired
     private PersonRepository repository;
-
+    /** The password encoder used for password constency in the database - use the corresponding Bean of the api */
     @Autowired
     private PasswordEncoder encoder;
-
+    /** MockMvc instance used to perform HTTP requests in the tests. */
     @Autowired
     private MockMvc mockMvc;
-
+    /** The object mapper to generate json body from java dtos */
     @Autowired
     private ObjectMapper objectMapper;
-
+    
+    /**
+     * Clean database before each test in the test container
+     * to make sure there is no data interferences between tests.
+     */
     @BeforeEach
     void cleanDatabase() {
         repository.deleteAll();

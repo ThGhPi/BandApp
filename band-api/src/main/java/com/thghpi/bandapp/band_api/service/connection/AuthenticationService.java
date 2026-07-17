@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.service.connection;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.entity.Person;
 
 import java.util.List;
 import org.springframework.lang.NonNull;
@@ -13,7 +14,7 @@ public interface AuthenticationService {
     List<PersonDto> saveAll(List<PersonDto> personDtos);
 
     // READ - authenticated person only
-    PersonDto getAuthenticatedPerson();
+    PersonDto getAuthenticatedPersonDto();
 
     // UPDATE - authenticated person only
     void changePassword(List<PersonDto> personList);
@@ -23,7 +24,7 @@ public interface AuthenticationService {
     void deleteAuthenticatedPerson(@NonNull Long id);
 
     // CHECK - for registration and update
-    void checkAuthenticatedPerson(Long id);
-    void checkUsernameAndEmailUsage(String username, String email, Boolean creation);
+    Person checkAuthenticatedPerson(Long id);
+    void checkUsernameAndEmailUsage(String username, String email, Long id);
 
 }
