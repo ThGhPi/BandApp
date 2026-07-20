@@ -1,8 +1,12 @@
 package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
-import com.thghpi.bandapp.band_api.dto.LoginResponse;
+import com.thghpi.bandapp.band_api.dto.request.LoginRequest;
+import com.thghpi.bandapp.band_api.dto.request.RegisterRequest;
+import com.thghpi.bandapp.band_api.dto.response.LoginResponse;
+import com.thghpi.bandapp.band_api.dto.response.ProfileResponse;
 import com.thghpi.bandapp.band_api.service.connection.AuthenticationServiceImpl;
-import com.thghpi.bandapp.band_api.service.exception.IDontKnowException;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 
 import org.springframework.lang.NonNull;
 import org.springframework.http.HttpStatus;
@@ -14,7 +18,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -40,8 +43,7 @@ public class AuthenticationController {
      * @return the registered PersonDto if the registration process is successful, otherwise an error response.
      */
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<PersonDto> register(@RequestBody PersonDto toRegisterPersonDto) {
+    public ResponseEntity<PersonDto> register(@RequestBody RegisterRequest toRegisterPersonDto) {
         PersonDto registeredPersonDto = authService.save(toRegisterPersonDto);
         return ResponseEntity
             .status(HttpStatus.CREATED.value())
@@ -56,9 +58,8 @@ public class AuthenticationController {
      * @return the list of registered PersonDto if the registration process is successful, otherwise an error response.
      */
     @PostMapping("/register/many")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<PersonDto>> registerMany(@RequestBody List<PersonDto> personDtos) {
-        List<PersonDto> registeredPersons = authService.saveAll(personDtos);
+    public ResponseEntity<List<PersonDto>> registerMany(@RequestBody List<RegisterRequest> personDtos) {
+        List<PersonDto> registeredPersons = authService.registerAll(personDtos);
         return ResponseEntity
             .status(HttpStatus.CREATED.value())
             .body(registeredPersons);
@@ -73,7 +74,7 @@ public class AuthenticationController {
      * @return the JWT token if the authentication process is successful, otherwise an error response.
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody PersonDto toAuthPerson) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest toAuthPerson) {
         String jwtToken = authService.authenticate(toAuthPerson);
         LoginResponse loginResponse = new LoginResponse(jwtToken);
 
@@ -88,7 +89,7 @@ public class AuthenticationController {
      * @return a no content ResponseEntity if the password renewal process is successful, otherwise an error response.
      */
     @PutMapping("/me")
-    public ResponseEntity<Void> renewPassword(@RequestBody List<PersonDto> personList) {
+    public ResponseEntity<Void> renewPassword(@RequestBody List<LoginRequest> personList) {
         authService.changePassword(personList);
         return ResponseEntity.noContent().build();
     }
@@ -99,10 +100,9 @@ public class AuthenticationController {
      * @return the PersonDto of the currently authenticated user if successful, else an error response.
      */
     @GetMapping("/me")
-    public ResponseEntity<PersonDto> getProfil() {
-        PersonDto currentPerson = authService.getAuthenticatedPersonDto();
-        throw new IDontKnowException("not here" + currentPerson.getUsername());
-        // return ResponseEntity.ok(currentPerson);
+    public ResponseEntity<ProfileResponse> getProfil() {
+        ProfileResponse currentPerson = authService.getAuthenticatedPersonProfile();
+        return ResponseEntity.ok(currentPerson);
     }
 
     /**
@@ -112,10 +112,16 @@ public class AuthenticationController {
      * @param id the id of the authenticated user, taken as a path variable.
      * @param personDto the updated PersonDto, taken from the body of the request.
      * @return the updated PersonDto if the update process is successful, otherwise an error response.
+     * @throws BadCUException whe, the path id and the given personDto id mismatch.
      */
     @PutMapping("/me/{id}")
-    public ResponseEntity<PersonDto> updateProfil(@PathVariable Long id, @RequestBody PersonDto personDto) {
-        PersonDto updatedPerson = authService.updateAuthenticatedPerson(id, personDto);
+    public ResponseEntity<ProfileResponse> updateProfil(@PathVariable Long id, @RequestBody PersonDto personDto) {
+        if (id != personDto.id()) {
+            throw new BadCUException(new BadCUMessage(
+                false, personDto.getClass(), "with mismatched IDs", null, null
+            ));
+        }
+        ProfileResponse updatedPerson = authService.updateAuthenticatedPerson(id, personDto);
         return ResponseEntity.ok(updatedPerson);
     }
 

@@ -1,39 +1,52 @@
 package com.thghpi.bandapp.band_api.dto;
-import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.thghpi.bandapp.band_api.entity.Person;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import org.springframework.lang.Nullable;
-
-@Data
-@AllArgsConstructor
-public class PersonDto {
-    @Nullable
-    private Long id;
-    @Nullable
-    private String lastname;
-    @Nullable
-    private String firstname;
-    private String username;
-    @Nullable
-    private String email;
-    @Nullable
-    private String trialPassword;
-    @Nullable
-    private Role role;
-    private LocalDate birthday;
-    @Nullable
-    private String phoneNumber;
-    @Nullable
-    private PlaceDto address;
-    private List<GroupDto> groups = new ArrayList<GroupDto>();
-    private List<InstrumentDto> instruments = new ArrayList<InstrumentDto>();
-    private Set<Long> choiceIds = new HashSet<Long>();
+/**
+ * PersonDto record used as a data transfer object
+ * when the summary of the informations about a {@link Person} is requested
+ * and when receiving a request for profile update
+ * visibility : all members
+ * @param id the id in database for the person
+ * @param lastname the stated lastname of the person
+ * @param firstname the stated firstnmae of the person
+ * @param username the name used for connection
+ * @param email the registered email of the person
+ * @param birthday the birth date of the person
+ * @param phoneNumber the phone number of the person
+ * @param address the person registered address
+ * @param instruments the music instruments played by the person
+ */
+public record PersonDto (
+    Long id,
+    String lastname,
+    String firstname,
+    String username,
+    String email,
+    LocalDate birthday,
+    String phoneNumber,
+    PlaceDto address,
+    List<InstrumentDto> instruments
+) {
+    public PersonDto(
+        Long id,
+        String lastname,
+        String firstname,
+        String username,
+        String email,
+        LocalDate birthday,
+        String phoneNumber,
+        PlaceDto address
+    ) {
+        this(
+            id, lastname, firstname,
+            username, email, birthday,
+            phoneNumber, address, new ArrayList<InstrumentDto>()
+        );
+    }
 }

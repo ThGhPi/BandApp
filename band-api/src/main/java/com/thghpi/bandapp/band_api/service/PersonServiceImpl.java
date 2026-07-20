@@ -154,7 +154,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void checkIdsForUpdate(List<PersonDto> personDtos) {
         for (PersonDto personDto : personDtos) {
-            if (personDto.getId() == null) {
+            if (personDto.id() == null) {
                 throw new BadCUException(new BadCUMessage(
                     false, Person.class, "with null ID",
                     null, null
@@ -162,7 +162,7 @@ public class PersonServiceImpl implements PersonService {
             }
         }
         List<Long> ids = personDtos.stream()
-            .map(PersonDto::getId)
+            .map(PersonDto::id)
             .filter(id -> !repository.existsById(Objects.requireNonNull(id)))
             .toList();
         if (!ids.isEmpty()) {

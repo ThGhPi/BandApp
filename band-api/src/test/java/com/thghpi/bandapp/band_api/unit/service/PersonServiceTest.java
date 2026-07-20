@@ -1,17 +1,14 @@
 package com.thghpi.bandapp.band_api.unit.service;
-import com.thghpi.bandapp.band_api.dto.GroupDto;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.dto.InstrumentDto;
-import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.GroupRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.PersonServiceImpl;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
@@ -54,28 +51,7 @@ public class PersonServiceTest {
      */
     @BeforeEach
     void setUp() {
-        PersonDto personDto1 = new PersonDto(
-            null, "John", "Doe",
-            "john.doe@example.com", "password123",
-            null, Role.MEMBER, null,
-            null, null, null,
-            null, null
-        );
-        PersonDto personDto2 = new PersonDto(
-            null, "Jane", "Smith",
-            "jane.smith@example.com", "password456",
-            null, Role.MEMBER, null,
-            null, null, null,
-            null, null
-        );
-        PersonDto personDto3 = new PersonDto(
-            null, "Jack", "Yang",
-            "jack.yang@example.com", "password789",
-            null, Role.MEMBER, null,
-            null, null, new ArrayList<GroupDto>(),
-            new ArrayList<InstrumentDto>(), new HashSet<Long>()
-        );
-        personDtoList = List.of(personDto1, personDto2, personDto3);
+        personDtoList = List.of();
     }
 
     /**
@@ -83,9 +59,23 @@ public class PersonServiceTest {
      */
     @Test
     void shouldRejectPersonDtoListWithLackingIds() {
-        for (PersonDto personDto : personDtoList) {
-            personDto.setId(null);
-        }
+        PersonDto personDto1 = new PersonDto(
+            null, "John", "Doe",
+            "johndoe", "john.doe@example.com",
+            null, null, null, null
+        );
+        PersonDto personDto2 = new PersonDto(
+            null, "Jane", "Smith", "janesmith",
+            "jane.smith@example.com", null,
+            null, null, null
+        );
+        PersonDto personDto3 = new PersonDto(
+            null, "Jack", "Yang",
+             "jackyang", "jack.yang@example.com",
+            null, null,
+            null, new ArrayList<InstrumentDto>()
+        );
+        personDtoList = List.of(personDto1, personDto2, personDto3);
 
         BadCUException thrown = assertThrows(
             BadCUException.class,
@@ -99,15 +89,30 @@ public class PersonServiceTest {
      */
     @Test
     void shouldRejectPersonDtoListWithNonExistingIds() {
+        PersonDto personDto1 = new PersonDto(
+            1L, "John", "Doe",
+            "johndoe", "john.doe@example.com",
+            null, null, null, null
+        );
+        PersonDto personDto2 = new PersonDto(
+            2L, "Jane", "Smith", "janesmith",
+            "jane.smith@example.com", null,
+            null, null, null
+        );
+        PersonDto personDto3 = new PersonDto(
+            3L, "Jack", "Yang",
+             "jackyang", "jack.yang@example.com",
+            null, null,
+            null, new ArrayList<InstrumentDto>()
+        );
+        personDtoList = List.of(personDto1, personDto2, personDto3);
         when(repository.existsById(1L))
             .thenReturn(false);
         when(repository.existsById(2L))
             .thenReturn(false);
         when(repository.existsById(3L))
             .thenReturn(false);
-        for (int i = 0; i < 3; i++) {
-            personDtoList.get(i).setId((long) i + 1);
-        }
+
         BadCUException thrown = assertThrows(
             BadCUException.class,
             () -> service.checkIdsForUpdate(personDtoList)
@@ -123,9 +128,23 @@ public class PersonServiceTest {
     */
    @Test
    void shouldAcceptValidPersonDtoList() {       
-       for (int i = 0; i < 3; i++) {
-           personDtoList.get(i).setId((long) i + 1);
-       }
+        PersonDto personDto1 = new PersonDto(
+            1L, "John", "Doe",
+            "johndoe", "john.doe@example.com",
+            null, null, null, null
+        );
+        PersonDto personDto2 = new PersonDto(
+            2L, "Jane", "Smith", "janesmith",
+            "jane.smith@example.com", null,
+            null, null, null
+        );
+        PersonDto personDto3 = new PersonDto(
+            3L, "Jack", "Yang",
+             "jackyang", "jack.yang@example.com",
+            null, null,
+            null, new ArrayList<InstrumentDto>()
+        );
+        personDtoList = List.of(personDto1, personDto2, personDto3);
        when(repository.existsById(1L))
        .thenReturn(true);
         when(repository.existsById(2L))

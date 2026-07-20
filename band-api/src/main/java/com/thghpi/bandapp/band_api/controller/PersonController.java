@@ -2,8 +2,8 @@ package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.service.PersonServiceImpl;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +69,7 @@ public class PersonController {
     @PutMapping
     public ResponseEntity<List<PersonDto>> updatePersons(@RequestBody List<PersonDto> personsToUpdate) {
         for (PersonDto personDto : personsToUpdate) {
-            if (personDto.getId() == null) {
+            if (personDto.id() == null) {
                 throw new IllegalArgumentException("All persons must have an ID for update");
             }
         }
@@ -100,7 +100,7 @@ public class PersonController {
     @DeleteMapping
     public ResponseEntity<Void> deletePersons(@RequestBody List<PersonDto> personDtos) {
         for (PersonDto personDto : personDtos) {
-            if (personDto.getId() == null) {
+            if (personDto.id() == null) {
                 throw new IllegalArgumentException("All persons must have an ID for deletion");
             }
         }

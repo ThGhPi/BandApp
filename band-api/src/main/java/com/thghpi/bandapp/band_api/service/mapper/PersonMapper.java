@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.service.mapper;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.dto.request.RegisterRequest;
+import com.thghpi.bandapp.band_api.dto.response.ProfileResponse;
 import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Person;
 
@@ -20,20 +23,34 @@ import com.thghpi.bandapp.band_api.entity.Person;
         ChoiceMapper.class})
 public interface PersonMapper {
 
+    // --- DTO --> Entity ---
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "address", ignore = true)
     @Mapping(target = "groups", ignore = true)
     @Mapping(target = "instruments", ignore = true)
     @Mapping(target = "choices", ignore = true)
     Person toEntity(PersonDto personDto);
 
-
-    @Mapping(target = "trialPassword", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "address", ignore = true)
     @Mapping(target = "groups", ignore = true)
     @Mapping(target = "instruments", ignore = true)
-    @Mapping(target = "choiceIds", source = "choices", qualifiedByName = "mapChoicesToChoiceIds")
+    @Mapping(target = "choices", ignore = true)
+    Person toEntity(RegisterRequest personDto);
+
+    // --- Entity --> DTO ---
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "instruments", ignore = true)
     PersonDto toDto(Person person);
+
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "instruments", ignore = true)
+    @Mapping(target = "groups", ignore = true)
+    @Mapping(target = "choiceIds", source = "choices", qualifiedByName = "mapChoicesToChoiceIds")
+    ProfileResponse toProfile(Person person);
 
     /**
      * Maps a setof choices to a set of choice ids.
@@ -48,9 +65,9 @@ public interface PersonMapper {
         }
         
         return choices.stream()
-            .filter(choice -> choice != null)
-            .filter(choice -> choice.getId() != null)
+            .filter(Objects::nonNull)
             .map(Choice::getId)
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
     }
 }

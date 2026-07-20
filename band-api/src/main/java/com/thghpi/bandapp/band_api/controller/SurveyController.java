@@ -1,6 +1,6 @@
 package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
-import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
+import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 
 import java.util.List;
@@ -62,7 +62,7 @@ public class SurveyController {
      * @return a list of SurveyDto for the older surveys.
      */
     @GetMapping("/before/{date}")
-    public ResponseEntity<SurveyPageDto> getOlderSurveys(@PathVariable LocalDate date) {
+    public ResponseEntity<SurveyPageResponse> getOlderSurveys(@PathVariable LocalDate date) {
         return ResponseEntity.ok(service.getPrevious(date));
     }
 

@@ -1,9 +1,9 @@
 package com.thghpi.bandapp.band_api.unit.service.mapper;
-import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
+import com.thghpi.bandapp.band_api.dto.response.ProfileResponse;
 
 import java.util.Set;
 
@@ -56,9 +56,9 @@ public class PersonMapperTest {
             Set.of(choice1, choice2)
         );
 
-        PersonDto dto = mapper.toDto(person1);
-        assertEquals(1, dto.getChoiceIds().size());
-        assertTrue(dto.getChoiceIds().contains(1L));
-        assertFalse(dto.getChoiceIds().contains(null));
+        ProfileResponse dto = mapper.toProfile(person1);
+        assertEquals(1, dto.choiceIds().size());
+        assertTrue(dto.choiceIds().contains(1L));
+        assertFalse(dto.choiceIds().contains(null));
     }
 }

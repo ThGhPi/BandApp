@@ -3,6 +3,8 @@ package com.thghpi.bandapp.band_api.controller.exception;
 import com.thghpi.bandapp.band_api.service.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleIdNotFound(NotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
+            .body(new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage()
+            )
+        );
+    }
+
+    /**
+     * Catch and handle the NoSuchElementException exceptions to generate error 404 Not Found http response
+     * @param NoSuchElementException exception the exception thrown when an entity is not found in the repository
+     * @return a 404 NOT FOUND error with a message countaining the id and the entity type concerned
+     */
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleIdNotFound(NoSuchElementException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
             .body(new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -91,7 +108,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Catch and handle the ExpiredJwtException exceptions to generate error 403 Forbidden http response
+     * Catch and handle the FailedPasswordChangeException exceptions to generate error 403 Forbidden http response
      * @param FailedPasswordChangeException exception the exception thrown when the password change failed to a wrong password
      * @return a 403 FORBIDDEN error with a message indicating the password provided did not fit
      */
@@ -100,6 +117,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
             .body(new ErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
+                exception.getMessage()
+            ));
+    }
+
+    /**
+     * Catch and handle the NotAuthenticatedException exceptions to generate error 401 UNAUTHORIZED http response
+     * @param NotAuthenticatedException exception the exception thrown when an operation outside current authority is attempted
+     * @return a 401 UNAUTHORIZED error with a message indicating the authentication doesn't match the necessary authorities for executing the request
+     */
+    @ExceptionHandler(NotAuthenticatedException.class)
+    public ResponseEntity<ErrorResponse> handleNotAuthenticated(NotAuthenticatedException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
+            .body(new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
                 exception.getMessage()
             ));
     }

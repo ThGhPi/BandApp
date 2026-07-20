@@ -1,7 +1,7 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
-import com.thghpi.bandapp.band_api.dto.SurveyPageDto;
+import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
@@ -52,12 +52,12 @@ public class SurveyServiceImpl implements SurveyService {
      * @return a SurveyPageDto with five most recent survey older than the given date.
      */
     @Override
-    public SurveyPageDto getPrevious(LocalDate date) {
+    public SurveyPageResponse getPrevious(LocalDate date) {
         Page<Survey> surveyPage = 
             repository.findByScheduledEndBeforeOrderByScheduledEndDesc(
                 date, PageRequest.of(0,5)
             );
-        return new SurveyPageDto(
+        return new SurveyPageResponse(
             surveyPage.getContent().stream()
                 .map(mapper::toDto)
                 .toList(),

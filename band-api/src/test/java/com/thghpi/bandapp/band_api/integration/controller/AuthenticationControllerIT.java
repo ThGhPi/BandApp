@@ -1,5 +1,7 @@
 package com.thghpi.bandapp.band_api.integration.controller;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.dto.request.LoginRequest;
+import com.thghpi.bandapp.band_api.dto.request.RegisterRequest;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
@@ -74,11 +76,10 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
             null, null, null
         )));
 
-        PersonDto toRegisterAliceDto = new PersonDto(
-            null, "Alice", "Smith",
+        RegisterRequest toRegisterAliceDto = new RegisterRequest(
+            "Alice", "Smith",
             usernameJohn, emailAlice, "Password123!",
-            Role.MEMBER, null, null, null,
-            null, null, null
+            null, null, null, null
         );
         
         mockMvc.perform(
@@ -90,14 +91,13 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         ).andDo(print())
             .andExpect(status().isConflict())
             .andExpect(jsonPath("$.message").value(
-                "Can't create Person. Username already exists in database."
+                "Can't create Person. " + usernameJohn + " already exists in database."
             ));
         
-        PersonDto toRegisterAliceDto2 = new PersonDto(
-            null, "Alice", "Smith",
+        RegisterRequest toRegisterAliceDto2 = new RegisterRequest(
+            "Alice", "Smith",
             usernameAlice, emailJohn, "Password123!",
-            Role.MEMBER, null, null, null,
-            null, null, null
+            null, null, null, null
         );
         
         mockMvc.perform(
@@ -108,7 +108,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
             ))
         ).andExpect(status().isConflict())
             .andExpect(jsonPath("$.message").value(
-                "Can't create Person. Email already exists in database."
+                "Can't create Person. " + emailJohn + " already exists in database."
             ));
     }
 
@@ -119,11 +119,11 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
      */
     @Test
     public void shouldRegisterUserSuccessfully() throws Exception {
-        PersonDto toRegisterPersonDto = new PersonDto(
-            null, "Alice", "Johnson",
+        RegisterRequest toRegisterPersonDto = new RegisterRequest(
+            "Alice", "Johnson",
             "alicejohnson", "alice.johnson@example.com",
-            "Password123!", Role.MEMBER, null,
-            null, null, null, null, null
+            "Password123!",null,
+            null, null, null
         );
 
         mockMvc.perform(
@@ -133,7 +133,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
                 objectMapper.writeValueAsString(toRegisterPersonDto)
             ))
         ).andExpect(status().isCreated())
-            .andExpect(jsonPath("$.username").value(toRegisterPersonDto.getUsername()));
+            .andExpect(jsonPath("$.username").value(toRegisterPersonDto.username()));
     }
 
     /**
@@ -146,11 +146,8 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         String rightPassword = "RightPassword123!";
         Person person = savePerson(rightPassword);
         
-        PersonDto trial1Dto = new PersonDto(
-            null, null, null,
-            person.getUsername(), null,
-            rightPassword, null, null,
-            null, null, null, null, null
+        LoginRequest trial1Dto = new LoginRequest(
+            person.getUsername(), rightPassword
         );
 
         mockMvc.perform(
@@ -173,11 +170,8 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         
         Person person = savePerson(rightPassword);
 
-        PersonDto trial1Dto = new PersonDto(
-            null, null, null,
-            person.getUsername(), null, wrongPassword,
-            null, null, null,
-            null, null, null, null
+        LoginRequest trial1Dto = new LoginRequest(
+            person.getUsername(), wrongPassword
         );
 
         mockMvc.perform(
@@ -200,19 +194,9 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         String initialPassword = "InitPassword123!";
         String newPassword = "NewPassword123!";
         Person person = savePerson(initialPassword);
-        List<PersonDto> passwordChangeDtos = List.of(
-            new PersonDto(
-                null, null, null, person.getUsername(),
-                null, initialPassword, null, null,
-                null, null, null,
-                null, null
-            ),
-            new PersonDto(
-                null, null, null, person.getUsername(),
-                null, newPassword, null, null,
-                null, null, null,
-                null, null
-            )
+        List<LoginRequest> passwordChangeDtos = List.of(
+            new LoginRequest(person.getUsername(), initialPassword),
+            new LoginRequest(person.getUsername(), newPassword)
         );
 
         String token = login(person, initialPassword);
@@ -239,19 +223,9 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         String wrongPassword = "WrongPassword";
         String newPassword = "NewPassword123!";
         Person person = savePerson(initialPassword);
-        List<PersonDto> passwordChangeDtos = List.of(
-            new PersonDto(
-                null, null, null, person.getUsername(),
-                null, wrongPassword, null, null,
-                null, null, null,
-                null, null
-            ),
-            new PersonDto(
-                null, null, null, person.getUsername(),
-                null, newPassword, null, null,
-                null, null, null,
-                null, null
-            )
+        List<LoginRequest> passwordChangeDtos = List.of(
+            new LoginRequest(person.getUsername(), wrongPassword),
+            new LoginRequest(person.getUsername(), newPassword)
         );
 
         mockMvc.perform(
@@ -314,9 +288,8 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
 
         PersonDto personDto = new PersonDto(
             person.getId(), person.getLastname(), person.getFirstname(),
-            person.getUsername(), newMail, null,
-            person.getRole(), person.getBirthday(), person.getPhoneNumber(),
-            null, null, null, null
+            person.getUsername(), newMail, person.getBirthday(),
+            person.getPhoneNumber(), null, null
         );
 
         mockMvc.perform(
@@ -353,9 +326,8 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
 
         PersonDto personDto = new PersonDto(
             person.getId(), person.getLastname(), person.getFirstname(),
-            person.getUsername(), newMail, null,
-            person.getRole(), person.getBirthday(), person.getPhoneNumber(),
-            null, null, null, null
+            person.getUsername(), newMail, person.getBirthday(),
+            person.getPhoneNumber(), null, null
         );
 
         String token = login(person, password);
@@ -437,11 +409,8 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
      * @return a valid token if successfull, throw Exception otherwise
      */
     private String login(Person person, String password) throws Exception {
-        PersonDto loginDto = new PersonDto(
-            null, null, null, person.getUsername(),
-            null, password, null, null,
-            null, null, null,
-            null, null
+        LoginRequest loginDto = new LoginRequest(
+            person.getUsername(), password
         );
 
         MvcResult loginResult = mockMvc.perform(
