@@ -1,10 +1,13 @@
 package com.thghpi.bandapp.band_api.service.connection;
+import com.thghpi.bandapp.band_api.entity.Instrument;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.dto.request.LoginRequest;
 import com.thghpi.bandapp.band_api.dto.request.RegisterRequest;
 import com.thghpi.bandapp.band_api.dto.response.ProfileResponse;
+import com.thghpi.bandapp.band_api.repository.InstrumentRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
+import com.thghpi.bandapp.band_api.repository.PlaceRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictMessage;
 import com.thghpi.bandapp.band_api.service.exception.FailedPasswordChangeException;
@@ -14,6 +17,7 @@ import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordChecker passwordChecker;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final PlaceRepository placeRepository;
+    private final InstrumentRepository instrumentRepository;
 
     /**
      * Saves a new person to the database after encoding their password.
@@ -103,13 +109,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public ProfileResponse getAuthenticatedPersonProfile() {
-        Long profileId = getAuthenticatedPerson().getId();
-        return mapper.toProfile(
-            repository.findPersonWithAllById(profileId)
-                .orElseThrow(() -> new NotFoundException(
-                    new NotFoundMessage(profileId, Person.class)
-                ))
+        Person authenticatedPerson = getAuthenticatedPerson();
+        authenticatedPerson.setInstruments(instrumentRepository.findAllByPerson(authenticatedPerson));
+        authenticatedPerson.setAddress(
+            placeRepository.findByPerson(authenticatedPerson).orElse(null)
         );
+        return mapper.toProfile(getAuthenticatedPerson());
     }
 
     /**
@@ -231,6 +236,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private Person getAuthenticatedPerson() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return repository.findByUsername(authentication.getName()).orElseThrow();
+        Person authenticatedPerson =repository.findByUsername(authentication.getName())
+            .orElseThrow(() -> new NoSuchElementException("Person with username " + authentication.getName() + " wasn't found in database."));
+        return authenticatedPerson;
     }
 }

@@ -26,7 +26,6 @@ import java.time.LocalDate;
  * @param address the address of the person
  * @param groups list of groups the person belong to
  * @param instruments list of instruments played by the person
- * @param choiceIds the set of choice ids voted by the person
  */
 public record ProfileResponse(
     Long id,
@@ -39,8 +38,7 @@ public record ProfileResponse(
     String phoneNumber,
     PlaceDto address,
     List<GroupDto> groups,
-    List<InstrumentDto> instruments,
-    Set<Long> choiceIds
+    List<InstrumentDto> instruments
 ) {
     public ProfileResponse(
         Long id,
@@ -57,8 +55,7 @@ public record ProfileResponse(
             id, lastname, firstname, username,
             email, role, birthday, phoneNumber,
             address, new ArrayList<GroupDto>(),
-            new ArrayList<InstrumentDto>(),
-            new LinkedHashSet<Long>()
+            new ArrayList<InstrumentDto>()
         );
     }
 }

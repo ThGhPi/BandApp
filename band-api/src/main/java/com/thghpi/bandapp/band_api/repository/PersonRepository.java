@@ -12,31 +12,6 @@ public interface PersonRepository extends JpaRepository<Person,Long> {
 
     Optional<Person> findByUsername(String username); // for authentication
     
-    /**
-     * Alternate method to load a person
-     * with it's relationship with instruments and place
-     * @param id the id of the person to load
-     * @return a person with it's address and list of played instruments loaded
-     */
-    @EntityGraph(attributePaths = {
-        "address",
-        "instruments"
-    })
-    Optional<Person> findPersonWithAddressAndInstrumentsById(Long id);
-
-    /**
-     * Alternate method to load a person
-     * with it's relationship with instruments and place
-     * @param id the id of the person to load
-     * @return a person with it's address, list of played instruments, set of choices and list of groups it belong to loaded
-     */
-    @EntityGraph(attributePaths = {
-        "address",
-        "instruments",
-        "groups",
-        "choices"
-    })
-    Optional<Person> findPersonWithAllById(Long id);
 
     List<Person> findByGroups(Group group);
 
