@@ -73,6 +73,7 @@ public class PersonController {
                 throw new IllegalArgumentException("All persons must have an ID for update");
             }
         }
+        // TODO : use DTO with role
         List<PersonDto> personDtos = service.updateMany(personsToUpdate);
         return ResponseEntity.ok(personDtos);
     }

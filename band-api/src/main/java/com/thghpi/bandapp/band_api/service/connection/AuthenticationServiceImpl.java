@@ -1,5 +1,4 @@
 package com.thghpi.bandapp.band_api.service.connection;
-import com.thghpi.bandapp.band_api.entity.Instrument;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.dto.request.LoginRequest;
@@ -12,8 +11,6 @@ import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictMessage;
 import com.thghpi.bandapp.band_api.service.exception.FailedPasswordChangeException;
 import com.thghpi.bandapp.band_api.service.exception.NotAuthenticatedException;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
-import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 
 import java.util.List;
@@ -105,14 +102,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     /**
      * Retrieves the authenticated person's information.
      * @return the authenticated person's data transfer object
-     * @throws NotFoundException when the authenticated person is not found by id in the database
      */
     @Override
     public ProfileResponse getAuthenticatedPersonProfile() {
         Person authenticatedPerson = getAuthenticatedPerson();
-        authenticatedPerson.setInstruments(instrumentRepository.findAllByPerson(authenticatedPerson));
+        authenticatedPerson.setInstruments(instrumentRepository.findAllByPersons(authenticatedPerson));
         authenticatedPerson.setAddress(
-            placeRepository.findByPerson(authenticatedPerson).orElse(null)
+            placeRepository.findByPersons(authenticatedPerson).orElse(null)
         );
         return mapper.toProfile(getAuthenticatedPerson());
     }
@@ -134,6 +130,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Person updatedPerson = mapper.toEntity(personDto);
         updatedPerson.setId(id);
         updatedPerson.setPassword(oldPerson.getPassword());
+        updatedPerson.setRole(oldPerson.getRole());
         return mapper.toProfile(repository.save(updatedPerson));
     }
     
@@ -236,7 +233,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private Person getAuthenticatedPerson() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Person authenticatedPerson =repository.findByUsername(authentication.getName())
+        Person authenticatedPerson = repository.findByUsername(authentication.getName())
             .orElseThrow(() -> new NoSuchElementException("Person with username " + authentication.getName() + " wasn't found in database."));
         return authenticatedPerson;
     }

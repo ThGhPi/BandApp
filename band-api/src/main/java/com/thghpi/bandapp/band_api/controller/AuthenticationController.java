@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/band-api/auth")
 public class AuthenticationController {
     private final AuthenticationServiceImpl authService;
-
+    
     /**
      * For POST request on endpoint band-api/auth/register,
      * Takes the body of the request as a PersonDto for endpoint band-api/auth/register,
@@ -118,7 +118,8 @@ public class AuthenticationController {
     public ResponseEntity<ProfileResponse> updateProfil(@PathVariable Long id, @RequestBody PersonDto personDto) {
         if (id != personDto.id()) {
             throw new BadCUException(new BadCUMessage(
-                false, personDto.getClass(), "with mismatched IDs", null, null
+                false, personDto.getClass(), "with mismatched IDs",
+                List.of(personDto.id()), "is different from " + id
             ));
         }
         ProfileResponse updatedPerson = authService.updateAuthenticatedPerson(id, personDto);

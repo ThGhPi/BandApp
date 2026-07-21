@@ -117,22 +117,26 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             null, "green", null,
             null, null, null
         );
-        SurveyDto dto = new SurveyDto(
-            null, "",
+        SurveyDto dto1 = new SurveyDto(
+            "",
             LocalDate.now().plusMonths(1),
-            false, null, null,
+            false,
             Set.of(choice1, choice2, choice3)
         );
-        String jsonSurvey1 = Objects.requireNonNull(objectMapper.writeValueAsString(dto));
+        String jsonSurvey1 = Objects.requireNonNull(objectMapper.writeValueAsString(dto1));
 
         mockMvc.perform(post("/band-api/surveys")
                 .contentType("application/json")
                 .content(jsonSurvey1))
             .andExpect(status().isBadRequest());
-        
-        dto.setQuestion("Favorite color ?");
-        dto.setScheduledEnd(LocalDate.now().minusYears(1));
-        String jsonSurvey2 = Objects.requireNonNull(objectMapper.writeValueAsString(dto));
+
+        SurveyDto dto2 = new SurveyDto(
+            "Favorite color ?",
+            LocalDate.now().minusYears(1),
+            false,
+            Set.of(choice1, choice2, choice3)
+        );
+        String jsonSurvey2 = Objects.requireNonNull(objectMapper.writeValueAsString(dto2));
 
         mockMvc.perform(post("/band-api/surveys")
                 .contentType("application/json")
@@ -358,7 +362,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             null, survey.getId(), null
         );
         SurveyDto dtoForUpdate = new SurveyDto(
-            null, "Favorite pet ?",
+            survey.getId(), "Favorite pet ?",
             LocalDate.now().plusMonths(2),
             true, null, null,
             Set.of(choice1, choice2, choice3)

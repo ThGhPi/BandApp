@@ -1,7 +1,11 @@
 package com.thghpi.bandapp.band_api.entity;
 
 import java.util.Set;
+
+import com.thghpi.bandapp.band_api.dto.ChoiceDto;
+
 import java.util.HashSet;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -74,6 +78,19 @@ public class Choice {
      */
     public Long getVotes() {
         return persons == null ? 0L : (long) persons.size();
+    }
+
+    /**
+     * affecte la valeur "Cliquez ici pour suivre le lien" à l'attribut complément
+     * si celui-ci est null ou blanc et que l'attribut url n'est ni null ni blanc
+     */
+    public void checkLinkComplement() {
+        if (
+            !(url == null || url.isBlank()) &&
+             (complement == null || complement.isBlank())
+            ) {
+            setComplement("Cliquez ici pour suivre le lien");
+        }
     }
 
     /**

@@ -39,8 +39,8 @@ public class ChoiceMapperTest {
                 null,
                 null
             );
-        assertEquals(0L, mapper.toDto(choice1).getVotes());
-        assertNull(mapper.toDto(choice1).getSurveyId());
+        assertEquals(0L, mapper.toDto(choice1).votes());
+        assertNull(mapper.toDto(choice1).surveyId());
         Choice choice2 = new Choice(
                 2L,
                 "Choice 2",
@@ -83,8 +83,8 @@ public class ChoiceMapperTest {
             Set.of(choice2)
         );
         choice2.setPersons(Set.of(person1, person2));
-        assertEquals(2L, mapper.toDto(choice2).getVotes());
-        assertEquals(1L, mapper.toDto(choice2).getSurveyId());
+        assertEquals(2L, mapper.toDto(choice2).votes());
+        assertEquals(1L, mapper.toDto(choice2).surveyId());
     }
 
     /**

@@ -5,9 +5,7 @@ import com.thghpi.bandapp.band_api.dto.InstrumentDto;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.time.LocalDate;
 

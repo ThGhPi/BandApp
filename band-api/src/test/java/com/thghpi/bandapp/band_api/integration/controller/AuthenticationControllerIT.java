@@ -181,7 +181,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
                 objectMapper.writeValueAsString(trial1Dto)
             ))
         ).andExpect(status().isForbidden())
-            .andExpect(jsonPath("$").doesNotExist());
+            .andExpect(jsonPath("$.message").value("Bad credentials"));
     }
 
     /**
@@ -364,7 +364,7 @@ public class AuthenticationControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(
             delete("/band-api/auth/me/" + person.getId() + 1)
             .header("Authorization", "Bearer " + token)
-        ).andExpect(status().isBadRequest());
+        ).andExpect(status().isUnauthorized());
 
     }
 

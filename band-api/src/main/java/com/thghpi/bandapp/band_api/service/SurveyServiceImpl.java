@@ -1,4 +1,5 @@
 package com.thghpi.bandapp.band_api.service;
+import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
@@ -98,9 +99,10 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public SurveyDto save(SurveyDto surveyDto) {
-        checkSurveyData(surveyDto);
+        checkSurveysData(List.of(surveyDto));
         Survey survey = mapper.toEntity(surveyDto);
-        checkSurveyClosure(survey);
+        checkSurveysClosure(List.of(survey));
+        survey.getChoices().forEach(Choice::checkLinkComplement);
         return mapper.toDto(
             repository.save(
                 Objects.requireNonNull(survey)
@@ -122,6 +124,10 @@ public class SurveyServiceImpl implements SurveyService {
                 .toList()
             );
         checkSurveysClosure(surveys);
+        surveys.forEach(
+            survey -> survey.getChoices()
+                .forEach(Choice::checkLinkComplement)
+            );
         return repository.saveAll(surveys)
             .stream()
             .map(mapper::toDto)
@@ -176,48 +182,6 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     /**
-     * Checks if the given survey is closed and throws an exception if it is.
-     * @param SurveyDto surveyDto the SurveyDto to check.
-     * @throws IllegalArgumentException if the survey is closed with it's ID.
-     */
-    @Override
-    public void checkSurveyClosure(Survey survey) {
-        if (survey.isClosed()) {
-            if (survey.getId() == null) {
-                throw new BadCUException(new BadCUMessage(
-                    true, Survey.class, "that are already closed",
-                    null, "The scheduled end date must be after today"
-                ));
-            }
-            throw new BadCUException(new BadCUMessage(
-                false, Survey.class, "that is already closed",
-                List.of(survey.getId()), " is already closed"
-            ));
-        }
-    }
-
-    /**
-     * Checks if the given survey has invalid data and throws an exception if it does.
-     * @param SurveyDto survey the SurveyDto to check.
-     * @throws BadCUException if the survey question isn't conform (blank or exceeding 255 in length) with it's ID.
-     */
-    @Override
-    public void checkSurveyData(SurveyDto survey) {
-        if (survey.getQuestion().isBlank() || survey.getQuestion().length() > 255) {
-            if (survey.getId() == null) {
-                throw new BadCUException(new BadCUMessage(
-                    true, Survey.class, "with invalid data",
-                    null, "The question must not be blank nor exceed 255 characters"
-                ));
-            }
-            throw new BadCUException(new BadCUMessage(
-                false, Survey.class, "with invalid data",
-                List.of(survey.getId()), "must not be blank nor exceed 255 characters"
-            ));
-        }
-    }
-
-    /**
      * Checks if there are surveys with invalid data in the provided list.
      * @param List<SurveyDto> surveys the list of SurveyDto to check.
      * @throws BadCUException if there are surveys with invalid data, with the list of invalid survey IDs.
@@ -225,8 +189,8 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public void checkSurveysData(List<SurveyDto> surveys) {
         List<Long> ids = surveys.stream()
-            .filter(survey -> survey.getQuestion().isBlank() || survey.getQuestion().length() > 255)
-            .map(SurveyDto::getId)
+            .filter(survey -> survey.question().isBlank() || survey.question().length() > 255)
+            .map(SurveyDto::id)
             .toList();
         if (!ids.isEmpty()) {
             if (ids.contains(null)) {

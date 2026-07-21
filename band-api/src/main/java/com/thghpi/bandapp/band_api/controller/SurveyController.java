@@ -2,6 +2,8 @@ package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
+import com.thghpi.bandapp.band_api.service.exception.BadCUException;
+import com.thghpi.bandapp.band_api.service.exception.BadCUMessage;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -99,7 +101,12 @@ public class SurveyController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<SurveyDto> updateSurvey(@PathVariable Long id, @RequestBody SurveyDto surveyDto) {
-        surveyDto.setId(id);
+        if (surveyDto.id() != id) {
+            throw new BadCUException(new BadCUMessage(
+                false, SurveyDto.class, "has mismatched ID with the path",
+                List.of(surveyDto.id()), "is different from " + id
+            ));
+        }
         return ResponseEntity.ok(service.save(surveyDto));
     }
 
@@ -114,7 +121,7 @@ public class SurveyController {
     @PutMapping
     public ResponseEntity<List<SurveyDto>> updateSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {
         for (SurveyDto survey : surveys) {
-            if (survey.getId() == null) {
+            if (survey.id() == null) {
                 throw new IllegalArgumentException("All surveys must have an ID for update");
             }
         }
@@ -143,7 +150,7 @@ public class SurveyController {
     @DeleteMapping
     public ResponseEntity<Void> deleteSeveral(@RequestBody @NonNull List<SurveyDto> surveys) {
         for (SurveyDto surveyDto : surveys) {
-            if (surveyDto.getId() == null) {
+            if (surveyDto.id() == null) {
                 throw new IllegalArgumentException("All surveys must have an ID for deletion");
             }
         }

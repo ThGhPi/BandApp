@@ -68,8 +68,8 @@ public class SurveyMapperTest {
             );
         SurveyDto surveyDto1 = mapper.toDto(survey1);
         assertNotNull(surveyDto1);
-        assertFalse(Objects.requireNonNull(surveyDto1.getClosed()));
-        assertEquals(0L, surveyDto1.getTotalVotes());
+        assertFalse(Objects.requireNonNull(surveyDto1.closed()));
+        assertEquals(0L, surveyDto1.totalVotes());
         Survey survey2 = new Survey(
                 2L,
                 "Question ?",
@@ -78,8 +78,8 @@ public class SurveyMapperTest {
                 Set.of()
             );
         SurveyDto surveyDto2 = mapper.toDto(survey2);
-        assertTrue(Objects.requireNonNull(surveyDto2.getClosed()));
-        assertEquals(0L, surveyDto2.getTotalVotes());
-        assertEquals(2, surveyDto1.getChoices().size());
+        assertTrue(Objects.requireNonNull(surveyDto2.closed()));
+        assertEquals(0L, surveyDto2.totalVotes());
+        assertEquals(2, surveyDto1.choices().size());
     }
 }

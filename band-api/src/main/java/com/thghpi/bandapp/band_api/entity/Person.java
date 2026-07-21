@@ -49,8 +49,7 @@ public class Person implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    private Role role; // TODO : mettre à jour looping et uml contrainte nullité
 
     @Column(name = "phone_number", length = 12)
     private String phoneNumber;

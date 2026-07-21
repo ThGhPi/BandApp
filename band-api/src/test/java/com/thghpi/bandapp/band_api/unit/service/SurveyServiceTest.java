@@ -58,7 +58,7 @@ public class SurveyServiceTest {
 
         BadCUException thrown = assertThrows(
             BadCUException.class,
-            () -> service.checkSurveyClosure(entity)
+            () -> service.checkSurveysClosure(List.of(entity))
         );
         assertEquals(
             "Can't create Survey that are already closed. The scheduled end date must be after today.",
@@ -66,7 +66,7 @@ public class SurveyServiceTest {
         );
         BadCUException thrown2 = assertThrows(
             BadCUException.class,
-            () -> service.checkSurveyData(closedSurveyDto)
+            () -> service.checkSurveysData(List.of(closedSurveyDto))
         );
         assertEquals(
             "Can't create Survey with invalid data. The question must not be blank nor exceed 255 characters.",
@@ -86,7 +86,7 @@ public class SurveyServiceTest {
             true,
             null
         );
-        assertDoesNotThrow(() -> service.checkSurveyClosure(openSurvey));
+        assertDoesNotThrow(() -> service.checkSurveysClosure(List.of(openSurvey)));
     }
 
     /**

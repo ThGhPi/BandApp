@@ -14,5 +14,4 @@ public interface ChoiceService {
 
     void deleteById(@NonNull Long id);
     void deleteAll(@NonNull Set<ChoiceDto> choiceDtos);
-    ChoiceDto checkLinkComplement(ChoiceDto choiceDto);
 }

@@ -62,9 +62,11 @@ public class ChoiceServiceImpl implements ChoiceService {
      */
     @Override
     public ChoiceDto save(ChoiceDto choiceDto) {
-        return mapper.toDto(repository.save(Objects.requireNonNull(
-            mapper.toEntity(this.checkLinkComplement(choiceDto))
-        )));
+        Choice choice = mapper.toEntity(choiceDto);
+        choice.checkLinkComplement();
+        return mapper.toDto(repository.save(
+            Objects.requireNonNull(choice)
+        ));
     }
 
     /**
@@ -74,12 +76,13 @@ public class ChoiceServiceImpl implements ChoiceService {
      */
     @Override
     public Set<ChoiceDto> saveAll(@NonNull Set<ChoiceDto> choiceDtos) {
+        Set<Choice> choices = choiceDtos.stream()
+                .map(mapper::toEntity)
+                .collect(Collectors.toSet());
+        choices.forEach(Choice::checkLinkComplement);
         return repository.saveAll(
             Objects.requireNonNull(
-            choiceDtos.stream()
-                .map(this::checkLinkComplement)
-                .map(mapper::toEntity)
-                .toList()
+                choices
             )).stream()
             .map(mapper::toDto)
             .collect(Collectors.toSet());
@@ -106,21 +109,5 @@ public class ChoiceServiceImpl implements ChoiceService {
                 .map(mapper::toEntity)
                 .toList()
         ));
-    }
-
-    /**
-     * Checks if a choice has a URL and no complement, and sets the complement accordingly.
-     * @param ChoiceDto choiceDto the data transfer object containing the choice information to check
-     * @return the updated ChoiceDto
-     */
-    @Override
-    public ChoiceDto checkLinkComplement(ChoiceDto choiceDto) {
-        if (
-            !(choiceDto.getUrl() == null || Objects.requireNonNull(choiceDto.getUrl()).isBlank()) &&
-             (choiceDto.getComplement() == null || Objects.requireNonNull(choiceDto.getComplement()).isBlank())
-            ) {
-            choiceDto.setComplement("Cliquez ici pour suivre le lien");
-        }
-        return choiceDto;
     }
 }

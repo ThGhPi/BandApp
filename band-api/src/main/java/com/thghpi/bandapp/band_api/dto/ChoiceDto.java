@@ -1,29 +1,20 @@
 package com.thghpi.bandapp.band_api.dto;
 
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import org.springframework.lang.Nullable;
-
 /**
- * DTO représentant un choix dans un sondage.
- * Contient les mêmes champs que l'entité Choice,
- * à l'exception de :
- * - votes : calculé à partir des personnes ayant voté pour ce choix
- * - surveyId : l'identifiant du sondage auquel ce choix est associé, pour éviter les références circulaires avec le SurveyDto
+ * ChoiceDto a record used as data transfer object
+ * for the {@link Choice} entity
+ * @param id the id of the choice in the database
+ * @param title the short proposition for this choice
+ * @param complement an eventual complement or text for a link
+ * @param url the address of the link attached to the choice
+ * @param surveyId the id of the survey it is attached to
+ * @param votes the number of person having chosen this choice
  */
-@Data
-@AllArgsConstructor
-public class ChoiceDto {
-    @Nullable
-    private Long id;
-    private String title;
-    
-    @Nullable
-    private String complement;
-    @Nullable
-    private String url;
-    @Nullable
-    private Long surveyId;
-    @Nullable
-    private Long votes;
-}
+public record ChoiceDto (
+    Long id,
+    String title,
+    String complement,
+    String url,
+    Long surveyId,
+    Long votes
+) { }
