@@ -1,11 +1,7 @@
 package com.thghpi.bandapp.band_api.entity;
 
 import java.util.Set;
-
-import com.thghpi.bandapp.band_api.dto.ChoiceDto;
-
 import java.util.HashSet;
-import java.util.Objects;
 
 import jakarta.persistence.*;
 import lombok.Getter;

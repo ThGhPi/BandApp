@@ -8,7 +8,7 @@ import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 // import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+// import org.mapstruct.factory.Mappers;
 
 // import static org.junit.jupiter.api.Assertions.assertTrue;
 // import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,7 +23,7 @@ import org.mapstruct.factory.Mappers;
  */
 public class PersonMapperTest {
     /** The PersonMapper instance used for testing. */
-    private final PersonMapper mapper = Mappers.getMapper(PersonMapper.class);
+    // private final PersonMapper mapper = Mappers.getMapper(PersonMapper.class);
 
     /**
      * Test that a Person entity with a set of choices is correctly mapped to a PersonDto

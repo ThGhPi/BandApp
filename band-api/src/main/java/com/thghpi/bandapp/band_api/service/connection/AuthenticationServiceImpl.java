@@ -128,7 +128,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             personDto.username(), personDto.email(), id
         );
         Person updatedPerson = mapper.toEntity(personDto);
-        updatedPerson.setId(id);
         updatedPerson.setPassword(oldPerson.getPassword());
         updatedPerson.setRole(oldPerson.getRole());
         return mapper.toProfile(repository.save(updatedPerson));

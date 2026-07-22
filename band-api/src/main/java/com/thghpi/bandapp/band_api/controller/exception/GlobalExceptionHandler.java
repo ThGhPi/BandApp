@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
             .body(new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                exception.getMessage()
+                exception.getMessage() + "Passed here !"
             )
         );
     }
@@ -56,6 +56,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BadCUException.class)
     public ResponseEntity<ErrorResponse> handleBadCreationOrUpdate(BadCUException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+            .body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage()
+            )
+        );
+    }
+
+    /**
+     * Catch and handle the IllegalArgumentException exceptions to generate error 400 Bad Request http response
+     * @param IllegalArgumentException exception the exception thrown when a request with lacking or wrong arguments occurs
+     * @return a 400 BAD REQUEST error with a message the entity type concerned, and the reason for failure
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleBadCreationOrUpdate(IllegalArgumentException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
             .body(new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -160,6 +175,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value())
             .body(new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
+                exception.getMessage()
+            ));
+    }
+
+    /**
+     * Catch and handle the NullPointerException exceptions to generate error 500 INTERNAL_SERVER_ERROR http response
+     * @param NullPointerException exception the exception thrown when a null element appear unexpectedly
+     * @return a 500 INTERNAL_SERVER_ERROR error with a message indicating a null element appeared somewhere it's not allowed to 
+     */
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResponse> handleNullPointing(NullPointerException exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .body(new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 exception.getMessage()
             ));
     }

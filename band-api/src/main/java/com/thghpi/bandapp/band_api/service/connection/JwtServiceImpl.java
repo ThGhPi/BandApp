@@ -1,4 +1,5 @@
 package com.thghpi.bandapp.band_api.service.connection;
+import com.thghpi.bandapp.band_api.configuration.TimeConfiguration;
 import com.thghpi.bandapp.band_api.configuration.properties.JwtProperties;
 
 import io.jsonwebtoken.Jwts;
@@ -8,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.MacAlgorithm;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -100,7 +102,7 @@ public class JwtServiceImpl implements JwtService {
      * @return the username extracted from the token
      */
     @Override
-    public String extractUsername(String token) { return extractClaim(token, Claims::getSubject); }
+    public String extractUsername(String token) { return extractClaim(token, claims -> claims.getSubject()); }
     
     /**
      * Method to check if the JWT token is expired.
@@ -117,7 +119,7 @@ public class JwtServiceImpl implements JwtService {
      * @return the expiration date of the token
      */
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return extractClaim(token, claims -> claims.getExpiration());
     }
     
     /**
@@ -128,8 +130,8 @@ public class JwtServiceImpl implements JwtService {
      */
     @Override
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        final Claims claims = Objects.requireNonNull(extractAllClaims(token));
+        return Objects.requireNonNull(claimsResolver.apply(claims));
     }
     
     /**

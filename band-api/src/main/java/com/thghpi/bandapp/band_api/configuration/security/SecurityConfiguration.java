@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -69,11 +70,11 @@ public class SecurityConfiguration {
                         ).permitAll()
                         .requestMatchers("/band-api/auth/me").authenticated()
                         .requestMatchers("/band-api/auth/me/**").authenticated()
-                        .requestMatchers("/band-api/**").permitAll() // TODO: remove this line to
-                                                                // secure all API endpoints,
-                                                                // currently allowing all for
-                                                                // testing purposes
-
+                        .requestMatchers(HttpMethod.PUT, "/band-api/persons").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/band-api/persons").hasRole("ADMIN")
+                        .requestMatchers("/band-api/persons/**").authenticated()
+                        .requestMatchers("/band-api/**").permitAll()
+                         // TODO: remove this line to secure all API endpoints, currently allowing all for testing purposes
                         .anyRequest().authenticated())
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

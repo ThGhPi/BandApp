@@ -19,7 +19,7 @@ public class TimeConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(Clock.class)
-    public Clock clock() {
+    public Clock clock() { // TODO : adapt survey feature and it's tests
         return Clock.systemUTC();
     }
 }

@@ -1,14 +1,17 @@
 package com.thghpi.bandapp.band_api.unit.service;
-import com.thghpi.bandapp.band_api.dto.PersonDto;
-import com.thghpi.bandapp.band_api.dto.InstrumentDto;
+import com.thghpi.bandapp.band_api.dto.PersonRoleDto;
+import com.thghpi.bandapp.band_api.entity.Person;
+import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.repository.GroupRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.PersonServiceImpl;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
@@ -43,7 +46,9 @@ public class PersonServiceTest {
     @InjectMocks
     private PersonServiceImpl service;
     /** A list of PersonDto instances for testing */
-    private List<PersonDto> personDtoList;
+    private List<PersonRoleDto> personDtoList;
+    /** A list of PersonDto instances for testing */
+    private List<Person> personList;
 
     /**
      * Sets up the test environment before each test method is executed.
@@ -59,24 +64,7 @@ public class PersonServiceTest {
      */
     @Test
     void shouldRejectPersonDtoListWithLackingIds() {
-        PersonDto personDto1 = new PersonDto(
-            null, "John", "Doe",
-            "johndoe", "john.doe@example.com",
-            null, null, null, null
-        );
-        PersonDto personDto2 = new PersonDto(
-            null, "Jane", "Smith", "janesmith",
-            "jane.smith@example.com", null,
-            null, null, null
-        );
-        PersonDto personDto3 = new PersonDto(
-            null, "Jack", "Yang",
-             "jackyang", "jack.yang@example.com",
-            null, null,
-            null, new ArrayList<InstrumentDto>()
-        );
-        personDtoList = List.of(personDto1, personDto2, personDto3);
-
+        setDtoList(List.of());
         BadCUException thrown = assertThrows(
             BadCUException.class,
             () -> service.checkIdsForUpdate(personDtoList)
@@ -85,37 +73,18 @@ public class PersonServiceTest {
     }
 
     /**
-     * Tests that the service correctly rejects a list of PersonDto instances with non-existing IDs.
+     * Tests that the service correctly rejects
+     * a list of PersonDto instances with non-existing IDs.
      */
     @Test
     void shouldRejectPersonDtoListWithNonExistingIds() {
-        PersonDto personDto1 = new PersonDto(
-            1L, "John", "Doe",
-            "johndoe", "john.doe@example.com",
-            null, null, null, null
-        );
-        PersonDto personDto2 = new PersonDto(
-            2L, "Jane", "Smith", "janesmith",
-            "jane.smith@example.com", null,
-            null, null, null
-        );
-        PersonDto personDto3 = new PersonDto(
-            3L, "Jack", "Yang",
-             "jackyang", "jack.yang@example.com",
-            null, null,
-            null, new ArrayList<InstrumentDto>()
-        );
-        personDtoList = List.of(personDto1, personDto2, personDto3);
-        when(repository.existsById(1L))
-            .thenReturn(false);
-        when(repository.existsById(2L))
-            .thenReturn(false);
-        when(repository.existsById(3L))
-            .thenReturn(false);
+        setDtoList(List.of(1L, 2L, 3L));
+        when(repository.findAllById(Objects.requireNonNull(Set.of(1L, 2L, 3L))))
+            .thenReturn(List.of());
 
         BadCUException thrown = assertThrows(
             BadCUException.class,
-            () -> service.checkIdsForUpdate(personDtoList)
+            () -> service.updateMany(personDtoList)
         );
         assertEquals(
             "Can't update Person with invalid IDs : Person with IDs [1, 2, 3] don't exist in database.",
@@ -124,33 +93,69 @@ public class PersonServiceTest {
     }
     
     /**
-     * Tests that the service correctly accepts a list of PersonDto instances with valid IDs.
+     * Tests that the service correctly accepts
+     * a list of PersonDto instances with valid IDs.
     */
    @Test
    void shouldAcceptValidPersonDtoList() {       
-        PersonDto personDto1 = new PersonDto(
-            1L, "John", "Doe",
-            "johndoe", "john.doe@example.com",
-            null, null, null, null
+        setDtoList(List.of(1L, 2L, 3L));
+        setPersonList();
+        when(repository.findAllById(Objects.requireNonNull(Set.of(1L, 2L, 3L))))
+            .thenReturn(personList);
+        for (int i = 0; i < 3; i++) {
+            when(mapper.toEntity(personDtoList.get(i)))
+                .thenReturn(personList.get(i));
+            when(mapper.toRoleDto(personList.get(i)))
+                .thenReturn(personDtoList.get(i));
+        }
+        when(repository.saveAll(Objects.requireNonNull(personList)))
+            .thenReturn(personList);
+
+        assertDoesNotThrow(() -> service.updateMany(personDtoList));
+    }
+
+    /**
+     * method to set personDtoList field using specified ids before using it for testing
+     * @param ids the list of Long ids to set in the dtos
+     */
+    private void setDtoList(List<Long> ids) {
+        PersonRoleDto personDto1 = new PersonRoleDto(
+            ids.size() == 0 ? null : ids.get(0),
+            "John", "Doe", "johndoe",
+            "john.doe@example.com", Role.ADMIN, null, null
         );
-        PersonDto personDto2 = new PersonDto(
-            2L, "Jane", "Smith", "janesmith",
-            "jane.smith@example.com", null,
-            null, null, null
+        PersonRoleDto personDto2 = new PersonRoleDto(
+            ids.size() == 0 ? null : ids.get(1),
+            "Jane", "Smith", "janesmith",
+            "jane.smith@example.com", Role.ARR, null, null
         );
-        PersonDto personDto3 = new PersonDto(
-            3L, "Jack", "Yang",
-             "jackyang", "jack.yang@example.com",
-            null, null,
-            null, new ArrayList<InstrumentDto>()
+        PersonRoleDto personDto3 = new PersonRoleDto(
+            ids.size() == 0 ? null : ids.get(2),
+            "Jack", "Yang", "jackyang",
+            "jack.yang@example.com", Role.ORG, null, null
         );
         personDtoList = List.of(personDto1, personDto2, personDto3);
-       when(repository.existsById(1L))
-       .thenReturn(true);
-        when(repository.existsById(2L))
-            .thenReturn(true);
-        when(repository.existsById(3L))
-            .thenReturn(true);
-        assertDoesNotThrow(() -> service.checkIdsForUpdate(personDtoList));
+    }
+
+    /**
+     * method to set personList field using personDtoList before using it for testing
+     */
+    private void setPersonList() {
+        if (personList == null) {
+            personList = new ArrayList<>();
+        }
+        personList.clear();
+        personDtoList.forEach(personDto -> {
+            personList.add(
+            Person.builder()
+                .id(personDto.id())
+                .lastname(personDto.lastname())
+                .firstname(personDto.firstname())
+                .username(personDto.username())
+                .email(personDto.email())
+                .role(personDto.role())
+                .build()
+            );
+        });
     }
 }

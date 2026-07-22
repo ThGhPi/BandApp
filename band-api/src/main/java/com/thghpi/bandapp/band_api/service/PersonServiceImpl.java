@@ -2,6 +2,7 @@ package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.entity.Group;
 import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.dto.PersonRoleDto;
 import com.thghpi.bandapp.band_api.repository.GroupRepository;
 import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
@@ -10,8 +11,11 @@ import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
+import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
@@ -104,17 +108,38 @@ public class PersonServiceImpl implements PersonService {
      * saves them to the repository and returns the updated list of PersonDto.
      * @param personDtos the list of PersonDto with updates
      * @return the list of updated PersonDto if the update process is successful
+     * 
      */
     @Override
-    public List<PersonDto> updateMany(List<PersonDto> personDtos) {
-        checkIdsForUpdate(personDtos);
-        return repository.saveAll(
-            Objects.requireNonNull(
-            personDtos.stream()
+    public List<PersonRoleDto> updateMany(List<PersonRoleDto> personDtos) {
+        
+        Set<Long> requestedIds = checkIdsForUpdate(personDtos);
+        List<Person> oldPersons = repository.findAllById(Objects.requireNonNull(requestedIds));
+        List<Person> persons = personDtos.stream()
                 .map(mapper::toEntity)
-                .toList()
-        )).stream()
-            .map(mapper::toDto)
+                .toList();
+        oldPersons.forEach( // affect the password from old person version to the new one before saving
+            (Person oldPerson) -> {
+                requestedIds.remove(oldPerson.getId()); //removing the id because it exists
+                Person newPerson = persons.stream()
+                    .filter(person -> person.getId() == oldPerson.getId())
+                    .toList()
+                    .getFirst();
+                newPerson.setPassword(oldPerson.getPassword());
+            } 
+        );
+        if (!requestedIds.isEmpty()) { // ids still there mean there are no corresponding person in database
+            List<Long> missingIds = requestedIds.stream().toList();
+            throw new BadCUException(new BadCUMessage(
+                false, Person.class,
+                "with invalid IDs", missingIds,
+                "don't exist in database"
+            ));
+        }
+        return repository.saveAll(
+            Objects.requireNonNull(persons)
+        ).stream()
+            .map(mapper::toRoleDto)
             .toList();
     }
 
@@ -152,24 +177,16 @@ public class PersonServiceImpl implements PersonService {
      * @throws BadCUException when encountering a person without id in the list or if one or several ids can't be found in database
      */
     @Override
-    public void checkIdsForUpdate(List<PersonDto> personDtos) {
-        for (PersonDto personDto : personDtos) {
-            if (personDto.id() == null) {
+    public Set<Long> checkIdsForUpdate(List<PersonRoleDto> personDtos) {
+        Set<Long> checkedIds = new HashSet<>();
+        for (PersonRoleDto personDto : personDtos) {
+            if (personDto == null || personDto.id() == null) {
                 throw new BadCUException(new BadCUMessage(
                     false, Person.class, "with null ID",
                     null, null
                 ));
-            }
+            } else { checkedIds.add(personDto.id()); }
         }
-        List<Long> ids = personDtos.stream()
-            .map(PersonDto::id)
-            .filter(id -> !repository.existsById(Objects.requireNonNull(id)))
-            .toList();
-        if (!ids.isEmpty()) {
-            throw new BadCUException(new BadCUMessage(
-                false, Person.class, "with invalid IDs",
-                ids, "don't exist in database"
-            ));
-        }
+        return checkedIds;
     }
 }

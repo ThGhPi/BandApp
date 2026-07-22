@@ -1,6 +1,8 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.dto.PersonRoleDto;
 
+import java.util.Set;
 import java.util.List;
 import org.springframework.lang.NonNull;
 
@@ -14,8 +16,8 @@ public interface PersonService {
     List<PersonDto> getByGroupId(@NonNull Long groupId);
 
     // UPDATE methods
-	List<PersonDto> updateMany(List<PersonDto> personDtos);
-    void checkIdsForUpdate(List<PersonDto> personDtos);
+	List<PersonRoleDto> updateMany(List<PersonRoleDto> personDtos);
+    Set<Long> checkIdsForUpdate(List<PersonRoleDto> personDtos);
 
     // DELETE methods
     void deleteOne(@NonNull Long id);

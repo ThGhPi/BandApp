@@ -1,5 +1,4 @@
 package com.thghpi.bandapp.band_api.service;
-import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
@@ -102,7 +101,7 @@ public class SurveyServiceImpl implements SurveyService {
         checkSurveysData(List.of(surveyDto));
         Survey survey = mapper.toEntity(surveyDto);
         checkSurveysClosure(List.of(survey));
-        survey.getChoices().forEach(Choice::checkLinkComplement);
+        survey.getChoices().forEach(choice -> Objects.requireNonNull(choice).checkLinkComplement());
         return mapper.toDto(
             repository.save(
                 Objects.requireNonNull(survey)
@@ -126,7 +125,7 @@ public class SurveyServiceImpl implements SurveyService {
         checkSurveysClosure(surveys);
         surveys.forEach(
             survey -> survey.getChoices()
-                .forEach(Choice::checkLinkComplement)
+                .forEach(choice -> Objects.requireNonNull(choice).checkLinkComplement())
             );
         return repository.saveAll(surveys)
             .stream()
@@ -164,16 +163,18 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public void checkSurveysClosure(List<Survey> surveys) {
         List<Long> ids = surveys.stream()
-            .filter(Survey::isClosed)
-            .map(Survey::getId)
+            .filter(survey -> Objects.requireNonNull(survey).isClosed())
+            .map(survey -> { // throw the error if it's for creation i.e. there are null ids
+                if (survey.getId() == null) {
+                    throw new BadCUException(new BadCUMessage(
+                        true, Survey.class, "that are already closed",
+                        null, "The scheduled end date must be after today"
+                    ));
+                }
+                return survey.getId();
+            })
             .toList();
         if (!ids.isEmpty()) {
-            if (ids.contains(null)) {
-                throw new BadCUException(new BadCUMessage(
-                    true, Survey.class, "that are already closed",
-                    null, "The scheduled end date must be after today"
-                ));
-            }
             throw new BadCUException(new BadCUMessage(
                 false, Survey.class, "that are already closed",
                 ids, "are already closed"
@@ -190,15 +191,17 @@ public class SurveyServiceImpl implements SurveyService {
     public void checkSurveysData(List<SurveyDto> surveys) {
         List<Long> ids = surveys.stream()
             .filter(survey -> survey.question().isBlank() || survey.question().length() > 255)
-            .map(SurveyDto::id)
+            .map(survey -> { // throw the error if it's for creation i.e. there are null ids
+                if (survey.id() == null) {
+                    throw new BadCUException(new BadCUMessage(
+                        true, Survey.class, "with invalid data",
+                        null, "The question must not be blank nor exceed 255 characters"
+                    ));
+                }
+                return survey.id();
+            })
             .toList();
         if (!ids.isEmpty()) {
-            if (ids.contains(null)) {
-                throw new BadCUException(new BadCUMessage(
-                    true, Survey.class, "with invalid data",
-                    null, "The question must not be blank nor exceed 255 characters"
-                ));
-            }
             throw new BadCUException(new BadCUMessage(
                 false, Survey.class, "with invalid data",
                 ids, "must not have their question blank nor exceeding 255 characters"

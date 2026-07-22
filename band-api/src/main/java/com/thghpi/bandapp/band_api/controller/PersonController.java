@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.PersonDto;
+import com.thghpi.bandapp.band_api.dto.PersonRoleDto;
 import com.thghpi.bandapp.band_api.service.PersonServiceImpl;
 
 import org.springframework.lang.NonNull;
@@ -42,7 +43,7 @@ public class PersonController {
      * For endpoint band-api/person/all GET request, returns the list of all persons in the database.
      * @return a list of PersonDto for all the persons in the database.
      */
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<List<PersonDto>> getAllPersons() {
         List<PersonDto> personDtos = service.getAll();
         return ResponseEntity.ok(personDtos);
@@ -67,14 +68,14 @@ public class PersonController {
      * @throws IllegalArgumentException when finding a PersonDto in the list without an id.
      */
     @PutMapping
-    public ResponseEntity<List<PersonDto>> updatePersons(@RequestBody List<PersonDto> personsToUpdate) {
-        for (PersonDto personDto : personsToUpdate) {
-            if (personDto.id() == null) {
+    public ResponseEntity<List<PersonRoleDto>> updatePersons(@RequestBody List<PersonRoleDto> personsToUpdate) {
+        personsToUpdate.forEach(personDto -> { if (personDto.id() == null) {
                 throw new IllegalArgumentException("All persons must have an ID for update");
-            }
-        }
-        // TODO : use DTO with role
-        List<PersonDto> personDtos = service.updateMany(personsToUpdate);
+            }}
+            
+        );
+        
+        List<PersonRoleDto> personDtos = service.updateMany(personsToUpdate);
         return ResponseEntity.ok(personDtos);
     }
 

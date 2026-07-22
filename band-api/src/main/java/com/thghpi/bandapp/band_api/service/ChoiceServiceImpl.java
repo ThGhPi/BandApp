@@ -77,9 +77,11 @@ public class ChoiceServiceImpl implements ChoiceService {
     @Override
     public Set<ChoiceDto> saveAll(@NonNull Set<ChoiceDto> choiceDtos) {
         Set<Choice> choices = choiceDtos.stream()
-                .map(mapper::toEntity)
-                .collect(Collectors.toSet());
-        choices.forEach(Choice::checkLinkComplement);
+            .map(mapper::toEntity)
+            .collect(Collectors.toSet());
+        choices.forEach(choice -> {
+            Objects.requireNonNull(choice).checkLinkComplement();
+        });
         return repository.saveAll(
             Objects.requireNonNull(
                 choices
