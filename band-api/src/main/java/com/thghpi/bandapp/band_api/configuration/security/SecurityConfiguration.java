@@ -69,12 +69,15 @@ public class SecurityConfiguration {
                             "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers("/band-api/auth/me").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/band-api/auth/register/many").hasRole("ADMIN")
                         .requestMatchers("/band-api/auth/me/**").authenticated()
+
                         .requestMatchers(HttpMethod.PUT, "/band-api/persons").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/band-api/persons").hasRole("ADMIN")
-                        .requestMatchers("/band-api/persons/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/band-api/persons/**").hasRole("ADMIN")
+                        .requestMatchers("/band-api/persons/**").hasAnyRole("ADMIN", "ARR", "ORG", "MEMBER")
+
                         .requestMatchers("/band-api/**").permitAll()
-                         // TODO: remove this line to secure all API endpoints, currently allowing all for testing purposes
+                         // TODO: remove this line above to secure all API endpoints, currently allowing all for testing purposes
                         .anyRequest().authenticated())
                 .sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

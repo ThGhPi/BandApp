@@ -12,7 +12,10 @@ import com.thghpi.bandapp.band_api.service.exception.NotFoundMessage;
 import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -103,42 +106,40 @@ public class PersonServiceImpl implements PersonService {
     /**
      * Updates the list of persons in the database using the given list of PersonDto.
      * The method takes a list of PersonDto as input,
-     * checks if each PersonDto has a valid id and exists in the database,
-     * converts them to Person entities using the mapper,
-     * saves them to the repository and returns the updated list of PersonDto.
-     * @param personDtos the list of PersonDto with updates
-     * @return the list of updated PersonDto if the update process is successful
-     * 
+     * checks if each PersonRoleDto has a valid id and exists in the database,
+     * update the related Person entities using the mapper,
+     * saves them to the repository and returns the updated list of PersonRoleDto.
+     * @param personDtos the list of PersonRoleDto with updates
+     * @return the list of updated PersonRoleDto if the update process is successful
+     * @throws BadCUException when there are PersonRoleDto with an id absent from database in the list
      */
     @Override
     public List<PersonRoleDto> updateMany(List<PersonRoleDto> personDtos) {
+        Set<Long> ids = checkIdsForUpdate(personDtos);
         
-        Set<Long> requestedIds = checkIdsForUpdate(personDtos);
-        List<Person> oldPersons = repository.findAllById(Objects.requireNonNull(requestedIds));
-        List<Person> persons = personDtos.stream()
-                .map(mapper::toEntity)
-                .toList();
-        oldPersons.forEach( // affect the password from old person version to the new one before saving
-            (Person oldPerson) -> {
-                requestedIds.remove(oldPerson.getId()); //removing the id because it exists
-                Person newPerson = persons.stream()
-                    .filter(person -> person.getId() == oldPerson.getId())
-                    .toList()
-                    .getFirst();
-                newPerson.setPassword(oldPerson.getPassword());
-            } 
+        List<Person> persons = repository.findAllById(Objects.requireNonNull(ids));
+
+        ids.removeAll(persons.stream()
+            .map(Person::getId)
+            .collect(Collectors.toSet())
         );
-        if (!requestedIds.isEmpty()) { // ids still there mean there are no corresponding person in database
-            List<Long> missingIds = requestedIds.stream().toList();
+
+        if (!ids.isEmpty()) { // ids still there mean there are no corresponding person in database
             throw new BadCUException(new BadCUMessage(
                 false, Person.class,
-                "with invalid IDs", missingIds,
+                "with invalid IDs", ids.stream().toList(),
                 "don't exist in database"
             ));
         }
-        return repository.saveAll(
-            Objects.requireNonNull(persons)
-        ).stream()
+
+        Map<Long,PersonRoleDto> dtoByIds = personDtos.stream()
+            .collect(Collectors.toMap(PersonRoleDto::id, Function.identity()));
+        
+        persons.forEach(person -> mapper.updatePersonFromRoleDto(
+            dtoByIds.get(person.getId()), person
+        ));
+
+        return repository.saveAll(Objects.requireNonNull(persons)).stream()
             .map(mapper::toRoleDto)
             .toList();
     }

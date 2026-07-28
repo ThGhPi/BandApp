@@ -103,8 +103,6 @@ public class PersonServiceTest {
         when(repository.findAllById(Objects.requireNonNull(Set.of(1L, 2L, 3L))))
             .thenReturn(personList);
         for (int i = 0; i < 3; i++) {
-            when(mapper.toEntity(personDtoList.get(i)))
-                .thenReturn(personList.get(i));
             when(mapper.toRoleDto(personList.get(i)))
                 .thenReturn(personDtoList.get(i));
         }

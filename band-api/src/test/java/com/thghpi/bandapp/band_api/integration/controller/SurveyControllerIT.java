@@ -1,7 +1,11 @@
 package com.thghpi.bandapp.band_api.integration.controller;
+import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
+import com.thghpi.bandapp.band_api.entity.enumeration.Role;
 import com.thghpi.bandapp.band_api.dto.ChoiceDto;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.request.LoginRequest;
+import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 
@@ -10,12 +14,15 @@ import java.util.List;
 import java.util.Objects;
 import java.time.LocalDate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,6 +50,12 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     /** SurveyRepository instance used to interact with the survey data in the tests. */
     @Autowired
     private SurveyRepository repository;
+    /** PersonRepository instance used to simulate connection. */
+    @Autowired
+    private PersonRepository personRepository;
+    /** PasswordEncoder instance used for saving a person to simulate connection */
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Clean database before each test in the test container
@@ -384,5 +397,50 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.choices[*].title").value(
                 Objects.requireNonNull(containsInAnyOrder("Dog", "Cat", "Fish"))
             )).andExpect(jsonPath("$.choices[0].votes").value(0));
+    }
+
+        /**
+     * Reusable method that returns a saved Person2 using the repository
+     * and default passworld "Passworld123!" when the argument password is null.
+     * @param String password can be null
+     * @return the saved person with the given password or default passworld
+     */
+    private Person savePerson(String password) {
+        return personRepository.save(Objects.requireNonNull(
+            Person.builder()
+            .lastname("Doe")
+            .firstname("John")
+            .username("johndoe")
+            .email("john.doe@example.com")
+            .password(passwordEncoder.encode(password != null ? password : "Password123!"))
+            .role(Role.MEMBER)
+            .build()
+        ));
+    }
+
+    /**
+     * Reusable method to authenticate a person using a given password
+     * @param Person person the person to authenticate (it's username will be used)
+     * @param String password the password used for authetication trial
+     * @return a valid token if successfull, throw Exception otherwise
+     */
+    private String login(Person person, String password) throws Exception {
+        LoginRequest loginDto = new LoginRequest(
+            person.getUsername(),
+            password != null ? password : "Password123!"
+        );
+
+        MvcResult loginResult = mockMvc.perform(
+            post("/band-api/auth/login")
+            .contentType("application/json")
+            .content(Objects.requireNonNull(
+                objectMapper.writeValueAsString(loginDto)
+            ))
+        ).andExpect(status().isOk())
+            .andReturn();
+
+        return JsonPath.read(
+            loginResult.getResponse().getContentAsString(), "$.token"
+        );
     }
 }

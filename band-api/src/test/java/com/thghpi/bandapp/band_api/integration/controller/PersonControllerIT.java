@@ -63,6 +63,11 @@ public class PersonControllerIT extends AbstractIntegrationTest {
         groupRepository.deleteAll();
     }
 
+    /**
+     * Test for successfull person info read by ID
+     * Tested endpoint : GET /band-api/persons/{id}
+     * @throws Exception when test fails
+     */    
     @Test
     void shouldReturnPersonWithTheRightId() throws Exception {
         Person person = savePerson(null);
@@ -71,13 +76,18 @@ public class PersonControllerIT extends AbstractIntegrationTest {
 
         mockMvc.perform(
             get("/band-api/persons/" + person.getId())
-            .header("Autorization", "Bearer " + token )
+            .header("Authorization", "Bearer " + token )
         ).andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(person.getId()))
             .andExpect(jsonPath("$.username").exists())
             .andExpect(jsonPath("$.instruments").doesNotExist());
     }
 
+    /**
+     * Test for failed person info read by ID
+     * Tested endpoint : GET /band-api/persons/{id}
+     * @throws Exception when test fails
+     */     
     @Test
     void shouldNotFindPersonWithInexistingId() throws Exception {
         Person person = savePerson(null);
@@ -88,12 +98,17 @@ public class PersonControllerIT extends AbstractIntegrationTest {
 
         mockMvc.perform(
             get("/band-api/persons/" + searchedId)
-            .header("Autorization", "Bearer " + token )
+            .header("Authorization", "Bearer " + token )
         ).andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message").exists())
             .andExpect(jsonPath("$.message").value("Person with ID " + searchedId + " not found."));
     }
 
+    /**
+     * Test for successfull all person info read by ID
+     * Tested endpoint : GET /band-api/persons
+     * @throws Exception when test fails
+     */     
     @Test
     void shouldReturnPersonList() throws Exception {
         Person person = savePerson(null);
@@ -122,6 +137,11 @@ public class PersonControllerIT extends AbstractIntegrationTest {
 
     }
 
+    /**
+     * Test for successfull persons info read by group ID
+     * Tested endpoint : GET /band-api/persons/group/{groupId}
+     * @throws Exception when test fails
+     */     
     @Test
     void shouldReturnPersonOfTheRightGroup() throws Exception {
         Group group1 = groupRepository.save(Objects.requireNonNull(
@@ -167,6 +187,11 @@ public class PersonControllerIT extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.[0].groups").doesNotExist());
     }
 
+    /**
+     * Test for successfull many persons update
+     * Tested endpoint : PUT /band-api/persons
+     * @throws Exception when test fails
+     */     
     @Test
     void shouldUpdatePersonsSuccessfully() throws Exception {
         Person person = savePerson(null);
@@ -206,9 +231,14 @@ public class PersonControllerIT extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.[0].username").exists())
             .andExpect(jsonPath("$.[0].username").value(personDto.username()))
             .andExpect(jsonPath("$.[0].role").exists())
-            .andExpect(jsonPath("$.[0].role").value(personDto.role()));
+            .andExpect(jsonPath("$.[0].role").value(personDto.role().toString()));
     }
 
+    /**
+     * Test for successfull many persons deletion
+     * Tested endpoint : DELETE /band-api/persons
+     * @throws Exception when test fails
+     */
     @Test
     void shouldDeleteSeveralSuccessfully() throws Exception {
         Person person = savePerson(null);
@@ -245,6 +275,11 @@ public class PersonControllerIT extends AbstractIntegrationTest {
         ).andExpect(status().isNoContent());
     }
 
+    /**
+     * Test for failed many persons deletion
+     * Tested endpoint : DELETE /band-api/persons
+     * @throws Exception when test fails
+     */
     @Test
     void shouldRefuseDeletionWithoutIds() throws Exception {
         Person person = savePerson(null);
