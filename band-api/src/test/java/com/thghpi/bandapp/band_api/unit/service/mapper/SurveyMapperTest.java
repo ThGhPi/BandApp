@@ -23,8 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
- * Unit Tests for the SurveyMapper class, which maps between Survey entities and SurveyDto objects.
- * Tests the mapping of the closed and totalVotes fields, as well as the mapping of choices using the ChoiceMapper.
+ * SurveyMapperTest a class of
+ * Unit Tests for the {@link SurveyMapper} class,
+ * which maps between Survey entities and SurveyDto objects.
+ * Tests the mapping of the closed and totalVotes fields,
+ * as well as the mapping of choices using the {@link ChoiceMapper}.
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -32,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
      ChoiceMapperImpl.class
     })
 public class SurveyMapperTest {
+    /** The mapper for Survey entity to test */
     @Autowired
     private SurveyMapper mapper;
 

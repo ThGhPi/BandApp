@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import java.time.Clock;
 
 /**
- * Central time configuration for the app
- * TimeConfiguration a class that define a Clock Bean to be used throughout the app
+ * Central time configuration for the API
+ * TimeConfiguration a class that define a Clock Bean to be used throughout the API
  */
 @Configuration
 public class TimeConfiguration {
