@@ -12,6 +12,7 @@ export class Option {
   
   survey = input.required<Survey>();
   choice = input.required<Choice>();
+  last = input<boolean>(false);
 
   voteChange = output<{
     surveyId: number;

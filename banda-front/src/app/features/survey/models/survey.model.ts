@@ -7,5 +7,5 @@ export interface Survey {
   multiplicity: boolean;
   totalVotes: number;
   closed: boolean;
-  options: Choice[];
+  choices: Choice[];
 }

@@ -1,47 +1,44 @@
-<div class="relative border-b border-dark hover:bg-gray-200 last:border-b-0 overflow-hidden"
-     (click)="toggle()">
+<div class="flex justify-between items-center text-start
+  hover:bg-gray-200 border-b border-dark"
+  [class.border-b-0]="last()"
+  (click)="toggle()">
 
-  <div class="left">
-
-    <div
-    class="absolute inset-y-0 left-0 bg-success bg-opacity-25 transition-all duration-500"
+  <div class="absolute inset-y-0 left-0 bg-success bg-opacity-25 transition-all duration-500"
     [style.width.%]="survey().totalVotes > 0 ? (choice().votes / survey().totalVotes) * 100 : 0">
-    </div>
+  </div>
+  <div class="flex mx-3">
+
     <!-- Multiple choice() -->
     @if (survey().multiplicity) {
-      <input type="checkbox"
-        [name]="survey().id"
-        [readOnly]="survey().closed"
-        [checked]="choice().chosen" />
+    <input type="checkbox" [name]="survey().id" [readOnly]="survey().closed" 
+      [checked]="choice().chosen" class="px-2"/>
     }
     <!-- Single choice() -->
     @else {
-      <input type="radio"
-        [name]="survey().id"
-        [readOnly]="survey().closed"
-        [checked]="choice().chosen" />
+    <input type="radio" [name]="survey().id" [readOnly]="survey().closed"
+      [checked]="choice().chosen" class="px-2"/>
     }
-    <div class="flex-column">
-        <div>
-          {{ choice().title }}
-        </div>
-        <!-- Avec complément -->
-        @if (choice().complement) {
-            <!-- Avec lien externe -->
-            @if (choice().url) {
-                <a [href]="choice().url" class="text-night underline italic">
-                    {{ choice().complement }}
-                </a>
-            }
-            <!-- Sans lien externe -->
-            @else {
-                <div>{{ choice().complement }}</div>
-            }
-        }
+    <div class="flex-col justify-around items-start p-2 mx-2">
+      <div>
+        {{ choice().title }}
+      </div>
+      <!-- Avec complément -->
+      @if (choice().complement) {
+      <!-- Avec lien externe -->
+      @if (choice().url) {
+      <a [href]="choice().url" class="text-night underline italic">
+        {{ choice().complement }}
+      </a>
+      }
+      <!-- Sans lien externe -->
+      @else {
+      <div>{{ choice().complement }}</div>
+      }
+      }
     </div>
   </div>
 
-  <div class="votes">
+  <div class="votes mx-3">
     {{ choice().votes }} vote{{ choice().votes > 1 ? 's' : '' }}
   </div>
 </div>
