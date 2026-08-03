@@ -362,6 +362,4 @@ public class PersonControllerIT extends AbstractIntegrationTest {
             loginResult.getResponse().getContentAsString(), "$.token"
         );
     }
-
-    // TODO: Implement integration tests for PersonController
 }
