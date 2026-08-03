@@ -29,32 +29,42 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
+ * AuthenticationServiceTest class of
  * Unit tests for the {@link AuthenticationService} class.
- * AuthenticationServiceTest
  */
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTest {
+    /** mock of a PersonMapper */
     @Mock
     private PersonMapper mapper;
+    /** mock of a JwtServiceImpl */
     @Mock
     private JwtServiceImpl jwtService;
+    /** mock of a PersonRepository */
     @Mock
     private PersonRepository repository;
+    /** mock of a PasswordChecker */
     @Mock
     private PasswordChecker passwordChecker;
+    /** mock of a PasswordEncoder */
     @Mock
     private PasswordEncoder passwordEncoder;
+    /** mock of an AuthenticationManager */
     @Mock
     private AuthenticationManager authenticationManager;
+    /** AuthenticationServiceImpl to be tested, injected with mocks for it's fields */
     @InjectMocks
     private AuthenticationServiceImpl service;
 
+    /** A dto used as an input for testing */
     private RegisterRequest input;
+    /** A dto used as output for testing */
     private PersonDto output = new PersonDto(
             1L, "John", "Doe", "johndoe",
             "john.doe@example.com", null,
             null, null, null
         );
+    /** A Person entity used for testing */
     private Person person = new Person(
             null, "John", "Doe", "johndoe",
             "john.doe@example.com", "encodedPassword",
