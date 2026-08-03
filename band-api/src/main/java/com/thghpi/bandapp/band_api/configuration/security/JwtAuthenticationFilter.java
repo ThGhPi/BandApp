@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         final String authHeader = request.getHeader("Authorization");
-
+// TODO : adapt for httpOnly cookie
         // If Authorization header is missing or doesn't start with "Bearer",
         // skip JWT processing and continue the filter chain
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

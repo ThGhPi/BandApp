@@ -15,6 +15,7 @@ export class LoginPage {
   constructor(private router: Router) {}
 
   login() {
+    
     // TEMPORAIRE
     this.router.navigate(['/sondages']);
   }
