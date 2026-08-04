@@ -1,6 +1,7 @@
 package com.thghpi.bandapp.band_api.service;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.request.VoteRequest;
 import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
 
 import java.time.LocalDate;
@@ -20,4 +21,6 @@ public interface SurveyService {
     void deleteAll(@NonNull List<SurveyDto> surveyDtos);
 	void checkSurveysClosure(List<Survey> surveys);
     void checkSurveysData(List<SurveyDto> surveys);
+    SurveyDto addVote(VoteRequest voteRequest);
+    SurveyDto removeVote(VoteRequest voteRequest);
 }

@@ -4,9 +4,10 @@ import com.thghpi.bandapp.band_api.dto.PersonDto;
 import com.thghpi.bandapp.band_api.dto.request.LoginRequest;
 import com.thghpi.bandapp.band_api.dto.request.RegisterRequest;
 import com.thghpi.bandapp.band_api.dto.response.ProfileResponse;
-import com.thghpi.bandapp.band_api.repository.InstrumentRepository;
-import com.thghpi.bandapp.band_api.repository.PersonRepository;
 import com.thghpi.bandapp.band_api.repository.PlaceRepository;
+import com.thghpi.bandapp.band_api.repository.PersonRepository;
+import com.thghpi.bandapp.band_api.repository.InstrumentRepository;
+import com.thghpi.bandapp.band_api.service.CurrentUserService;
 import com.thghpi.bandapp.band_api.service.mapper.PersonMapper;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictMessage;
 import com.thghpi.bandapp.band_api.service.exception.FailedPasswordChangeException;
@@ -14,7 +15,6 @@ import com.thghpi.bandapp.band_api.service.exception.NotAuthenticatedException;
 import com.thghpi.bandapp.band_api.service.exception.ExistenceConflictException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +35,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final PersonMapper mapper;
     private final JwtServiceImpl jwtService;
+    private final CurrentUserService currentUserService;
     private final PersonRepository repository;
     private final PasswordChecker passwordChecker;
     private final PasswordEncoder passwordEncoder;
@@ -86,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public void changePassword(List<LoginRequest> personList) {
-        Person person = getAuthenticatedPerson();
+        Person person = currentUserService.getAuthenticatedPerson();
         if (!passwordEncoder.matches(
                 personList.getFirst().trialPassword(),
                 person.getPassword()
@@ -105,12 +106,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public ProfileResponse getAuthenticatedPersonProfile() {
-        Person authenticatedPerson = getAuthenticatedPerson();
+        Person authenticatedPerson = currentUserService.getAuthenticatedPerson();
         authenticatedPerson.setInstruments(instrumentRepository.findAllByPersons(authenticatedPerson));
         authenticatedPerson.setAddress(
             placeRepository.findByPersons(authenticatedPerson).orElse(null)
         );
-        return mapper.toProfile(getAuthenticatedPerson());
+        return mapper.toProfile(currentUserService.getAuthenticatedPerson());
     }
 
     /**
@@ -228,12 +229,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 ));
             }
         }
-    }
-
-    private Person getAuthenticatedPerson() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Person authenticatedPerson = repository.findByUsername(authentication.getName())
-            .orElseThrow(() -> new NoSuchElementException("Person with username " + authentication.getName() + " wasn't found in database."));
-        return authenticatedPerson;
     }
 }

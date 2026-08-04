@@ -4,6 +4,7 @@ import com.thghpi.bandapp.band_api.entity.Person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Set;
 
@@ -87,5 +88,54 @@ public class ChoiceTest {
         choiceWithoutUrl2.checkLinkComplement();
         assertNull(choiceWithoutUrl1.getComplement());
         assertEquals("Some complement", choiceWithoutUrl2.getComplement());
+    }
+
+    /**
+     * Tests the addVote and removeVote methods of the Choice entity. It creates a choice and a person, adds a vote for the person,
+     * asserts that the vote count increases, then removes the vote and asserts that the vote count decreases.
+     */
+    @Test
+    void shouldAddAndRemoveVote() {
+        Choice choice = Choice.builder()
+            .id(1L)
+            .title("Option 1")
+            .complement("complement")
+            .build();
+        Person person = Person.builder()
+            .id(1L)
+            .lastname("Taylor")
+            .firstname("Alice")
+            .username("aliceT")
+            .email("alice.taylor@example.com")
+            .password("blank")
+            .build();
+        choice.addVote(person);
+        assertEquals(1L, choice.getVotes());
+        choice.removeVote(person);
+        assertEquals(0L, choice.getVotes());
+    }
+
+    /**
+     * Tests that adding a duplicate vote for the same person throws an IllegalArgumentException.
+     * It creates a choice and a person, adds a vote for the person, and then attempts to add another vote for the same person,
+     * asserting that an exception is thrown.
+     */
+    @Test
+    void shouldThrowExceptionWhenAddingDuplicateVote() {
+        Choice choice = Choice.builder()
+            .id(1L)
+            .title("Option 1")
+            .complement("complement")
+            .build();
+        Person person = Person.builder()
+            .id(1L)
+            .lastname("Taylor")
+            .firstname("Alice")
+            .username("aliceT")
+            .email("alice.taylor@example.com")
+            .password("blank")
+            .build();
+        choice.addVote(person);
+        assertThrows(IllegalArgumentException.class, () -> choice.addVote(person));
     }
 }

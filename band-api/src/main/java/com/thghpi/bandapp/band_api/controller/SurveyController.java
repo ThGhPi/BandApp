@@ -1,5 +1,6 @@
 package com.thghpi.bandapp.band_api.controller;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.request.VoteRequest;
 import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
@@ -156,5 +157,27 @@ public class SurveyController {
         }
         service.deleteAll(surveys);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * For endpoint band-api/surveys/vote POST request,
+     * adds a vote to a survey based on the provided VoteRequest.
+     * @param voteRequest the VoteRequest containing the surveyId and choiceId to add the vote, taken from the body of the request.
+     * @return the updated SurveyDto after adding the vote if successful, otherwise an error response.
+     */
+    @PostMapping("/vote")
+    public ResponseEntity<SurveyDto> addVote(@RequestBody @NonNull VoteRequest voteRequest) {
+        return ResponseEntity.ok(service.addVote(voteRequest));
+    }
+
+    /**
+     * For endpoint band-api/surveys/vote DELETE request,
+     * removes a vote from a survey based on the provided VoteRequest.
+     * @param voteRequest the VoteRequest containing the surveyId and choiceId to remove the vote, taken from the body of the request.
+     * @return the updated SurveyDto after removing the vote if successful, otherwise an error response.
+     */
+    @DeleteMapping("/vote")
+    public ResponseEntity<SurveyDto> removeVote(@RequestBody @NonNull VoteRequest voteRequest) {
+        return ResponseEntity.ok(service.removeVote(voteRequest));
     }
 }

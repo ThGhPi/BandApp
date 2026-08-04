@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Survey } from '../models/survey.model';
 import { API_ENDPOINTS } from '../../../core/config/api-endpoints';
+import { Vote } from '../models/vote.model';
 
 @Injectable({
   providedIn: 'root',
@@ -36,19 +37,20 @@ export class SurveyService {
   /**
    * Vote an option (choice)
    */
-  addVote(surveyId: number, choiceId: number): Observable<Survey> {
+  addVote(vote: Vote): Observable<Survey> {
     return this.http.post<Survey>(
-      `${this.baseUrl}/${surveyId}/vote`,
-      { choiceId }
+      `${this.baseUrl}/vote`,
+      vote
     );
   }
 
   /**
    * Unvote an option 
    */
-  removeVote(surveyId: number, choiceId: number): Observable<Survey> {
+  removeVote(vote: Vote): Observable<Survey> {
     return this.http.delete<Survey>(
-      `${this.baseUrl}/${surveyId}/vote/${choiceId}`
+      `${this.baseUrl}/vote`,
+      { body: vote }
     );
   }
 

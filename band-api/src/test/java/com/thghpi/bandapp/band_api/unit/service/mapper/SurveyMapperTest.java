@@ -8,7 +8,10 @@ import com.thghpi.bandapp.band_api.service.mapper.SurveyMapperImpl;
 
 import java.util.Objects;
 import java.util.Set;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SurveyMapperTest {
     @Autowired
     private SurveyMapper mapper;
+
+    private final Clock fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     /**
      * Tests the mapping of a Survey entity to a SurveyDto, including the calculation of the closed and totalVotes fields,
@@ -66,7 +71,7 @@ public class SurveyMapperTest {
                     )
                 )
             );
-        SurveyDto surveyDto1 = mapper.toDto(survey1);
+        SurveyDto surveyDto1 = mapper.toDto(survey1, null, fixedClock);
         assertNotNull(surveyDto1);
         assertFalse(Objects.requireNonNull(surveyDto1.closed()));
         assertEquals(0L, surveyDto1.totalVotes());
@@ -77,7 +82,7 @@ public class SurveyMapperTest {
                 true,
                 Set.of()
             );
-        SurveyDto surveyDto2 = mapper.toDto(survey2);
+        SurveyDto surveyDto2 = mapper.toDto(survey2, null, fixedClock);
         assertTrue(Objects.requireNonNull(surveyDto2.closed()));
         assertEquals(0L, surveyDto2.totalVotes());
         assertEquals(2, surveyDto1.choices().size());

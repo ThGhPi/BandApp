@@ -4,6 +4,7 @@ import { SurveyService } from '../../services/survey.service';
 import { Card } from "../../../../shared/components/card/card";
 import { SmartDatePipe } from '../../../../shared/pipes/smart-date.pipe';
 import { Option } from '../../components/option/option';
+import { Vote } from '../../models/vote.model';
 
 @Component({
   selector: 'app-survey-list.page',
@@ -31,9 +32,13 @@ export class SurveyListPage {
     optionId: number;
     selected: boolean;
   }) {
+    const vote: Vote = {
+      surveyId: event.surveyId,
+      choiceId: event.optionId
+    };
     const request$ = event.selected
-      ? this.surveyService.addVote(event.surveyId, event.optionId)
-      : this.surveyService.removeVote(event.surveyId, event.optionId);
+      ? this.surveyService.addVote(vote)
+      : this.surveyService.removeVote(vote);
 
     request$.subscribe(updatedSurvey => {
       this.updateSurvey(updatedSurvey);

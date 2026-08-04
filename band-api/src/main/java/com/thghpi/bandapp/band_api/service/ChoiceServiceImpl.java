@@ -36,7 +36,8 @@ public class ChoiceServiceImpl implements ChoiceService {
     public ChoiceDto getById(@NonNull Long id) {
         return mapper.toDto(
             repository.findById(id)
-                .orElseThrow(() -> new NotFoundException(new NotFoundMessage(id, Choice.class)))
+                .orElseThrow(() -> new NotFoundException(new NotFoundMessage(id, Choice.class))),
+            null
             );
     }
 
@@ -49,7 +50,7 @@ public class ChoiceServiceImpl implements ChoiceService {
     public Set<ChoiceDto> getBySurveyId(Long surveyId) {
         return repository.findAllBySurveyId(surveyId)
             .stream()
-            .map(mapper::toDto)
+            .map(choice -> mapper.toDto(choice, null))
             .collect(Collectors.toSet());
     }
 
@@ -66,7 +67,7 @@ public class ChoiceServiceImpl implements ChoiceService {
         choice.checkLinkComplement();
         return mapper.toDto(repository.save(
             Objects.requireNonNull(choice)
-        ));
+        ), null);
     }
 
     /**
@@ -86,7 +87,7 @@ public class ChoiceServiceImpl implements ChoiceService {
             Objects.requireNonNull(
                 choices
             )).stream()
-            .map(mapper::toDto)
+            .map(choice -> mapper.toDto(choice, null))
             .collect(Collectors.toSet());
     }
 
