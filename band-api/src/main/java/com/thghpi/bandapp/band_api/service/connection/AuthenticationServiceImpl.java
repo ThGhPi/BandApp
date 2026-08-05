@@ -111,7 +111,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticatedPerson.setAddress(
             placeRepository.findByPersons(authenticatedPerson).orElse(null)
         );
-        return mapper.toProfile(currentUserService.getAuthenticatedPerson());
+        return mapper.toProfile(authenticatedPerson);
     }
 
     /**
