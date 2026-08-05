@@ -14,9 +14,9 @@ import org.mapstruct.Named;
 public interface ChoiceMapper {
     
     @Mapping(target = "id", source = "choice.id")
-    @Mapping(target = "chosen", expression = "java(currentUser != null ? choice.hasVoted(currentUser) : null)")
-    @Mapping(target = "votes", expression = "java(choice.getVotes())")
-    @Mapping(target = "surveyId", expression = "java(choice.getSurvey() != null ? choice.getSurvey().getId() : null)")
+    @Mapping(target = "chosen", expression = "java((choice != null && currentUser != null) ? choice.hasVoted(currentUser) : null)")
+    @Mapping(target = "votes", expression = "java((choice != null ? choice.getVotes() : null))")
+    @Mapping(target = "surveyId", expression = "java((choice != null && choice.getSurvey() != null) ? choice.getSurvey().getId() : null)")
     ChoiceDto toDto(Choice choice, Person currentUser);
 
     @Mapping(target = "voters", ignore = true)
