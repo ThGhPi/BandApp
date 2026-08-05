@@ -23,8 +23,8 @@ export class SurveyService {
   /**
    * Get survey by id
    */
-  getPrevious(date: Date): Observable<{ surveys: Survey[], hasNext: Boolean }> {
-    return this.http.get<{ surveys: Survey[], hasNext: Boolean }>(`${this.baseUrl}/before/${date.toISOString()}`);
+  getPrevious(date: Date): Observable<{ surveys: Survey[], hasNext: boolean }> {
+    return this.http.get<{ surveys: Survey[], hasNext: boolean }>(`${this.baseUrl}/before/${date.toISOString()}`);
   }
 
   /**

@@ -16,6 +16,7 @@ export class SurveyListPage {
   private surveyService = inject(SurveyService);
 
   surveys = signal<Survey[]>([]);
+  hasNext = signal<boolean>(true);
 
   ngOnInit() {
     this.loadSurveys();
@@ -25,6 +26,21 @@ export class SurveyListPage {
     this.surveyService.getRecent().subscribe(data => {
       this.surveys.set(data);
     });
+  }
+
+  loadMoreSurveys() {
+    if (!this.hasNext()) return;
+    else {
+      const lastSurvey: Survey | undefined = this.surveys().at(-1);
+      if (!lastSurvey) return;
+      else {
+        const lastSurveyDate: Date = new Date(lastSurvey.scheduledEnd);
+        this.surveyService.getPrevious(lastSurveyDate).subscribe(data => {
+          this.surveys.update(surveys => [...surveys, ...data.surveys]);
+          this.hasNext.set(data.hasNext);
+        });
+      }
+    }
   }
 
   handleVote(event: {

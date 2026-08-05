@@ -28,3 +28,10 @@
   </div>
 </app-card>
 }
+@if (hasNext()) {
+<div class="flex justify-center mt-4">
+  <button class="btn btn-festive" (click)="loadMoreSurveys()">
+    ↓ Sondages précédents ↓
+  </button>
+</div>
+}

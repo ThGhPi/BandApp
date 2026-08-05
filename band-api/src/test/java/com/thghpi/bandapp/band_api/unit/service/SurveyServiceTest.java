@@ -3,6 +3,7 @@ import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
+import com.thghpi.bandapp.band_api.service.CurrentUserService;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
@@ -13,13 +14,11 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 
 import org.mockito.Mock;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -35,14 +34,13 @@ public class SurveyServiceTest {
     /** The SurveyMapper instance to be mocked */
     @Mock
     private SurveyMapper mapper;
+    /** The CurrentUserService instance to be mocked */
+    @Mock
+    private CurrentUserService authService;
     /** The SurveyRepository instance to be mocked */
     @Mock
     private SurveyRepository repository;
-    /** The clock instance to be mocked */
-    @Mock
-    private Clock clock;
     /** The SurveyServiceImpl instance to be tested, with mocked dependencies injected */
-    @InjectMocks
     private SurveyServiceImpl service;
     
     /** A fixed clock instance for testing purposes, replacing the bean clock */
@@ -57,8 +55,7 @@ public class SurveyServiceTest {
      */
     @BeforeEach
     void setUp() {
-        when(clock.instant()).thenReturn(FIXED_CLOCK.instant());
-        when(clock.getZone()).thenReturn(FIXED_CLOCK.getZone());
+        service = new SurveyServiceImpl(FIXED_CLOCK, mapper, repository, authService);
     }
 
     /**
