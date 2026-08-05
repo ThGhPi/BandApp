@@ -15,6 +15,7 @@ import com.thghpi.bandapp.band_api.integration.AbstractIntegrationTest;
 import java.util.Set;
 import java.util.List;
 import java.util.Objects;
+import java.time.Clock;
 import java.time.LocalDate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -62,6 +63,9 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private Clock clock;
+
     /**
      * Clean database before each test in the test container
      * to make sure there is no data interferences between tests.
@@ -92,7 +96,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 null, null, null);
         SurveyDto dto1 = new SurveyDto(
                 null, "Favorite color ?",
-                LocalDate.now().plusMonths(1),
+                LocalDate.now(clock).plusMonths(1),
                 false, null, null,
                 Set.of(choice1, choice2, choice3));
 
@@ -137,7 +141,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 null, null, null);
         SurveyDto dto1 = new SurveyDto(
                 "",
-                LocalDate.now().plusMonths(1),
+                LocalDate.now(clock).plusMonths(1),
                 false,
                 Set.of(choice1, choice2, choice3));
         String jsonSurvey1 = Objects.requireNonNull(objectMapper.writeValueAsString(dto1));
@@ -150,7 +154,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
 
         SurveyDto dto2 = new SurveyDto(
                 "Favorite color ?",
-                LocalDate.now().minusYears(1),
+                LocalDate.now(clock).minusYears(1),
                 false,
                 Set.of(choice1, choice2, choice3));
         String jsonSurvey2 = Objects.requireNonNull(objectMapper.writeValueAsString(dto2));
@@ -177,44 +181,44 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         String token = login(person, "Password123!");
         Survey survey1 = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().minusMonths(2))
+                .scheduledEnd(LocalDate.now(clock).minusMonths(2))
                 .multiplicity(false)
                 .build();
         Survey survey2 = Survey.builder()
                 .question("Favorite pet ?")
-                .scheduledEnd(LocalDate.now().minusMonths(3))
+                .scheduledEnd(LocalDate.now(clock).minusMonths(3))
                 .multiplicity(false)
                 .build();
         Survey survey3 = Survey.builder()
                 .question("Favorite instrument ?")
-                .scheduledEnd(LocalDate.now().minusMonths(4))
+                .scheduledEnd(LocalDate.now(clock).minusMonths(4))
                 .multiplicity(false)
                 .build();
         Survey survey4 = Survey.builder()
                 .question("Favorite food ?")
-                .scheduledEnd(LocalDate.now().minusMonths(5))
+                .scheduledEnd(LocalDate.now(clock).minusMonths(5))
                 .multiplicity(false)
                 .build();
         Survey survey5 = Survey.builder()
                 .question("Favorite drink ?")
-                .scheduledEnd(LocalDate.now().minusMonths(6))
+                .scheduledEnd(LocalDate.now(clock).minusMonths(6))
                 .multiplicity(false)
                 .build();
         Survey survey6 = Survey.builder()
                 .question("Favorite town ?")
-                .scheduledEnd(LocalDate.now().minusMonths(7))
+                .scheduledEnd(LocalDate.now(clock).minusMonths(7))
                 .multiplicity(false)
                 .build();
         Survey survey7 = Survey.builder()
                 .question("Favorite season ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
 
         repository.saveAll(Objects.requireNonNull(
                 List.of(survey1, survey2, survey3, survey4, survey5, survey6, survey7)));
 
-        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(1))
+        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now(clock).minusMonths(1))
             .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.surveys").isArray())
@@ -226,7 +230,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.surveys[5]").doesNotExist())
                 .andExpect(jsonPath("$.hasNext").value(true));
 
-        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(6))
+        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now(clock).minusMonths(6))
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.surveys").isArray())
@@ -234,7 +238,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.surveys[1]").doesNotExist())
                 .andExpect(jsonPath("$.hasNext").value(false));
 
-        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now().minusMonths(7))
+        mockMvc.perform(get("/band-api/surveys/before/" + LocalDate.now(clock).minusMonths(7))
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.surveys").isArray())
@@ -255,17 +259,17 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         String token = login(person, "Password123!");
         Survey survey1 = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
         Survey survey2 = Survey.builder()
                 .question("Favorite pet ?")
-                .scheduledEnd(LocalDate.now().minusDays(20))
+                .scheduledEnd(LocalDate.now(clock).minusDays(20))
                 .multiplicity(false)
                 .build();
         Survey survey3 = Survey.builder()
                 .question("Favorite town ?")
-                .scheduledEnd(LocalDate.now().minusYears(1))
+                .scheduledEnd(LocalDate.now(clock).minusYears(1))
                 .multiplicity(false)
                 .build();
 
@@ -295,17 +299,17 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         String token = login(person, "Password123!");
         Survey survey1 = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
         Survey survey2 = Survey.builder()
                 .question("Favorite pet ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
         Survey survey3 = Survey.builder()
                 .question("Favorite instrument ?")
-                .scheduledEnd(LocalDate.now().minusYears(1))
+                .scheduledEnd(LocalDate.now(clock).minusYears(1))
                 .multiplicity(false)
                 .build();
 
@@ -335,7 +339,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         String token = login(person, "Password123!");
         Survey survey = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
 
@@ -345,7 +349,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.question").value("Favorite color ?"))
-                .andExpect(jsonPath("$.scheduledEnd").value(LocalDate.now().plusMonths(1).toString()))
+                .andExpect(jsonPath("$.scheduledEnd").value(LocalDate.now(clock).plusMonths(1).toString()))
                 .andExpect(jsonPath("$.multiplicity").value(false))
                 .andExpect(jsonPath("$.totalVotes").value(0))
                 .andExpect(jsonPath("$.closed").value(false))
@@ -386,7 +390,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         String token = login(person, "Password123!");
         Survey survey = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
 
@@ -403,7 +407,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 null, survey.getId(), null);
         SurveyDto dtoForUpdate = new SurveyDto(
                 survey.getId(), "Favorite pet ?",
-                LocalDate.now().plusMonths(2),
+                LocalDate.now(clock).plusMonths(2),
                 true, null, null,
                 Set.of(choice1, choice2, choice3));
         String jsonForUpdate = Objects.requireNonNull(objectMapper.writeValueAsString(dtoForUpdate));
@@ -415,7 +419,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(survey.getId()))
                 .andExpect(jsonPath("$.question").value("Favorite pet ?"))
-                .andExpect(jsonPath("$.scheduledEnd").value(LocalDate.now().plusMonths(2).toString()))
+                .andExpect(jsonPath("$.scheduledEnd").value(LocalDate.now(clock).plusMonths(2).toString()))
                 .andExpect(jsonPath("$.multiplicity").value(true))
                 .andExpect(jsonPath("$.totalVotes").value(0))
                 .andExpect(jsonPath("$.closed").value(false))
@@ -445,7 +449,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         );
         Survey survey = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
         choices.forEach(survey::addChoice);
@@ -481,7 +485,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         );
         Survey survey = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
         choices.forEach(survey::addChoice);
@@ -508,13 +512,13 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
         String token = login(person, "Password123!");
         // Create a survey with choices
         Set<Choice> choices = Set.of(
-            Choice.builder().title("Red").persons(Set.of(person)).build(),
+            Choice.builder().title("Red").voters(Set.of(person)).build(),
             Choice.builder().title("Blue").build(),
             Choice.builder().title("Green").build()
         );
         Survey survey = Survey.builder()
                 .question("Favorite color ?")
-                .scheduledEnd(LocalDate.now().plusMonths(1))
+                .scheduledEnd(LocalDate.now(clock).plusMonths(1))
                 .multiplicity(false)
                 .build();
         choices.forEach(survey::addChoice);

@@ -55,12 +55,15 @@ public class AuthenticationServiceTest {
             "john.doe@example.com", null,
             null, null, null
         );
-    private Person person = new Person(
-            null, "John", "Doe", "johndoe",
-            "john.doe@example.com", "encodedPassword",
-            Role.MEMBER, null, null, null,
-            null, null, null
-        );
+    private Person person = Person.builder()
+            .id(null)
+            .firstname("John")
+            .lastname("Doe")
+            .username("johndoe")
+            .email("john.doe@example.com")
+            .password("encodedPassword")
+            .role(Role.MEMBER)
+            .build();
 
     /**
      * Reset the input dto and the entituy person used by the tests.

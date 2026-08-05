@@ -37,7 +37,7 @@ public class SurveyTest {
         Survey survey1 = new Survey(
                 1L,
                 "Question ?",
-                LocalDate.from(fixedClock.instant()).plusDays(1),
+                LocalDate.now(fixedClock).plusDays(1),
                 true,
                 Set.of()
             );
@@ -45,7 +45,7 @@ public class SurveyTest {
         Survey survey2 = new Survey(
                 2L,
                 "Question ?",
-                LocalDate.from(fixedClock.instant()).minusDays(1),
+                LocalDate.now(fixedClock).minusDays(1),
                 true,
                 Set.of()
             );
@@ -53,7 +53,7 @@ public class SurveyTest {
         Survey survey3 = new Survey(
                 3L,
                 "Question ?",
-                LocalDate.from(fixedClock.instant()),
+                LocalDate.now(fixedClock),
                 true,
                 Set.of()
             );
@@ -69,7 +69,7 @@ public class SurveyTest {
         Survey survey = new Survey(
                 1L,
                 "Question ?",
-                LocalDate.now().plusDays(1),
+                LocalDate.now(fixedClock).plusDays(1),
                 true,
                 Set.of()
             );
@@ -112,8 +112,8 @@ public class SurveyTest {
             null, null, null, null, null, null,
             Set.of(choice1)
         );
-        choice1.setPersons(Set.of(person1, person2));
-        choice2.setPersons(Set.of(person1));
+        choice1.setVoters(Set.of(person1, person2));
+        choice2.setVoters(Set.of(person1));
         assertEquals(2L, survey.getTotalVotes());
     }
 
@@ -126,7 +126,7 @@ public class SurveyTest {
         Survey survey = Survey.builder()
             .id(1L)
             .question("Question ?")
-            .scheduledEnd(LocalDate.now().plusDays(1))
+            .scheduledEnd(LocalDate.now(fixedClock).plusDays(1))
             .multiplicity(true)
             .build();
         Choice choice1 = Choice.builder()
@@ -151,7 +151,7 @@ public class SurveyTest {
             .build();
         survey.addVote(choice1.getId(), person1);
         assertEquals(1L, survey.getTotalVotes());
-        assertEquals(person1, choice1.getPersons().iterator().next());
+        assertEquals(person1, choice1.getVoters().iterator().next());
         assertTrue(choice1.hasVoted(person1));
         survey.removeVote(choice1.getId(), person1);
         assertEquals(0L, survey.getTotalVotes());

@@ -14,7 +14,6 @@ import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
@@ -45,7 +44,7 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public List<SurveyDto> getRecent() {
-        LocalDate date = LocalDate.from(Instant.now(clock)).minusMonths(1);
+        LocalDate date = LocalDate.now(clock).minusMonths(1);
         Person currentUser = authService.getAuthenticatedPerson();
         return repository.findRecent(date)
             .stream()

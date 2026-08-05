@@ -19,7 +19,7 @@ public interface ChoiceMapper {
     @Mapping(target = "surveyId", expression = "java(choice.getSurvey() != null ? choice.getSurvey().getId() : null)")
     ChoiceDto toDto(Choice choice, Person currentUser);
 
-    @Mapping(target = "persons", ignore = true)
+    @Mapping(target = "voters", ignore = true)
     @Mapping(target = "survey", source = "surveyId", qualifiedByName = "mapSurveyIdToSurvey")
     Choice toEntity(ChoiceDto choice);
 

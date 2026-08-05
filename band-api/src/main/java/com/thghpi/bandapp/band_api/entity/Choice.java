@@ -66,14 +66,14 @@ public class Choice {
         inverseJoinColumns = @JoinColumn(name = "person_id")
         )
     @Builder.Default
-    private Set<Person> persons = new HashSet<Person>();
+    private Set<Person> voters = new HashSet<Person>();
 
     /**
      * Compte le nombre de personnes ayant voté pour ce choix.
      * @return le nombre de personnes ayant une relation avec ce choix.
      */
     public Long getVotes() {
-        return persons == null ? 0L : (long) persons.size();
+        return voters == null ? 0L : (long) voters.size();
     }
 
     /**
@@ -94,7 +94,7 @@ public class Choice {
      * @param Person person la personne à ajouter
      */
     public void addPerson(Person person) {
-        persons.add(person);
+        voters.add(person);
         person.getChoices().add(this);
     }
 
@@ -103,7 +103,7 @@ public class Choice {
      * @param Person person la personne à supprimer
      */
     public void removePerson(Person person) {
-        persons.remove(person);
+        voters.remove(person);
         person.getChoices().remove(this);
     }
 
@@ -143,7 +143,7 @@ public class Choice {
      * @return true si la personne a voté pour ce choix, false sinon
      */
     public Boolean hasVoted(Person person) {
-        return persons.contains(person);
+        return voters.contains(person);
     }
 
     /**

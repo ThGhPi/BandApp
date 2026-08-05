@@ -65,7 +65,7 @@ public class Survey {
      * @return true si la date de clotûre est passée (stricte)
      */
     public Boolean isClosed(Clock clock) {
-        return LocalDate.from(clock.instant()).isAfter(scheduledEnd);
+        return LocalDate.now(clock).isAfter(scheduledEnd);
     }
 
     /**
@@ -77,7 +77,7 @@ public class Survey {
             return 0L;
         }
         return choices.stream()
-            .flatMap(choice -> choice.getPersons() != null ? choice.getPersons().stream() : Stream.empty())
+            .flatMap(choice -> choice.getVoters() != null ? choice.getVoters().stream() : Stream.empty())
             .distinct()
             .count();
     }
@@ -114,7 +114,7 @@ public class Survey {
             .orElseThrow(() -> new IllegalArgumentException("Choice with id " + choiceId + " does not belong to this survey."));
 
         // Vérifie si le sondage est à choix unique et si la personne a déjà voté pour un autre choix
-        if (!multiplicity) {
+        if (!multiplicity && hasVoted(person)) {
             Choice otherChoice = choices.stream().filter(c -> c.hasVoted(person)).findAny().orElse(null);
             if (otherChoice != null) { // La personne a déjà voté pour un autre choix
                 otherChoice.removeVote(person); // Supprime le vote de l'autre choix avant d'ajouter le nouveau vote
@@ -137,5 +137,14 @@ public class Survey {
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Choice with id " + choiceId + " does not belong to this survey."));
         choice.removeVote(person);
+    }
+
+    /**
+     * Vérifie si une personne a déjà voté pour ce sondage.
+     * @param Person person la personne à vérifier
+     * @return true si la personne a déjà voté pour un choix du sondage, false sinon
+     */
+    public Boolean hasVoted(Person person) {
+        return choices.stream().anyMatch(choice -> choice.hasVoted(person));
     }
 }

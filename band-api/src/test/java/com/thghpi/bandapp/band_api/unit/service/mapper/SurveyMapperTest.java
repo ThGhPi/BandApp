@@ -11,7 +11,7 @@ import java.util.Set;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,10 @@ public class SurveyMapperTest {
     @Autowired
     private SurveyMapper mapper;
 
-    private final Clock fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private static final Clock FIXED_CLOCK = Clock.fixed(
+        Instant.parse("2026-07-03T12:00:00Z"),
+        ZoneOffset.UTC
+    );
 
     /**
      * Tests the mapping of a Survey entity to a SurveyDto, including the calculation of the closed and totalVotes fields,
@@ -46,43 +49,34 @@ public class SurveyMapperTest {
      */
     @Test
     void shouldMapSurveyToDto() {
-        Survey survey1 = new Survey(
-                1L,
-                "Question ?",
-                LocalDate.now().plusDays(1),
-                true,
-                Set.of()
-            );
-        survey1.setChoices(Set.of(
-                new Choice(
-                        1L,
-                        "Choice 1",
-                        null,
-                        null,
-                        survey1,
-                        null),
-                new Choice(
-                        2L,
-                        "Choice 2",
-                        null,
-                        null,
-                        survey1,
-                        null
-                    )
-                )
-            );
-        SurveyDto surveyDto1 = mapper.toDto(survey1, null, fixedClock);
+        Survey survey1 = Survey.builder()
+                .id(1L)
+                .question("Question ?")
+                .scheduledEnd(LocalDate.now(FIXED_CLOCK).plusDays(1))
+                .multiplicity(true)
+                .build();
+        survey1.addChoice(Choice.builder()
+                .id(1L)
+                .title("Choice 1")
+                .survey(survey1)
+                .build());
+        survey1.addChoice(Choice.builder()
+                .id(2L)
+                .title("Choice 2")
+                .survey(survey1)
+                .build());
+        SurveyDto surveyDto1 = mapper.toDto(survey1, null, FIXED_CLOCK);
         assertNotNull(surveyDto1);
         assertFalse(Objects.requireNonNull(surveyDto1.closed()));
         assertEquals(0L, surveyDto1.totalVotes());
-        Survey survey2 = new Survey(
-                2L,
-                "Question ?",
-                LocalDate.now().minusDays(1),
-                true,
-                Set.of()
-            );
-        SurveyDto surveyDto2 = mapper.toDto(survey2, null, fixedClock);
+        Survey survey2 = Survey.builder()
+                .id(2L)
+                .question("Question ?")
+                .scheduledEnd(LocalDate.now(FIXED_CLOCK).minusDays(1))
+                .multiplicity(true)
+                .choices(Set.of())
+                .build();
+        SurveyDto surveyDto2 = mapper.toDto(survey2, null, FIXED_CLOCK);
         assertTrue(Objects.requireNonNull(surveyDto2.closed()));
         assertEquals(0L, surveyDto2.totalVotes());
         assertEquals(2, surveyDto1.choices().size());

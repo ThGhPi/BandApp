@@ -46,7 +46,7 @@ public class ChoiceTest {
             .password("blank")
             .choices(Set.of(choice))
             .build();
-        choice.setPersons(Set.of(person1, person2));
+        choice.setVoters(Set.of(person1, person2));
         assertEquals(2L, choice.getVotes());
     }
 
