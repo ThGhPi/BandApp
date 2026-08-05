@@ -1,27 +1,37 @@
 @for (survey of surveys(); track survey.id) {
-  <app-card [title]="survey.question">
-    @for (option of survey.options; track option.id) {
-      <app-option
-        [survey]="survey"
-        [choice]="option"
-        (voteChange)="handleVote($event)">
-      </app-option>
-    }
+<app-card [title]="survey.question"
+  [headerBg]="survey.closed ? 'copper' : 'festive'"
+  [headerText]="survey.closed ? 'black' : 'white'">
+  @if (!survey.closed) {
+  <div class="bg-light text-center text-sm text-white p-1">
+    @if (survey.multiplicity) { Plusieurs réponses possibles }
+    @else { Une seule réponse possible }
+  </div>
+  }
+  @for (choice of survey.choices; track choice.id) {
+  <app-option [survey]="survey" [choice]="choice" [last]="$last"
+    (voteChange)="handleVote($event)"
+    class="border-b border-dark last:border-b-0">
+  </app-option>
+  }
+  <div card-footer class="bg-yellow flex justify-between px-4 py-2">
     @if (survey.closed) {
-      <div card-footer>
-        <div>
-          Sondage clos le :
-        </div>
-        <div>{{survey.scheduledEnd | smartDates}}</div>
-      </div>
+    <div>
+      Sondage clos le :
+    </div>
     } @else {
-      <div card-footer>
-        <div>
-          Répondre avant le :
-        </div>
-        <div>{{survey.scheduledEnd | smartDates}}</div>
-      </div>
+    <div>
+      Répondre avant le :
+    </div>
     }
-  </app-card>
+    <div>{{survey.scheduledEnd | smartDates}}</div>
+  </div>
+</app-card>
 }
-
+@if (hasNext()) {
+<div class="flex justify-center mt-4">
+  <button class="btn btn-festive" (click)="loadMoreSurveys()">
+    ↓ Sondages précédents ↓
+  </button>
+</div>
+}

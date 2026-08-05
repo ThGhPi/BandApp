@@ -31,60 +31,42 @@ public class ChoiceMapperTest {
      */
     @Test
     public void shouldMapChoiceToDto() {
-        Choice choice1 = new Choice(
-                1L,
-                "Choice 1",
-                null,
-                null,
-                null,
-                null
-            );
-        assertEquals(0L, mapper.toDto(choice1).votes());
-        assertNull(mapper.toDto(choice1).surveyId());
-        Choice choice2 = new Choice(
-                2L,
-                "Choice 2",
-                "Cliquez ici pour suivre le lien",
-                "http://example.com",
-                null,
-                null
-            );
+        Choice choice1 = Choice.builder()
+                .id(1L)
+                .title("Choice 1")
+                .build();
+        assertEquals(0L, mapper.toDto(choice1, null).votes());
+        assertNull(mapper.toDto(choice1, null).surveyId());
+        Choice choice2 = Choice.builder()
+                .id(2L)
+                .title("Choice 2")
+                .complement("Cliquez ici pour suivre le lien")
+                .url("http://example.com")
+                .build();
         Survey survey = new Survey();
         survey.setId(1L);
         choice2.setSurvey(survey);
-        Person person1 = new Person(
-            1L,
-            "Taylor",
-            "Alice",
-            "aliceT",
-            "alice@example.com",
-            "blank",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            Set.of(choice2)
-        );
-        Person person2 = new Person(
-            2L,
-            "Smith",
-            "Bob",
-            "bobS",
-            "bob@example.com",
-            "blank",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            Set.of(choice2)
-        );
-        choice2.setPersons(Set.of(person1, person2));
-        assertEquals(2L, mapper.toDto(choice2).votes());
-        assertEquals(1L, mapper.toDto(choice2).surveyId());
+        Person person1 = Person.builder()
+            .id(1L)
+            .firstname("Alice")
+            .lastname("Taylor")
+            .username("aliceT")
+            .email("alice@example.com")
+            .password("blank")
+            .choices(Set.of(choice2))
+            .build();
+        Person person2 = Person.builder()
+            .id(2L)
+            .firstname("Bob")
+            .lastname("Smith")
+            .username("bobS")
+            .email("bob@example.com")
+            .password("blank")
+            .choices(Set.of(choice2))
+            .build();
+        choice2.setVoters(Set.of(person1, person2));
+        assertEquals(2L, mapper.toDto(choice2, null).votes());
+        assertEquals(1L, mapper.toDto(choice2, null).surveyId());
     }
 
     /**

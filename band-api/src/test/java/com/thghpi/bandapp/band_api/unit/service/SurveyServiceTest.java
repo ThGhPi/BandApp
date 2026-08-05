@@ -3,16 +3,20 @@ import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.SurveyServiceImpl;
+import com.thghpi.bandapp.band_api.service.CurrentUserService;
 import com.thghpi.bandapp.band_api.service.exception.BadCUException;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
 
 import java.util.List;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 import org.mockito.Mock;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,22 +34,39 @@ public class SurveyServiceTest {
     /** The SurveyMapper instance to be mocked */
     @Mock
     private SurveyMapper mapper;
+    /** The CurrentUserService instance to be mocked */
+    @Mock
+    private CurrentUserService authService;
     /** The SurveyRepository instance to be mocked */
     @Mock
     private SurveyRepository repository;
     /** The SurveyServiceImpl instance to be tested, with mocked dependencies injected */
-    @InjectMocks
     private SurveyServiceImpl service;
+    
+    /** A fixed clock instance for testing purposes, replacing the bean clock */
+    private static final Clock FIXED_CLOCK = Clock.fixed(
+            Instant.parse("2026-07-03T12:00:00Z"),
+            ZoneOffset.UTC
+        );
+
+    /**
+     * Sets up the test environment before each test method is executed.
+     * This method is used to stub the clock methods to return a fixed instant and zone, ensuring consistent test results.
+     */
+    @BeforeEach
+    void setUp() {
+        service = new SurveyServiceImpl(FIXED_CLOCK, mapper, repository, authService);
+    }
 
     /**
      * Tests that the service correctly rejects attempts to create a single survey with invalid data.
-     */
-    @Test
+    */
+   @Test
     void shouldRejectInvalidSurvey() {
         SurveyDto closedSurveyDto = new SurveyDto(
             null,
             "",
-            LocalDate.now().minusDays(1),
+            LocalDate.now(FIXED_CLOCK).minusDays(1),
             true,
             null,
             null,
@@ -53,7 +74,7 @@ public class SurveyServiceTest {
         );
         Survey entity = new Survey();
         entity.setQuestion("Question ?");
-        entity.setScheduledEnd(LocalDate.now().minusDays(1));
+        entity.setScheduledEnd(LocalDate.now(FIXED_CLOCK).minusDays(1));
         entity.setMultiplicity(true);
 
         BadCUException thrown = assertThrows(
@@ -82,7 +103,7 @@ public class SurveyServiceTest {
         Survey openSurvey = new Survey(
             null,
             "Question ?",
-            LocalDate.now(),
+            LocalDate.now(FIXED_CLOCK),
             true,
             null
         );
@@ -99,14 +120,14 @@ public class SurveyServiceTest {
         Survey closedSurvey1 = new Survey(
             2L,
             "Question QuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestion ?",
-            LocalDate.now().minusDays(1),
+            LocalDate.now(FIXED_CLOCK).minusDays(1),
             false,
             null
         );
         Survey closedSurvey2 = new Survey(
             1L,
             "Question ?",
-            LocalDate.now().minusDays(1),
+            LocalDate.now(FIXED_CLOCK).minusDays(1),
             true,
             null
         );
@@ -123,7 +144,7 @@ public class SurveyServiceTest {
         SurveyDto dto1 = new SurveyDto(
             2L,
             "Question QuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestionQuestion ?",
-            LocalDate.now().minusDays(1),
+            LocalDate.now(FIXED_CLOCK).minusDays(1),
             false,
             null,
             null,
@@ -132,7 +153,7 @@ public class SurveyServiceTest {
         SurveyDto dto2 = new SurveyDto(
             1L,
             "",
-            LocalDate.now().minusDays(1),
+            LocalDate.now(FIXED_CLOCK).minusDays(1),
             false,
             null,
             null,
@@ -158,14 +179,14 @@ public class SurveyServiceTest {
         Survey openSurvey1 = new Survey(
             2L,
             "Question ?",
-            LocalDate.now().plusDays(1),
+            LocalDate.now(FIXED_CLOCK).plusDays(1),
             false,
             null
         );
         Survey openSurvey2 = new Survey(
             1L,
             "Question ?",
-            LocalDate.now().plusDays(1),
+            LocalDate.now(FIXED_CLOCK).plusDays(1),
             true,
             null
         );

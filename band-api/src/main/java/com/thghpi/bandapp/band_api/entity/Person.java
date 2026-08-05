@@ -79,12 +79,7 @@ public class Person implements UserDetails {
     @Builder.Default
     private List<Instrument> instruments = new ArrayList<Instrument>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "answer",
-        joinColumns = @JoinColumn(name = "person_id"),
-        inverseJoinColumns = @JoinColumn(name = "choice_id")
-        )
+    @ManyToMany(mappedBy = "voters")
     @Builder.Default
     private Set<Choice> choices = new HashSet<Choice>();
 

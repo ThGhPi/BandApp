@@ -134,12 +134,12 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
         Choice choice1 = Choice.builder()
             .title("choix1")
-            .persons(Set.of(person1))
+            .voters(Set.of(person1))
             .survey(surveys.getFirst())
             .build();
         Choice choice2 = Choice.builder()
             .title("choix1")
-            .persons(Set.of(person1, person2))
+            .voters(Set.of(person1, person2))
             .survey(surveys.getFirst())
             .build();
         choiceRepository.save(Objects.requireNonNull(choice1));
@@ -201,12 +201,12 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
 
         Choice choice1 = Choice.builder()
             .title("choix1")
-            .persons(Set.of(person1))
+            .voters(Set.of(person1))
             .survey(surveys.getFirst())
             .build();
         Choice choice2 = Choice.builder()
             .title("choix1")
-            .persons(Set.of(person1, person2))
+            .voters(Set.of(person1, person2))
             .survey(surveys.getFirst())
             .build();
         choiceRepository.save(Objects.requireNonNull(choice1));

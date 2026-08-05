@@ -47,6 +47,11 @@ public class JwtServiceTest {
     /** The generated JWT token to be used in tests */
     private String token;
 
+    private static final Clock FIXED_CLOCK = Clock.fixed(
+        Instant.parse("2026-07-03T12:00:00Z"),
+        ZoneOffset.UTC
+    );
+
     /**
      * Sets up the test environment before each test method is executed.
      * This method initializes the JwtServiceImpl instance, creates a mock PersonRepository,
@@ -58,11 +63,8 @@ public class JwtServiceTest {
             "jy19b6M7BTKnaL38W92vMuldkwW7gREFc+W+hgNq7fOdd0EzphdgnAIxXI49TthIVeOlGhg+DvUC2ZHn7abzGg",
             3_600_000L
         );
-        Clock fixedClock = Clock.fixed(
-            Instant.parse("2026-07-03T12:00:00Z"),
-            ZoneOffset.UTC
-        );
-        jwtService = new JwtServiceImpl(jwtProperties, fixedClock);
+
+        jwtService = new JwtServiceImpl(jwtProperties, FIXED_CLOCK);
 
         Person person1 = new Person(
             1L, "Taylor", "Alice",
@@ -76,7 +78,7 @@ public class JwtServiceTest {
             .thenReturn(Optional.of(person1));
         AppUserDetailsService userDetailsService = new AppUserDetailsService(repository);
         userDetails = userDetailsService.loadUserByUsername("aliceT");
-        Instant now = Instant.now(fixedClock);
+        Instant now = Instant.now(FIXED_CLOCK);
         Instant end = now.plusMillis(3_600_000);
         token = Jwts
                 .builder()
@@ -118,12 +120,9 @@ public class JwtServiceTest {
             "jy19b6M7BTKnaL38W92vMuldkwW7gREFc+W+hgNq7fOdd0EzphdgnAIxXI49TthIVeOlGhg+DvUC2ZHn7abzGg",
             3_600_000L
         );
-        Clock clock = Clock.fixed(
-            Instant.parse("2026-07-03T12:00:00Z"),
-            ZoneOffset.UTC
-        );
-        Date now = Date.from(Instant.now(clock).minusMillis(5000));
-        Date expiredDate = Date.from(Instant.now(clock).minusMillis(3000));
+
+        Date now = Date.from(Instant.now(FIXED_CLOCK).minusMillis(5000));
+        Date expiredDate = Date.from(Instant.now(FIXED_CLOCK).minusMillis(3000));
 
         String testToken = Jwts.builder()
         .subject(userDetails.getUsername())

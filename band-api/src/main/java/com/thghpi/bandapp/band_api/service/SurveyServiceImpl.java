@@ -1,6 +1,8 @@
 package com.thghpi.bandapp.band_api.service;
+import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
 import com.thghpi.bandapp.band_api.dto.SurveyDto;
+import com.thghpi.bandapp.band_api.dto.request.VoteRequest;
 import com.thghpi.bandapp.band_api.dto.response.SurveyPageResponse;
 import com.thghpi.bandapp.band_api.repository.SurveyRepository;
 import com.thghpi.bandapp.band_api.service.mapper.SurveyMapper;
@@ -11,6 +13,7 @@ import com.thghpi.bandapp.band_api.service.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Objects;
+import java.time.Clock;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 
@@ -30,8 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class SurveyServiceImpl implements SurveyService {
+    private final Clock clock;
     private final SurveyMapper mapper;
     private final SurveyRepository repository;
+    private final CurrentUserService authService;
 
     /**
      * Retrieves the most recent surveys from the database (less than a month old).
@@ -39,10 +44,11 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public List<SurveyDto> getRecent() {
-        LocalDate date = LocalDate.now().minusMonths(1);
+        LocalDate date = LocalDate.now(clock).minusMonths(1);
+        Person currentUser = authService.getAuthenticatedPerson();
         return repository.findRecent(date)
             .stream()
-            .map(mapper::toDto)
+            .map(survey -> mapper.toDto(survey, currentUser, clock))
             .toList();
     }
 
@@ -53,13 +59,14 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public SurveyPageResponse getPrevious(LocalDate date) {
+        Person currentUser = authService.getAuthenticatedPerson();
         Page<Survey> surveyPage = 
             repository.findByScheduledEndBeforeOrderByScheduledEndDesc(
                 date, PageRequest.of(0,5)
             );
         return new SurveyPageResponse(
             surveyPage.getContent().stream()
-                .map(mapper::toDto)
+                .map(survey -> mapper.toDto(survey, currentUser, clock))
                 .toList(),
             surveyPage.hasNext()
         );
@@ -76,7 +83,7 @@ public class SurveyServiceImpl implements SurveyService {
         return mapper.toDto(
             repository.findById(id)
                 .orElseThrow(() -> new NotFoundException(new NotFoundMessage(id, Survey.class)))
-            );
+            , authService.getAuthenticatedPerson(), clock);
     }
 
     /**
@@ -87,7 +94,7 @@ public class SurveyServiceImpl implements SurveyService {
     public List<SurveyDto> getAll() {
         return repository.findAll()
             .stream()
-            .map(mapper::toDto)
+            .map(survey -> mapper.toDto(survey, null, clock))
             .toList();
     }
 
@@ -105,7 +112,7 @@ public class SurveyServiceImpl implements SurveyService {
         return mapper.toDto(
             repository.save(
                 Objects.requireNonNull(survey)
-            )
+            ), null, clock
         );
     }
 
@@ -129,7 +136,7 @@ public class SurveyServiceImpl implements SurveyService {
             );
         return repository.saveAll(surveys)
             .stream()
-            .map(mapper::toDto)
+            .map(survey -> mapper.toDto(survey, null, clock))
             .toList();
     }
 
@@ -156,6 +163,43 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     /**
+     * Adds a vote to the survey for the authenticated person.
+     * @param VoteRequest voteRequest the request containing the survey and choice IDs.
+     * @return the updated SurveyDto object.
+     */
+    @Override
+    public SurveyDto addVote(VoteRequest voteRequest) {
+        // Get the authenticated person
+        Person currentUser = authService.getAuthenticatedPerson();
+
+        // Retrieve the survey from the database
+        Survey survey = repository.findById(Objects.requireNonNull(voteRequest.surveyId()))
+            .orElseThrow(() -> new NotFoundException(new NotFoundMessage(voteRequest.surveyId(), Survey.class)));
+        
+        checkSurveysClosure(List.of(survey)); // Check if the survey is closed before adding the vote
+        survey.addVote(voteRequest.choiceId(), currentUser); // Add the vote to the survey
+        return mapper.toDto(repository.save(survey), currentUser, clock);
+    }
+
+    /**
+     * Removes a vote from the survey for the authenticated person.
+     * @param VoteRequest voteRequest the request containing the survey and choice IDs.
+     * @return the updated SurveyDto object.
+     */
+    @Override
+    public SurveyDto removeVote(VoteRequest voteRequest) {
+        Person currentUser = authService.getAuthenticatedPerson(); // Get the authenticated person
+
+        // Retrieve the survey from the database
+        Survey survey = repository.findById(Objects.requireNonNull(voteRequest.surveyId()))
+            .orElseThrow(() -> new NotFoundException(new NotFoundMessage(voteRequest.surveyId(), Survey.class)));
+        
+        checkSurveysClosure(List.of(survey)); // Check if the survey is closed before removing the vote
+        survey.removeVote(voteRequest.choiceId(), currentUser); // Remove the vote from the survey
+        return mapper.toDto(repository.save(survey), currentUser, clock);
+    }
+
+    /**
      * Checks if there are closed survey in the provided list and throws an exception there are.
      * @param SurveyDto surveyDto the SurveyDto to check.
      * @throws IllegalArgumentException if there are closed surveys, with the list of closed survey IDs.
@@ -163,7 +207,7 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public void checkSurveysClosure(List<Survey> surveys) {
         List<Long> ids = surveys.stream()
-            .filter(survey -> Objects.requireNonNull(survey).isClosed())
+            .filter(survey -> Objects.requireNonNull(survey).isClosed(clock))
             .map(survey -> { // throw the error if it's for creation i.e. there are null ids
                 if (survey.getId() == null) {
                     throw new BadCUException(new BadCUMessage(

@@ -4,6 +4,7 @@ import { SurveyService } from '../../services/survey.service';
 import { Card } from "../../../../shared/components/card/card";
 import { SmartDatePipe } from '../../../../shared/pipes/smart-date.pipe';
 import { Option } from '../../components/option/option';
+import { Vote } from '../../models/vote.model';
 
 @Component({
   selector: 'app-survey-list.page',
@@ -15,6 +16,7 @@ export class SurveyListPage {
   private surveyService = inject(SurveyService);
 
   surveys = signal<Survey[]>([]);
+  hasNext = signal<boolean>(true);
 
   ngOnInit() {
     this.loadSurveys();
@@ -26,14 +28,33 @@ export class SurveyListPage {
     });
   }
 
+  loadMoreSurveys() {
+    if (!this.hasNext()) return;
+    else {
+      const lastSurvey: Survey | undefined = this.surveys().at(-1);
+      if (!lastSurvey) return;
+      else {
+        const lastSurveyDate: Date = new Date(lastSurvey.scheduledEnd);
+        this.surveyService.getPrevious(lastSurveyDate).subscribe(data => {
+          this.surveys.update(surveys => [...surveys, ...data.surveys]);
+          this.hasNext.set(data.hasNext);
+        });
+      }
+    }
+  }
+
   handleVote(event: {
     surveyId: number;
     optionId: number;
     selected: boolean;
   }) {
+    const vote: Vote = {
+      surveyId: event.surveyId,
+      choiceId: event.optionId
+    };
     const request$ = event.selected
-      ? this.surveyService.addVote(event.surveyId, event.optionId)
-      : this.surveyService.removeVote(event.surveyId, event.optionId);
+      ? this.surveyService.addVote(vote)
+      : this.surveyService.removeVote(vote);
 
     request$.subscribe(updatedSurvey => {
       this.updateSurvey(updatedSurvey);

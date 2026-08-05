@@ -1,4 +1,4 @@
-## Docker environment for executing api integration and unit tests
+## Docker environment for executing api unit tests (for app context test)
 
 ```bash
 docker compose -f docker-compose.test.yml up -d

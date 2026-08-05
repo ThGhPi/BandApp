@@ -28,7 +28,7 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
     @Query("""
         SELECT DISTINCT s FROM Survey s 
         LEFT JOIN FETCH s.choices c 
-        LEFT JOIN FETCH c.persons p
+        LEFT JOIN FETCH c.voters p
         WHERE s.scheduledEnd >= :date 
         ORDER BY s.scheduledEnd DESC
         """)
@@ -42,7 +42,7 @@ public interface SurveyRepository extends JpaRepository<Survey,Long> {
      */
     @EntityGraph(attributePaths = {
         "choices",
-        "choices.persons"
+        "choices.voters"
     })
     Page<Survey> findByScheduledEndBeforeOrderByScheduledEndDesc(
         LocalDate date,

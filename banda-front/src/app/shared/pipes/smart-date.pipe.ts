@@ -8,21 +8,21 @@ export class SmartDatePipe implements PipeTransform {
   transform(value: string | Date): string {
     if (!value) return '';
 
-    const date = new Date(value);
-    const now = new Date();
+    const date: Date = new Date(value);
+    const now: Date = new Date();
 
-    const dateYear = date.getFullYear();
-    const currentYear = now.getFullYear();
+    const dateYear: number = date.getFullYear();
+    const currentYear: number = now.getFullYear();
 
-    const month: string = date.getMonth().toString().padStart(2,'0');
-    const day: string = date.getDay().toString().padStart(2,'0');
+    const month: string = (date.getMonth() + 1).toString().padStart(2,'0');
+    const day: string = date.getDate().toString().padStart(2,'0');
 
     if (dateYear === currentYear) { // Current year, show weekday and dd/mm
       const weekday: string = new Intl.DateTimeFormat('fr-FR', {weekday: 'short'}).format(date);
       return `${capitalize(weekday)} ${day}/${month}`;
     }
     
-    // Past years, show dd/mm/yy
+    // Past and future years, show dd/mm/yy
     return `${day}/${month}/${dateYear.toString().slice(-2)}`;
   }
 

@@ -1,6 +1,7 @@
 package com.thghpi.bandapp.band_api.service.mapper;
 import com.thghpi.bandapp.band_api.dto.ChoiceDto;
 import com.thghpi.bandapp.band_api.entity.Choice;
+import com.thghpi.bandapp.band_api.entity.Person;
 import com.thghpi.bandapp.band_api.entity.Survey;
 
 import org.mapstruct.Mapper;
@@ -12,11 +13,13 @@ import org.mapstruct.Named;
 )
 public interface ChoiceMapper {
     
-    @Mapping(target = "votes", expression = "java(choice.getVotes())")
-    @Mapping(target = "surveyId", expression = "java(choice.getSurvey() != null ? choice.getSurvey().getId() : null)")
-    ChoiceDto toDto(Choice choice);
+    @Mapping(target = "id", source = "choice.id")
+    @Mapping(target = "chosen", expression = "java((choice != null && currentUser != null) ? choice.hasVoted(currentUser) : null)")
+    @Mapping(target = "votes", expression = "java((choice != null ? choice.getVotes() : null))")
+    @Mapping(target = "surveyId", expression = "java((choice != null && choice.getSurvey() != null) ? choice.getSurvey().getId() : null)")
+    ChoiceDto toDto(Choice choice, Person currentUser);
 
-    @Mapping(target = "persons", ignore = true)
+    @Mapping(target = "voters", ignore = true)
     @Mapping(target = "survey", source = "surveyId", qualifiedByName = "mapSurveyIdToSurvey")
     Choice toEntity(ChoiceDto choice);
 
