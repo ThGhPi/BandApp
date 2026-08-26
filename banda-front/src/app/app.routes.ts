@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { SurveyListPage } from './features/survey/pages/survey-list.page/survey-list.page';
-import { LoginPage } from './core/auth/pages/login.page/login.page';
+import { LoginPage } from './features/auth/login/pages/login.page/login.page';
 
 export const routes: Routes = [
     
