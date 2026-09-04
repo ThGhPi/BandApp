@@ -58,7 +58,7 @@ public class SecurityConfiguration {
         http
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // TODO : adapt for httpOnly cookie
                 .authorizeHttpRequests(requests -> requests
                         /* Authentication paths */
                         .requestMatchers(

@@ -77,7 +77,7 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest toAuthPerson) {
         String jwtToken = authService.authenticate(toAuthPerson);
         LoginResponse loginResponse = new LoginResponse(jwtToken);
-
+// TODO : adapt for httpOnly cookie
         return ResponseEntity.ok(loginResponse);
     }
 

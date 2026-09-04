@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { SurveyListPage } from './features/survey/pages/survey-list.page/survey-list.page';
-import { LoginPage } from './core/auth/login.page/login.page';
+import { LoginPage } from './features/auth/login/pages/login.page/login.page';
+import { authGuard } from './core/auth/guards/auth.guard';
 
 export const routes: Routes = [
     
@@ -8,7 +9,7 @@ export const routes: Routes = [
 
   { path: 'login', component: LoginPage },
 
-  { path: 'sondages', component: SurveyListPage },
+  { path: 'sondages', canActivate: [authGuard], component: SurveyListPage },
 
   { path: '**', redirectTo: 'login' }
 ];

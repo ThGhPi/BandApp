@@ -1,0 +1,26 @@
+<form [formGroup]="loginFormGroup" (ngSubmit)="onSubmit()"
+  class="flex flex-col justify-center items-start">
+
+  <div class="mb-6">
+    <label for="username">Nom d'utilisateur</label>
+
+    <input
+      id="username" type="text" placeholder="nom d'utilisateur"
+      formControlName="username" class="w-full p-2 mt-2 border">
+  </div>
+
+  <div class="mb-6">
+    <label for="password">Mot de passe</label>
+
+    <input id="password" type="password" placeholder="mot de passe"
+      formControlName="trialPassword" class="w-full p-2 mt-2 border">
+    <a href="" class="text-festive italic text-xs hover:underline ps-2">mot de passe oublié ?</a>
+  </div>
+
+  <button type="submit"
+    class="bg-festive text-white px-5 py-2 self-center"
+    [disabled]="loginFormGroup.invalid">
+    Se connecter
+  </button>
+
+</form>
