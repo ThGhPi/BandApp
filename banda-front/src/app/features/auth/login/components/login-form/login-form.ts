@@ -17,7 +17,7 @@ export class LoginForm {
 
   loginFormGroup = this.formBuilder.nonNullable.group({
     username: ['', Validators.required],
-    password: ['', Validators.required]
+    trialPassword: ['', Validators.required]
   });
 
   onSubmit(): void {

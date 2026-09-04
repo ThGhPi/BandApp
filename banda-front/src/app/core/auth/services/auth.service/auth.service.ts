@@ -26,7 +26,7 @@ export class AuthService {
       );
     }
 
-    isAutheticated() : boolean {
+    isAuthenticated() : boolean {
         return this.tokenStorage.hasToken();
     }
 
