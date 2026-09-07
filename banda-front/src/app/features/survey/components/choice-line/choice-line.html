@@ -3,10 +3,10 @@
   [class.border-b-0]="last()"
   (click)="toggle()">
 
-  <div class="absolute inset-y-0 left-0 bg-success bg-opacity-25 transition-all duration-500"
+  <div class="relative z-10 inset-y-0 left-0 bg-success bg-opacity-25 transition-all duration-500"
     [style.width.%]="survey().totalVotes > 0 ? (choice().votes / survey().totalVotes) * 100 : 0">
   </div>
-  <div class="flex mx-3">
+  <div class="flex mx-3 z-0">
 
     <!-- Multiple choice() -->
     @if (survey().multiplicity) {
@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <div class="votes mx-3">
+  <div class="votes mx-3 z-0">
     {{ choice().votes }} vote{{ choice().votes > 1 ? 's' : '' }}
   </div>
 </div>

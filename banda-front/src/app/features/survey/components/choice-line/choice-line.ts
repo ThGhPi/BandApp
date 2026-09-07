@@ -3,12 +3,12 @@ import { Choice } from '../../models/choice.model';
 import { Survey } from '../../models/survey.model';
 
 @Component({
-  selector: 'app-option',
+  selector: 'app-choice-line',
   imports: [],
-  templateUrl: './option.html',
-  styleUrl: './option.css',
+  templateUrl: './choice-line.html',
+  styleUrl: './choice-line.css',
 })
-export class Option {
+export class ChoiceLine {
   
   survey = input.required<Survey>();
   choice = input.required<Choice>();
@@ -22,13 +22,15 @@ export class Option {
 
   toggle(): void {
 
-    const newValue = !this.choice().chosen;
-
-    this.voteChange.emit({
-      surveyId: this.survey().id,
-      optionId: this.choice().id,
-      selected: newValue
-    });
+    if (this.survey().multiplicity) {
+      const newValue = !this.choice().chosen;
+  
+      this.voteChange.emit({
+        surveyId: this.survey().id,
+        optionId: this.choice().id,
+        selected: newValue
+      });
+    }
   }
 
 }
