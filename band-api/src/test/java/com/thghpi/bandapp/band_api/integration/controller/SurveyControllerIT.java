@@ -559,7 +559,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                         .username("johndoe")
                         .email("john.doe@example.com")
                         .password(passwordEncoder.encode(password != null ? password : "Password123!"))
-                        .role(Role.MEMBER)
+                        .role(Role.ADMIN)
                         .build()));
     }
 

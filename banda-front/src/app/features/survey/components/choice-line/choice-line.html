@@ -1,44 +1,46 @@
-<div class="flex justify-between items-center text-start
-  hover:bg-gray-200 border-b border-dark"
-  [class.border-b-0]="last()"
-  (click)="toggle()">
-
-  <div class="relative z-10 inset-y-0 left-0 bg-success bg-opacity-25 transition-all duration-500"
+<div class="relative w-full h-max">
+  <div class="absolute top-0 bottom-0 left-0 z-10 bg-success bg-opacity-25 transition-all duration-500"
     [style.width.%]="survey().totalVotes > 0 ? (choice().votes / survey().totalVotes) * 100 : 0">
   </div>
-  <div class="flex mx-3 z-0">
-
-    <!-- Multiple choice() -->
-    @if (survey().multiplicity) {
-    <input type="checkbox" [name]="survey().id" [readOnly]="survey().closed" 
-      [checked]="choice().chosen" class="px-2"/>
-    }
-    <!-- Single choice() -->
-    @else {
-    <input type="radio" [name]="survey().id" [readOnly]="survey().closed"
-      [checked]="choice().chosen" class="px-2"/>
-    }
-    <div class="flex-col justify-around items-start p-2 mx-2">
-      <div>
-        {{ choice().title }}
-      </div>
-      <!-- Avec complément -->
-      @if (choice().complement) {
-      <!-- Avec lien externe -->
-      @if (choice().url) {
-      <a [href]="choice().url" class="text-night underline italic">
-        {{ choice().complement }}
-      </a>
+  <div class="relative top-0 left-0 flex justify-between items-center text-start
+    hover:bg-gray-200 border-b border-dark w-full"
+    [class.border-b-0]="last()"
+    (click)="toggle()">
+  
+    <div class="flex mx-3">
+  
+      <!-- Multiple choice() -->
+      @if (survey().multiplicity) {
+      <input type="checkbox" [name]="survey().id" [readOnly]="survey().closed" 
+        [checked]="chosen()" class="px-2"/>
       }
-      <!-- Sans lien externe -->
+      <!-- Single choice() -->
       @else {
-      <div>{{ choice().complement }}</div>
+      <input type="radio" [name]="survey().id" [readOnly]="survey().closed"
+        [checked]="chosen()" class="px-2"/>
       }
-      }
+      <div class="flex-col justify-around items-start p-2 mx-2">
+        <div>
+          {{ choice().title }}
+        </div>
+        <!-- Avec complément -->
+        @if (choice().complement) {
+        <!-- Avec lien externe -->
+        @if (choice().url) {
+        <a [href]="choice().url" class="text-night underline italic">
+          {{ choice().complement }}
+        </a>
+        }
+        <!-- Sans lien externe -->
+        @else {
+        <div>{{ choice().complement }}</div>
+        }
+        }
+      </div>
     </div>
-  </div>
-
-  <div class="votes mx-3 z-0">
-    {{ choice().votes }} vote{{ choice().votes > 1 ? 's' : '' }}
+  
+    <div class="votes mx-3">
+      {{ choice().votes }} vote{{ choice().votes > 1 ? 's' : '' }}
+    </div>
   </div>
 </div>
