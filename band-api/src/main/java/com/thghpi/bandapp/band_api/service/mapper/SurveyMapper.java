@@ -10,6 +10,7 @@ import org.mapstruct.InjectionStrategy;
 import java.time.Clock;
 
 import org.mapstruct.AfterMapping;
+import org.mapstruct.Context;
 import org.mapstruct.MappingTarget;
 
 @Mapper(
@@ -23,7 +24,7 @@ public interface SurveyMapper {
     @Mapping(target = "choices", source = "survey.choices")
     @Mapping(target = "closed", expression = "java((survey != null ? survey.isClosed(clock) : null))")
     @Mapping(target = "totalVotes", expression = "java((survey != null ? survey.getTotalVotes() : null))")
-    SurveyDto toDto(Survey survey, Person currentUser, Clock clock);
+    SurveyDto toDto(Survey survey, @Context Person currentUser, Clock clock);
         
     Survey toEntity(SurveyDto survey);
 

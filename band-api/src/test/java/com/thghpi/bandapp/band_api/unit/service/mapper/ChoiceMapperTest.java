@@ -7,6 +7,7 @@ import com.thghpi.bandapp.band_api.service.mapper.ChoiceMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -67,6 +68,7 @@ public class ChoiceMapperTest {
         choice2.setVoters(Set.of(person1, person2));
         assertEquals(2L, mapper.toDto(choice2, null).votes());
         assertEquals(1L, mapper.toDto(choice2, null).surveyId());
+        assertTrue(mapper.toDto(choice2, person1).chosen());
     }
 
     /**
