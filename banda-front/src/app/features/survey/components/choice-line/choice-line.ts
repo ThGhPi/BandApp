@@ -9,7 +9,7 @@ import { Survey } from '../../models/survey.model';
   styleUrl: './choice-line.css',
 })
 export class ChoiceLine {
-  
+
   survey = input.required<Survey>();
   choice = input.required<Choice>();
   last = input<boolean>(false);
@@ -29,11 +29,18 @@ export class ChoiceLine {
 
     if (this.survey().multiplicity) {
       const newValue = !this.choice().chosen;
-  
+      this.chosen.set(newValue);
       this.voteChange.emit({
         surveyId: this.survey().id,
         optionId: this.choice().id,
         selected: newValue
+      });
+    } else if (!this.choice().chosen) {
+      this.chosen.set(true);
+      this.voteChange.emit({
+        surveyId: this.survey().id,
+        optionId: this.choice().id,
+        selected: true
       });
     }
   }

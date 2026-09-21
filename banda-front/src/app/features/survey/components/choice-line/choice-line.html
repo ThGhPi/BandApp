@@ -2,8 +2,8 @@
   <div class="absolute top-0 bottom-0 left-0 z-10 bg-success bg-opacity-25 transition-all duration-500"
     [style.width.%]="survey().totalVotes > 0 ? (choice().votes / survey().totalVotes) * 100 : 0">
   </div>
-  <div class="relative top-0 left-0 flex justify-between items-center text-start
-    hover:bg-gray-200 border-b border-dark w-full"
+  <div class="relative top-0 left-0 z-20 flex justify-between items-center text-start
+    bg-transparent hover:bg-gray-200 hover:bg-opacity-50 border-b border-dark w-full"
     [class.border-b-0]="last()"
     (click)="toggle()">
   
