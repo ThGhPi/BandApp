@@ -3,8 +3,10 @@ import com.thghpi.bandapp.band_api.entity.Choice;
 import com.thghpi.bandapp.band_api.entity.Person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -111,8 +113,10 @@ public class ChoiceTest {
             .build();
         choice.addVote(person);
         assertEquals(1L, choice.getVotes());
+        assertTrue(choice.getVoters().contains(person));
         choice.removeVote(person);
         assertEquals(0L, choice.getVotes());
+        assertFalse(choice.getVoters().contains(person));
     }
 
     /**

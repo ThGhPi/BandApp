@@ -3,12 +3,12 @@ import { Survey } from '../../models/survey.model';
 import { SurveyService } from '../../services/survey.service';
 import { Card } from "../../../../shared/components/card/card";
 import { SmartDatePipe } from '../../../../shared/pipes/smart-date.pipe';
-import { Option } from '../../components/option/option';
+import { ChoiceLine } from '../../components/choice-line/choice-line';
 import { Vote } from '../../models/vote.model';
 
 @Component({
   selector: 'app-survey-list.page',
-  imports: [Card, SmartDatePipe, Option],
+  imports: [Card, SmartDatePipe, ChoiceLine],
   templateUrl: './survey-list.page.html',
   styleUrl: './survey-list.page.css',
 })

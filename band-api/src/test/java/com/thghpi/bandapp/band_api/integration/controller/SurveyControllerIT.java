@@ -470,7 +470,8 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(survey.getId()))
                 .andExpect(jsonPath("$.totalVotes").value(1))
-                .andExpect(jsonPath("$.choices[?(@.votes == 1)]").exists());
+                .andExpect(jsonPath("$.choices[?(@.votes == 1)]").exists())
+                .andExpect(jsonPath("$.choices[?(@.chosen == true)]").exists());
     }
 
     @Test
@@ -541,7 +542,8 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                 .content(voteRequestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalVotes").value(0))
-                .andExpect(jsonPath("$.choices[?(@.id == " + choiceId + ")].votes").value(0));
+                .andExpect(jsonPath("$.choices[?(@.id == " + choiceId + ")].votes").value(0))
+                .andExpect(jsonPath("$.choices[?(@.id == " + choiceId + ")].chosen").value(false));
     }
 
     /**
@@ -559,7 +561,7 @@ public class SurveyControllerIT extends AbstractIntegrationTest {
                         .username("johndoe")
                         .email("john.doe@example.com")
                         .password(passwordEncoder.encode(password != null ? password : "Password123!"))
-                        .role(Role.MEMBER)
+                        .role(Role.ADMIN)
                         .build()));
     }
 

@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration tests for the SurveyRepository interface and implementation by JPA et hibernate.
@@ -151,6 +152,7 @@ public class SurveyRepositoryIT extends AbstractIntegrationTest {
         assertEquals(2,recentSurveys.size());
         assertEquals(recentSurveys.getFirst(), surveys.getFirst());
         assertEquals(recentSurveys.getLast(), surveys.get(1));
+        assertTrue(recentSurveys.getFirst().getChoices().stream().anyMatch(c -> c.getVoters().contains(person1)));
     }
 
     /**

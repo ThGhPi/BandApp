@@ -76,6 +76,13 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, "/band-api/persons/**").hasRole("ADMIN")
                         .requestMatchers("/band-api/persons/**").hasAnyRole("ADMIN", "ARR", "ORG", "MEMBER")
 
+                        .requestMatchers(HttpMethod.GET, "/band-api/surveys/all").hasAnyRole("ADMIN", "ORG")
+                        .requestMatchers(HttpMethod.GET, "/band-api/surveys/**").hasAnyRole("ADMIN", "ARR", "ORG", "MEMBER")
+                        .requestMatchers(HttpMethod.POST, "/band-api/surveys/vote").hasAnyRole("ADMIN", "ARR", "ORG", "MEMBER")
+                        .requestMatchers(HttpMethod.POST, "/band-api/surveys/**").hasAnyRole("ADMIN", "ORG")
+                        .requestMatchers(HttpMethod.PUT, "/band-api/surveys/**").hasAnyRole("ADMIN", "ORG")
+                        .requestMatchers(HttpMethod.DELETE, "/band-api/surveys/vote").hasAnyRole("ADMIN", "ARR", "ORG", "MEMBER")
+                        .requestMatchers(HttpMethod.DELETE, "/band-api/surveys/**").hasAnyRole("ADMIN", "ORG")
                         .requestMatchers("/band-api/**").permitAll()
                          // TODO: remove this line above to secure all API endpoints, currently allowing all for testing purposes
                         .anyRequest().authenticated())

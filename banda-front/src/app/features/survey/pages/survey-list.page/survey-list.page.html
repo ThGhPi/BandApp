@@ -9,10 +9,10 @@
   </div>
   }
   @for (choice of survey.choices; track choice.id) {
-  <app-option [survey]="survey" [choice]="choice" [last]="$last"
+  <app-choice-line [survey]="survey" [choice]="choice" [last]="$last"
     (voteChange)="handleVote($event)"
     class="border-b border-dark last:border-b-0">
-  </app-option>
+  </app-choice-line>
   }
   <div card-footer class="bg-yellow flex justify-between px-4 py-2">
     @if (survey.closed) {
