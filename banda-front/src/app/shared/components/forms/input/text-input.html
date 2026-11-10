@@ -1,0 +1,15 @@
+<div>
+    <label [for]="name()" class="input-label">{{ label() }}</label>
+    <input
+        [id]="name()"
+        [name]="name()"
+        [type]="type()"
+        [placeholder]="placeholder()"
+        [formControl]="control()"
+    />
+    <small class="error-message">
+        @if (errorMessage; as error) {
+            {{ error }}
+        }
+    </small>
+</div>

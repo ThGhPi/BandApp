@@ -3,10 +3,13 @@
     <input
         [id]="name()"
         [name]="name()"
-        [formTarget]="formName()"
         [type]="type()"
-        [pattern]="pattern()"
         [placeholder]="placeholder()"
-        [formMethod]=""
+        [formControl]="control()"
     />
+    <small class="error-message">
+        @if (errorMessage; as error) {
+            {{ error }}
+        }
+    </small>
 </div>
