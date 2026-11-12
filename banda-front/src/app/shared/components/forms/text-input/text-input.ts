@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { ReactiveFormsModule, FormControlName } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-text-input',
@@ -15,7 +15,7 @@ export class TextInput {
 
   type = input<'text'|'email'|'password'>('text');
 
-  control = input.required<FormControlName<string>>();
+  control = input.required<FormControl<string>>();
 
   get errorMessage(): string | null {
     const control = this.control;
@@ -28,7 +28,7 @@ export class TextInput {
       return `${this.label} est requis.`;
     }
 
-    if (control().hasError('pattern')) {
+    if (control().hasError('pattern') || control().hasError('email')) {
       return 'Veuillez entrer' + this.placeholder + ' valide.';
     }
 

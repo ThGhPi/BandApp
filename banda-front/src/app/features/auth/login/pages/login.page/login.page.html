@@ -2,12 +2,16 @@
 
   <div class="flex flex-1 justify-center items-center">
 
-    <div class="bg-gray-100 p-8 rounded-lg w-80">
+    <div class="bg-gray-100 px-8 pt-8 pb-2 rounded-lg w-80">
 
       <h2 class="text-xl text-center mb-6">Connexion</h2>
 
       <app-login-form />
 
+      <p class="text-center mt-4 self-end">
+        Pas de compte ?
+        <a href="" (click)="navigateToSignup()" class="text-festive hover:underline hover:mouse-pointer">Créer un compte !</a>
+      </p>
     </div>
 
   </div>

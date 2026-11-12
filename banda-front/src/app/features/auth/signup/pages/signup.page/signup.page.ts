@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { TextInput } from '../../../../../shared/components/forms/input/text-input';
+import { TextInput } from '../../../../../shared/components/forms/text-input/text-input';
 import { DateInput } from '../../../../../shared/components/forms/date-input/date-input';
 import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ export class SignupPage {
   private readonly router = inject(Router);
   private formBuilder = inject(FormBuilder);
 
-  signupForm : FormGroup = this.formBuilder.nonNullable.group({
+  signupForm = this.formBuilder.nonNullable.group({
     firstname: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
     lastname: ['', [Validators.required, Validators.pattern('^[a-zA-Z]+$')]],
     username: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9]+$')]],
@@ -34,6 +34,7 @@ export class SignupPage {
   }, {
     validators: this.passwordMatchValidator
   });
+
 
   passwordMatchValidator(
     control: AbstractControl
@@ -64,7 +65,7 @@ export class SignupPage {
       username,
       email,
       trialPassword,
-      phonenumber,
+      phoneNumber,
       birthdate
     } = this.signupForm.getRawValue();
 
@@ -74,7 +75,7 @@ export class SignupPage {
       username,
       email,
       trialPassword,
-      phonenumber,
+      phoneNumber,
       birthdate
     };
 

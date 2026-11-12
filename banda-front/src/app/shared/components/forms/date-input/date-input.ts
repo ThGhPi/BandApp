@@ -20,17 +20,17 @@ export class DateInput {
   get errorMessage(): string | null {
     const control = this.control;
 
-    if (!control || !control.touched || !control.errors) {
+    if (!control() || !control().touched || !control().errors) {
       return null;
     }
 
-    if (control.hasError('required')) {
+    if (control().hasError('required')) {
       return `${this.label} est requis.`;
     }
 
-    if (control.hasError('pattern')) {
-      return 'Veuillez entrer' + this.placeholder + ' valide.';
-    }
+    // if (control().hasError('pattern')) {
+    //   return 'Veuillez entrer' + this.placeholder + ' valide.';
+    // }
 
     return 'Entrée non valide.';
   }

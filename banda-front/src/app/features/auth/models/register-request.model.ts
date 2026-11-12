@@ -7,4 +7,6 @@ export interface RegisterRequest {
     trialPassword: string;
     phoneNumber: string;
     birthdate: string;
+    address: string | null;
+    instruments: string[] | null;
 }

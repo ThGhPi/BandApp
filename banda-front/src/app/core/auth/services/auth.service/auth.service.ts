@@ -5,6 +5,8 @@ import { LoginRequestModel } from "../../models/login-request.model";
 import { LoginResponse } from "../../models/login-response.model";
 import { Observable, tap } from "rxjs";
 import { TokenStorageService } from "../token-storage.service";
+import { RegisterRequest } from "../../../../features/auth/models/register-request.model";
+import { Person } from "../../../../features/auth/models/person.model";
 
 @Injectable({providedIn : "root"})
 export class AuthService {
@@ -24,6 +26,13 @@ export class AuthService {
           this.tokenStorage.setToken(response.token);
         })
       );
+    }
+
+    register(credentials: RegisterRequest): Observable<Person> {
+        return this.http.post<Person>(
+            `${this.baseURL}/register`,
+            credentials
+        );
     }
 
     isAuthenticated() : boolean {
