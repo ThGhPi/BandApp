@@ -29,8 +29,8 @@ export class SignupPage {
       Validators.required,
       Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')
     ]],
-    phonenumber: ['', [Validators.required, Validators.pattern('^\\+?[1-9]\\d{7,14}$')]],
-    birthdate: ['', [Validators.required]]
+    phoneNumber: ['', [Validators.pattern('^\\+?[1-9]\\d{7,14}$')]],
+    birthdate: ['', ]
   }, {
     validators: this.passwordMatchValidator
   });

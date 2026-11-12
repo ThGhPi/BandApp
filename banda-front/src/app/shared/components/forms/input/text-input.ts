@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormControlName } from '@angular/forms';
 
 @Component({
   selector: 'app-text-input',
@@ -15,7 +15,7 @@ export class TextInput {
 
   type = input<'text'|'email'|'password'>('text');
 
-  control = input.required<FormControl<string>>();
+  control = input.required<FormControlName<string>>();
 
   get errorMessage(): string | null {
     const control = this.control;
