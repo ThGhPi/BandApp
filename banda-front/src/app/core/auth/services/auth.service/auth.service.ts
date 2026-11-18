@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { API_ENDPOINTS } from "../../../config/api-endpoints";
 import { HttpClient } from "@angular/common/http";
-import { LoginRequestModel } from "../../models/login-request.model";
-import { LoginResponse } from "../../models/login-response.model";
 import { Observable, tap } from "rxjs";
 import { TokenStorageService } from "../token-storage.service";
+import { LoginRequestModel } from "../../models/login-request.model";
+import { LoginResponse } from "../../models/login-response.model";
 import { RegisterRequest } from "../../../../features/auth/models/register-request.model";
 import { Person } from "../../../../features/auth/models/person.model";
+import { Profil } from "../../../../features/auth/models/profil.model";
 
 @Injectable({providedIn : "root"})
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
         tap(response => {
           this.tokenStorage.setToken(response.token);
         })
-      );
+        );
     }
 
     register(credentials: RegisterRequest): Observable<Person> {
@@ -33,6 +34,10 @@ export class AuthService {
             `${this.baseURL}/register`,
             credentials
         );
+    }
+
+    getProfil(): Observable<Profil> {
+        return this.http.get<Profil>(`${this.baseURL}/me`);
     }
 
     isAuthenticated() : boolean {

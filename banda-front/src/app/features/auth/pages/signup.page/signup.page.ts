@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { TextInput } from '../../../../../shared/components/forms/text-input/text-input';
-import { DateInput } from '../../../../../shared/components/forms/date-input/date-input';
+import { TextInput } from '../../../../shared/components/forms/text-input/text-input';
+import { DateInput } from '../../../../shared/components/forms/date-input/date-input';
 import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
